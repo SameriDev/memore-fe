@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:play.google.com)",
+      "WebSearch",
+      "WebFetch(domain:refero.design)",
+      "Bash(mkdir -p gathered)",
+      "Bash(flutter pub get)",
+      "Bash(tree lib)",
+      "Bash(flutter run)",
+      "Bash(flutter run -d windows)",
+      "Bash(nc localhost 8080)",
+      "Bash(flutter analyze)",
+      "Bash(flutter analyze --suppress-analytics)",
+      "Bash(flutter build apk --dry-run)",
+      "Bash(timeout 30 flutter build apk --debug --target-platform android-arm64)",
+      "Bash(flutter analyze lib/presentation/screens/friends/add_friend_screen.dart --suppress-analytics)",
+      "Bash(flutter clean)"
+    ]
+  }
+}
