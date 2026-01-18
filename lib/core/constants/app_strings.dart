@@ -1,14 +1,15 @@
-/// App string constants based on Locket app screenshots and UI text
+/// App string constants based on memore app screenshots and UI text
 class AppStrings {
   AppStrings._();
 
   // App Name and General
-  static const String appName = 'Locket';
+  static const String appName = 'memore';
   static const String memoreAppName = 'Memore';
 
   // Onboarding & Welcome
-  static const String welcomeTitle = 'Welcome to Locket';
-  static const String welcomeSubtitle = 'Share live photos with your closest friends';
+  static const String welcomeTitle = 'Welcome to memore';
+  static const String welcomeSubtitle =
+      'Share live photos with your closest friends';
   static const String getStarted = 'Get Started';
   static const String continueText = 'Continue';
   static const String skip = 'Skip';
@@ -17,9 +18,11 @@ class AppStrings {
 
   // Widget Demo
   static const String widgetDemoTitle = 'Live photos of your friends';
-  static const String widgetDemoSubtitle = 'Add the Locket widget to your home screen';
+  static const String widgetDemoSubtitle =
+      'Add the memore widget to your home screen';
   static const String addWidget = 'Add Widget';
-  static const String widgetInstructions = 'Long press on your home screen, then tap the + button to add widgets';
+  static const String widgetInstructions =
+      'Long press on your home screen, then tap the + button to add widgets';
 
   // Authentication
   static const String phoneNumber = 'Phone number';
@@ -35,7 +38,8 @@ class AppStrings {
   static const String createPassword = 'Create a password';
   static const String password = 'Password';
   static const String confirmPassword = 'Confirm password';
-  static const String passwordRequirements = 'Password must be at least 8 characters';
+  static const String passwordRequirements =
+      'Password must be at least 8 characters';
   static const String passwordsDontMatch = 'Passwords don\'t match';
   static const String createAccount = 'Create Account';
 
@@ -48,7 +52,8 @@ class AppStrings {
   // Terms and Privacy
   static const String termsAndConditions = 'Terms and Conditions';
   static const String privacyPolicy = 'Privacy Policy';
-  static const String agreeToTerms = 'I agree to the Terms and Conditions and Privacy Policy';
+  static const String agreeToTerms =
+      'I agree to the Terms and Conditions and Privacy Policy';
   static const String acceptTerms = 'Accept';
 
   // Camera & Photo Sharing
@@ -95,8 +100,10 @@ class AppStrings {
   static const String block = 'Block';
   static const String unblock = 'Unblock';
   static const String removeFriend = 'Remove Friend';
-  static const String removeFriendConfirm = 'Are you sure you want to remove this friend?';
-  static const String blockFriendConfirm = 'Are you sure you want to block this friend?';
+  static const String removeFriendConfirm =
+      'Are you sure you want to remove this friend?';
+  static const String blockFriendConfirm =
+      'Are you sure you want to block this friend?';
 
   // Friend Status
   static const String online = 'Online';
@@ -185,16 +192,19 @@ class AppStrings {
 
   // Permissions
   static const String cameraPermission = 'Camera Permission';
-  static const String cameraPermissionMessage = 'This app needs camera access to take photos';
+  static const String cameraPermissionMessage =
+      'This app needs camera access to take photos';
   static const String allowAccess = 'Allow Access';
   static const String denyAccess = 'Deny';
   static const String openSettings = 'Open Settings';
 
   static const String storagePermission = 'Storage Permission';
-  static const String storagePermissionMessage = 'This app needs storage access to save photos';
+  static const String storagePermissionMessage =
+      'This app needs storage access to save photos';
 
   static const String notificationPermission = 'Notification Permission';
-  static const String notificationPermissionMessage = 'Allow notifications to stay updated with your friends';
+  static const String notificationPermissionMessage =
+      'Allow notifications to stay updated with your friends';
 
   // Time Formats
   static const String now = 'Now';
@@ -208,7 +218,7 @@ class AppStrings {
   static const String weeksAgo = '{weeks} weeks ago';
 
   // Widget Messages
-  static const String widgetTitle = 'Locket Widget';
+  static const String widgetTitle = 'memore Widget';
   static const String widgetDescription = 'Live photos from your friends';
   static const String noPhotosInWidget = 'No new photos';
   static const String tapToOpenApp = 'Tap to open app';

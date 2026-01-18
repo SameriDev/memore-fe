@@ -6,7 +6,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
-/// Email Input Screen matching Locket design
+/// Email Input Screen matching memore design
 /// First step in the authentication flow - collect user email
 class EmailInputScreen extends ConsumerStatefulWidget {
   const EmailInputScreen({super.key});
@@ -39,21 +39,13 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
-    _slideAnimation = Tween<double>(
-      begin: 30.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _slideAnimation = Tween<double>(begin: 30.0, end: 0.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -68,7 +60,9 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
 
   void _validateEmail() {
     final email = _emailController.text;
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
 
     setState(() {
       _isValidEmail = emailRegex.hasMatch(email) && email.isNotEmpty;
@@ -132,13 +126,16 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.3),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: _animationController,
-                    curve: Curves.easeOut,
-                  )),
+                  position:
+                      Tween<Offset>(
+                        begin: const Offset(0, 0.3),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: _animationController,
+                          curve: Curves.easeOut,
+                        ),
+                      ),
                   child: Column(
                     children: [
                       // Title
@@ -201,7 +198,10 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                             height: 1.4,
                           ),
                           children: [
-                            TextSpan(text: 'By tapping Continue, you are agreeing to\nour '),
+                            TextSpan(
+                              text:
+                                  'By tapping Continue, you are agreeing to\nour ',
+                            ),
                             TextSpan(
                               text: 'Terms of Service',
                               style: TextStyle(
@@ -232,12 +232,16 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                 width: double.infinity,
                 height: AppSizes.buttonHeightSm,
                 child: ElevatedButton(
-                  onPressed: _isValidEmail && !_isLoading ? _continueWithEmail : null,
+                  onPressed: _isValidEmail && !_isLoading
+                      ? _continueWithEmail
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidEmail
                         ? const Color(0xFFFFD700)
                         : const Color(0xFF404040),
-                    foregroundColor: _isValidEmail ? Colors.black : const Color(0xFF666666),
+                    foregroundColor: _isValidEmail
+                        ? Colors.black
+                        : const Color(0xFF666666),
                     elevation: 0,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -250,7 +254,9 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.black,
+                            ),
                           ),
                         )
                       : Row(
@@ -261,14 +267,18 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: _isValidEmail ? Colors.black : const Color(0xFF666666),
+                                color: _isValidEmail
+                                    ? Colors.black
+                                    : const Color(0xFF666666),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Icon(
                               Icons.arrow_forward,
                               size: 20,
-                              color: _isValidEmail ? Colors.black : const Color(0xFF666666),
+                              color: _isValidEmail
+                                  ? Colors.black
+                                  : const Color(0xFF666666),
                             ),
                           ],
                         ),

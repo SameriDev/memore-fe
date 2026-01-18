@@ -6,7 +6,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
-/// Full-screen camera interface matching Locket design
+/// Full-screen camera interface matching memore design
 /// Features camera preview, controls, and capture functionality
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key});
@@ -37,21 +37,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       vsync: this,
     );
 
-    _captureAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.9,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _captureAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -121,22 +113,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                 child: const Center(
                   child: Text(
                     'Camera Preview',
-                    style: TextStyle(
-                      color: Color(0xFF333333),
-                      fontSize: 18,
-                    ),
+                    style: TextStyle(color: Color(0xFF333333), fontSize: 18),
                   ),
                 ),
               ),
             ),
 
             // Top controls
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _buildTopControls(),
-            ),
+            Positioned(top: 0, left: 0, right: 0, child: _buildTopControls()),
 
             // Timer indicator (center)
             Positioned(
@@ -188,10 +172,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     ? const Color(0xFF2A2A2A)
                     : Colors.transparent,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFF404040),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFF404040), width: 1),
               ),
               child: Icon(
                 _isFlashOn ? Icons.flash_on : Icons.flash_off,
@@ -214,11 +195,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.people,
-                  color: Colors.white,
-                  size: 16,
-                ),
+                const Icon(Icons.people, color: Colors.white, size: 16),
                 const SizedBox(width: 6),
                 const Text(
                   '1 Friend',
@@ -241,10 +218,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFF404040),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFF404040), width: 1),
               ),
               child: const Icon(
                 Icons.message_outlined,
@@ -278,11 +252,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.flash_on,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+                  child: Icon(Icons.flash_on, color: Colors.white, size: 28),
                 ),
               ),
 

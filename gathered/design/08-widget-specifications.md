@@ -1,11 +1,12 @@
-# Locket Widget Specifications (Future Development)
+# memore Widget Specifications (Future Development)
 
 ## Widget Overview
 
-This document outlines the specifications for implementing **home screen widgets** - Locket's signature feature that enables photos to appear directly on users' home screens. This is documented for **Phase 3** implementation after the core app is complete.
+This document outlines the specifications for implementing **home screen widgets** - memore's signature feature that enables photos to appear directly on users' home screens. This is documented for **Phase 3** implementation after the core app is complete.
 
 ### Widget Philosophy
-Widgets are the heart of Locket's value proposition, providing **always-visible** photo sharing that creates surprise and delight throughout the day. They transform the home screen into a **live window** into friends' lives.
+
+Widgets are the heart of memore's value proposition, providing **always-visible** photo sharing that creates surprise and delight throughout the day. They transform the home screen into a **live window** into friends' lives.
 
 ---
 
@@ -14,6 +15,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ### 1.1 Standard Friend Widget
 
 #### Visual Design
+
 ```
 ┌─────────────────────────┐
 │                         │
@@ -25,6 +27,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ```
 
 **Design Specifications:**
+
 - **Size**: 4x2 Android widget grid (320x160dp)
 - **Corner Radius**: 12dp to match app design
 - **Background**: White with 1dp gray border
@@ -33,6 +36,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 - **Typography**: Roboto, white text with drop shadow
 
 **Content Elements:**
+
 - Friend's latest photo (full size background)
 - Friend name (Label Medium, 14sp)
 - Timestamp (Body Small, 12sp)
@@ -41,16 +45,19 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 #### Widget States
 
 **Loading State:**
+
 - Gray skeleton background
 - Animated pulse effect
 - "Loading..." text centered
 
 **Error State:**
+
 - Light gray background with error icon
 - "Tap to refresh" message
 - Camera icon placeholder
 
 **Empty State:**
+
 - Soft gradient background
 - "Add friends to see photos" message
 - Plus icon for setup
@@ -58,6 +65,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ### 1.2 Best Friend Widget
 
 #### Visual Design
+
 ```
 ┌─────────────────────────┐
 │                         │
@@ -69,6 +77,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ```
 
 **Design Specifications:**
+
 - **Size**: Same as standard widget (4x2 grid)
 - **Special Accent**: Golden star (⭐) before name
 - **Border**: 2dp golden border instead of gray
@@ -77,6 +86,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ### 1.3 Crush Widget (Premium Feature)
 
 #### Visual Design
+
 ```
 ┌─────────────────────────┐
 │                         │
@@ -88,6 +98,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ```
 
 **Design Specifications:**
+
 - **Size**: Same as standard widget (4x2 grid)
 - **Special Accent**: Pink heart (💕) before name
 - **Border**: 2dp pink border
@@ -96,6 +107,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ### 1.4 Friends Grid Widget
 
 #### Visual Design
+
 ```
 ┌─────────────────────────┐
 │  [Photo1] [Photo2]      │ 4x4 widget grid
@@ -106,6 +118,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ```
 
 **Design Specifications:**
+
 - **Size**: 4x4 Android widget grid (320x320dp)
 - **Layout**: 2x2 grid of friend photos
 - **Photo Size**: 150x150dp each with 4dp spacing
@@ -119,7 +132,7 @@ Widgets are the heart of Locket's value proposition, providing **always-visible*
 ### 2.1 Widget Provider Class
 
 ```kotlin
-class LocketWidgetProvider : AppWidgetProvider() {
+class memoreWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(
         context: Context,
@@ -136,7 +149,7 @@ class LocketWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         widgetId: Int
     ) {
-        val views = RemoteViews(context.packageName, R.layout.widget_locket)
+        val views = RemoteViews(context.packageName, R.layout.widget_memore)
 
         // Get latest photo data
         val photoData = getLatestPhotoData(context, widgetId)
@@ -193,7 +206,7 @@ class LocketWidgetProvider : AppWidgetProvider() {
 ### 2.2 Widget Layout XML
 
 ```xml
-<!-- res/layout/widget_locket.xml -->
+<!-- res/layout/widget_memore.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_container"
     android:layout_width="match_parent"
@@ -307,10 +320,10 @@ class LocketWidgetProvider : AppWidgetProvider() {
     android:maxResizeHeight="200dp"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
-    android:initialLayout="@layout/widget_locket"
-    android:configure="com.locket.app.WidgetConfigActivity"
+    android:initialLayout="@layout/widget_memore"
+    android:configure="com.memore.app.WidgetConfigActivity"
     android:previewImage="@drawable/widget_preview"
-    android:previewLayout="@layout/widget_locket"
+    android:previewLayout="@layout/widget_memore"
     android:updatePeriodMillis="1800000"
     android:description="@string/widget_description" />
 ```
@@ -347,10 +360,10 @@ class WidgetUpdateService : JobIntentService() {
     private fun updateAllWidgets() {
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val widgetIds = appWidgetManager.getAppWidgetIds(
-            ComponentName(this, LocketWidgetProvider::class.java)
+            ComponentName(this, memoreWidgetProvider::class.java)
         )
 
-        val intent = Intent(this, LocketWidgetProvider::class.java).apply {
+        val intent = Intent(this, memoreWidgetProvider::class.java).apply {
             action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
         }
@@ -382,7 +395,7 @@ class PhotoUpdateReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            "com.locket.app.NEW_PHOTO" -> {
+            "com.memore.app.NEW_PHOTO" -> {
                 val photoData = intent.getSerializableExtra("photoData") as PhotoData
 
                 // Update widget immediately
@@ -393,7 +406,7 @@ class PhotoUpdateReceiver : BroadcastReceiver() {
                 WidgetUpdateService.enqueueWork(context, updateIntent)
             }
 
-            "com.locket.app.FRIEND_ONLINE" -> {
+            "com.memore.app.FRIEND_ONLINE" -> {
                 val friendId = intent.getStringExtra("friendId")
                 // Update widget with online status indicator
             }
@@ -531,7 +544,7 @@ class WidgetConfigActivity : AppCompatActivity() {
 
             // Update the widget
             val appWidgetManager = AppWidgetManager.getInstance(this@WidgetConfigActivity)
-            LocketWidgetProvider().onUpdate(
+            memoreWidgetProvider().onUpdate(
                 this@WidgetConfigActivity,
                 appWidgetManager,
                 intArrayOf(appWidgetId)
@@ -573,7 +586,7 @@ class WidgetConfigActivity : AppCompatActivity() {
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="24dp">
 
-        <include layout="@layout/widget_locket"
+        <include layout="@layout/widget_memore"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -763,7 +776,7 @@ class WidgetUpdateWorker(context: Context, workerParams: WorkerParameters) :
             )
 
             // Trigger widget update
-            val intent = Intent(applicationContext, LocketWidgetProvider::class.java).apply {
+            val intent = Intent(applicationContext, memoreWidgetProvider::class.java).apply {
                 action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(widgetData.widgetId))
             }
@@ -1103,4 +1116,4 @@ class WidgetPerformanceTest {
 }
 ```
 
-This comprehensive widget specification provides the foundation for implementing Locket's signature home screen widget feature in a future development phase, complete with technical implementation details, security considerations, and testing strategies.
+This comprehensive widget specification provides the foundation for implementing memore's signature home screen widget feature in a future development phase, complete with technical implementation details, security considerations, and testing strategies.

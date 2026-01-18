@@ -130,7 +130,7 @@ class MessagesScreen extends StatelessWidget {
       _MessageItem(
         userId: '1',
         userName: 'Danny D',
-        lastMessage: 'Replied to your Locket!',
+        lastMessage: 'Replied to your memore!',
         time: '2m',
       ),
       _MessageItem(

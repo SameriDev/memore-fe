@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-/// Photo model representing a shared photo in the Locket clone app
+/// Photo model representing a shared photo in the memore clone app
 /// Contains all photo-related data with placeholder structure for frontend-only implementation
 class PhotoModel {
   final String id;
@@ -130,9 +130,7 @@ class PhotoModel {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PhotoModel &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is PhotoModel && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
@@ -144,11 +142,7 @@ class PhotoModel {
 }
 
 /// Photo status enum
-enum PhotoStatus {
-  sending,
-  delivered,
-  failed,
-}
+enum PhotoStatus { sending, delivered, failed }
 
 /// Photo interaction model for likes, saves, etc.
 class PhotoInteraction {
@@ -186,12 +180,7 @@ class PhotoInteraction {
 }
 
 /// Photo interaction types
-enum PhotoInteractionType {
-  viewed,
-  saved,
-  reported,
-  copied,
-}
+enum PhotoInteractionType { viewed, saved, reported, copied }
 
 /// Mock data class for testing and development
 class MockPhotos {
@@ -300,7 +289,8 @@ class MockPhotos {
       id: _uuid.v4(),
       senderId: senderId,
       recipientIds: recipientIds,
-      imageUrl: sampleImageUrls[DateTime.now().millisecond % sampleImageUrls.length],
+      imageUrl:
+          sampleImageUrls[DateTime.now().millisecond % sampleImageUrls.length],
       timestamp: DateTime.now().subtract(
         Duration(
           hours: DateTime.now().second % 24,
@@ -324,9 +314,7 @@ class MockPhotos {
 
   /// Get photos sent by a specific user
   static List<PhotoModel> getPhotosSentByUser(String userId) {
-    return samplePhotos
-        .where((photo) => photo.senderId == userId)
-        .toList()
+    return samplePhotos.where((photo) => photo.senderId == userId).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
@@ -347,9 +335,9 @@ class MockPhotos {
   /// Get recent photos (last 24 hours)
   static List<PhotoModel> getRecentPhotos(String userId) {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return getPhotosForUser(userId)
-        .where((photo) => photo.timestamp.isAfter(yesterday))
-        .toList();
+    return getPhotosForUser(
+      userId,
+    ).where((photo) => photo.timestamp.isAfter(yesterday)).toList();
   }
 
   /// Get photos from a specific time period
@@ -359,8 +347,10 @@ class MockPhotos {
     DateTime end,
   ) {
     return getPhotosForUser(userId)
-        .where((photo) =>
-            photo.timestamp.isAfter(start) && photo.timestamp.isBefore(end))
+        .where(
+          (photo) =>
+              photo.timestamp.isAfter(start) && photo.timestamp.isBefore(end),
+        )
         .toList();
   }
 
@@ -373,8 +363,10 @@ class MockPhotos {
   /// Get time travel photos for a user
   static List<PhotoModel> getTimeTravelPhotos(String userId) {
     return timeTravelPhotos
-        .where((photo) =>
-            photo.recipientIds.contains(userId) || photo.senderId == userId)
+        .where(
+          (photo) =>
+              photo.recipientIds.contains(userId) || photo.senderId == userId,
+        )
         .toList()
       ..sort((a, b) => b.originalTimestamp!.compareTo(a.originalTimestamp!));
   }

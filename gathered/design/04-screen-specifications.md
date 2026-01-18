@@ -1,8 +1,8 @@
-# Locket Screen Specifications
+# memore Screen Specifications
 
 ## Screen Overview
 
-This document provides detailed layout specifications for every screen in the Locket app, designed for **Android-first development** with Material Design 3 principles. All measurements are in density-independent pixels (dp) following Android conventions.
+This document provides detailed layout specifications for every screen in the memore app, designed for **Android-first development** with Material Design 3 principles. All measurements are in density-independent pixels (dp) following Android conventions.
 
 ---
 
@@ -11,6 +11,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 1.1 Welcome Screen
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │              Status Bar              │ 24dp height
@@ -19,7 +20,7 @@ This document provides detailed layout specifications for every screen in the Lo
 │           App Logo/Icon             │ 80dp x 80dp, centered
 │              (120dp)                │ margin top
 │                                     │
-│              Locket                 │ H1, 48dp margin top
+│              memore                 │ H1, 48dp margin top
 │                                     │
 │    "A little glimpse of what        │ Body Large, 24dp margin top
 │     everyone's up to throughout     │ 32dp horizontal margin
@@ -37,21 +38,24 @@ This document provides detailed layout specifications for every screen in the Lo
 ```
 
 #### Component Specifications
+
 - **App Icon**: 80x80dp, purple gradient circle with white camera icon
 - **Title**: H1 typography, Warm Gray 800, center aligned
 - **Description**: Body Large, Warm Gray 600, center aligned, max 2 lines
 - **Illustration**: Friendly vector illustration of friends sharing photos
 - **Get Started Button**: Primary button, full width minus 32dp margins, 48dp height
-- **Learn More Link**: Label Medium, Locket Purple, center aligned
+- **Learn More Link**: Label Medium, memore Purple, center aligned
 
 #### Interaction States
+
 - **Get Started Tap**: Navigate to Phone Verification with slide transition
-- **Learn More Tap**: Open in-app browser with Locket feature overview
+- **Learn More Tap**: Open in-app browser with memore feature overview
 - **Screen Gestures**: No swipe navigation (prevent accidental skips)
 
 ### 1.2 Phone Verification Screen
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │     [←]    Verify Phone    [Skip]   │ App bar, 56dp height
@@ -74,6 +78,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ```
 
 #### Component Specifications
+
 - **App Bar**: Material 3 top app bar with back arrow and skip option
 - **Title**: H3 typography, Warm Gray 800
 - **Country Selector**: Dropdown with flag emoji and country code
@@ -82,6 +87,7 @@ This document provides detailed layout specifications for every screen in the Lo
 - **Terms Link**: Body Small with clickable terms and privacy links
 
 #### Input Validation
+
 - **Phone Format**: Auto-format as user types (e.g., (555) 123-4567)
 - **Country Detection**: Auto-detect country based on device locale
 - **Error States**: Show validation errors below input field
@@ -90,6 +96,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 1.3 SMS Verification Screen
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │     [←]    Enter Code              │ App bar
@@ -110,6 +117,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ```
 
 #### Component Specifications
+
 - **Phone Display**: Body Medium, Warm Gray 600, show formatted phone number
 - **Code Input**: 6 separate input boxes, 40x48dp each, 8dp spacing
 - **Auto-Advance**: Automatically advance focus between input boxes
@@ -123,6 +131,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 2.1 Camera Screen (Default/Primary)
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │  [Flash] [Settings]     [Grid] [?]  │ 16dp margins, overlay
@@ -142,18 +151,21 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Component Specifications
 
 **Top Controls Overlay**
+
 - **Flash Toggle**: 24dp icon, cycles through off/auto/on states
 - **Settings**: 24dp gear icon, opens camera settings modal
 - **Grid Toggle**: 24dp grid icon, toggles rule of thirds overlay
 - **Help**: 24dp question mark, opens camera tips
 
 **Camera Viewfinder**
+
 - **Full Screen**: Covers entire available area
 - **Focus Indicator**: Animated circle on tap-to-focus
 - **Exposure Control**: Vertical slider appears on focus tap
 - **Zoom Indicator**: Pinch gesture shows zoom level (1.0x - 8.0x)
 
 **Bottom Controls**
+
 - **Gallery Preview**: 48dp circular thumbnail of last photo taken
 - **Capture Button**: 80dp circular button, white with purple ring
 - **Camera Flip**: 48dp icon, switches between front/rear camera
@@ -161,12 +173,14 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Camera States
 
 **Capture States**
+
 - **Ready**: White capture button with purple ring (2dp)
 - **Processing**: Loading spinner inside capture button
 - **Success**: Green checkmark animation, 500ms
 - **Error**: Red X animation with haptic feedback
 
 **Viewfinder Overlays**
+
 - **Grid Lines**: Subtle white lines for rule of thirds
 - **Focus Square**: Yellow square that fades after 2 seconds
 - **Exposure Slider**: Vertical slider from -2.0 to +2.0 EV
@@ -174,9 +188,10 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 2.2 Home Feed Screen
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
-│           Locket        [Profile]   │ App bar with title
+│           memore        [Profile]   │ App bar with title
 ├─────────────────────────────────────┤
 │ ┌─────────────────────────────────┐ │
 │ │         Friend's Photo          │ │ Card container
@@ -198,17 +213,20 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Component Specifications
 
 **Photo Cards**
+
 - **Card Size**: Full width minus 32dp margins, 16:9 aspect ratio
 - **Corner Radius**: 12dp for modern, friendly appearance
 - **Elevation**: Level 1 shadow (2dp)
 - **Spacing**: 16dp between cards
 
 **Photo Metadata**
+
 - **Friend Name**: Label Large, Warm Gray 800, left aligned
 - **Timestamp**: Body Small, Warm Gray 500, right aligned
 - **Heart Icon**: 20dp purple heart, right aligned
 
 **Photo Interactions**
+
 - **Single Tap**: Open full-screen photo viewer
 - **Double Tap**: Quick heart reaction with animation
 - **Long Press**: Context menu (save, delete, report)
@@ -216,16 +234,19 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Feed States
 
 **Loading State**
+
 - **Skeleton Cards**: 3 skeleton placeholders while loading
 - **Pull-to-Refresh**: Material design refresh indicator
 
 **Empty State**
+
 - **Illustration**: Friends sharing photos illustration
 - **Heading**: "No new photos yet"
 - **Description**: "When friends share photos, they'll appear here"
 - **CTA Button**: "Invite Friends" primary button
 
 **Error State**
+
 - **Icon**: 48dp wifi-off icon
 - **Heading**: "Connection problem"
 - **Description**: "Check your internet and try again"
@@ -234,6 +255,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 2.3 Friends Management Screen
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │     Friends          [+] [Search]   │ App bar
@@ -259,6 +281,7 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Component Specifications
 
 **Friend List Items**
+
 - **Item Height**: 72dp for comfortable touch targets
 - **Avatar**: 40dp circular profile photo or initial circle
 - **Online Status**: 12dp colored dot (green=online, gray=offline)
@@ -266,11 +289,13 @@ This document provides detailed layout specifications for every screen in the Lo
 - **Action Button**: 32dp height, secondary button style
 
 **Section Headers**
+
 - **Typography**: Label Medium, Warm Gray 600
 - **Spacing**: 24dp margin top, 8dp margin bottom
 - **Divider**: 1dp line, Warm Gray 200
 
 **Friend Actions**
+
 - **Message Button**: Opens quick photo send interface
 - **Accept/Decline**: Green check (32dp) and red X (32dp) buttons
 - **Pending Indicator**: Body Small, Warm Gray 500 text
@@ -278,6 +303,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 2.4 Profile Screen
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │              Profile    [Settings]  │ App bar
@@ -306,16 +332,19 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Component Specifications
 
 **Profile Header**
+
 - **Avatar**: 80dp circle with 2dp purple border when active
 - **Name**: H2 typography, Warm Gray 800
 - **Stats**: Body Medium, Warm Gray 600, includes username and friend count
 
 **Recent Photos Grid**
+
 - **Thumbnails**: 60x60dp squares, 8dp spacing
 - **Corner Radius**: 8dp
 - **Tap Action**: Open photo in full-screen viewer
 
 **Action Buttons**
+
 - **Button Style**: Secondary buttons, full width minus 32dp margins
 - **Height**: 48dp each
 - **Spacing**: 16dp between buttons
@@ -327,6 +356,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 3.1 Photo Send Modal
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │    [×]      Send Photo     [Send]   │ Modal header
@@ -352,16 +382,19 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Component Specifications
 
 **Modal Container**
+
 - **Background**: White with rounded top corners (16dp)
 - **Height**: 60% of screen height
 - **Slide Animation**: Slides up from bottom
 
 **Photo Preview**
+
 - **Size**: 200x200dp maximum, maintains aspect ratio
 - **Corner Radius**: 12dp
 - **Border**: 1dp Warm Gray 200
 
 **Friend Selection**
+
 - **Checkboxes**: Material 3 checkbox style
 - **Selection Limit**: Maximum 5 friends at once
 - **Counter**: "2 of 5 selected" helper text
@@ -369,6 +402,7 @@ This document provides detailed layout specifications for every screen in the Lo
 ### 3.2 Settings Modal
 
 #### Layout Structure
+
 ```
 ┌─────────────────────────────────────┐
 │    [×]        Settings              │ Modal header
@@ -399,11 +433,13 @@ This document provides detailed layout specifications for every screen in the Lo
 #### Component Specifications
 
 **Setting Sections**
+
 - **Section Headers**: Label Medium, Warm Gray 600
 - **Item Height**: 56dp for comfortable interaction
 - **Dividers**: 1dp lines between sections
 
 **Setting Items**
+
 - **Text**: Body Large, Warm Gray 800
 - **Toggle Switches**: Material 3 switch component
 - **Chevron Icons**: 16dp right arrow for navigation items
@@ -439,7 +475,7 @@ This document provides detailed layout specifications for every screen in the Lo
 │                                     │
 │      Camera Access Needed          │ H3, center aligned
 │                                     │
-│    Locket needs camera access to   │ Body Large, center
+│    memore needs camera access to   │ Body Large, center
 │       capture and share photos     │ 16dp margins
 │                                     │
 │        [Open Settings]              │ Primary button
@@ -457,18 +493,21 @@ This document provides detailed layout specifications for every screen in the Lo
 ### Screen Size Adaptations
 
 #### Small Phones (<360dp width)
+
 - Reduce horizontal margins from 16dp to 12dp
 - Stack bottom navigation icons vertically if needed
 - Reduce photo grid from 5 to 4 columns in history
 - Compress camera controls spacing
 
 #### Large Phones (>414dp width)
+
 - Increase maximum content width to 600dp with center alignment
 - Add more whitespace in layouts
 - Use larger touch targets (48dp minimum)
 - Consider two-column layout for settings
 
 #### Tablets (>600dp width)
+
 - Two-panel layout with navigation on left
 - Larger photo previews and grid layouts
 - Increased typography sizes for readability
@@ -477,11 +516,13 @@ This document provides detailed layout specifications for every screen in the Lo
 ### Orientation Handling
 
 #### Portrait Mode (Default)
+
 - All layouts optimized for portrait orientation
 - Camera uses full screen in portrait
 - Navigation remains at bottom
 
 #### Landscape Mode
+
 - Camera rotates viewfinder but keeps controls accessible
 - Photo viewing optimized for landscape aspect ratios
 - Navigation may move to side for tablets
@@ -490,16 +531,19 @@ This document provides detailed layout specifications for every screen in the Lo
 ### Accessibility Compliance
 
 #### Touch Targets
+
 - Minimum 48x48dp touch targets
 - 8dp spacing between interactive elements
 - Clear visual feedback for all interactions
 
 #### Text Scaling
+
 - Support dynamic text sizing up to 200%
 - Maintain layout integrity at large text sizes
 - Provide alternative layouts for extreme scaling
 
 #### Color Contrast
+
 - All text meets WCAG 2.1 AA contrast ratios
 - Interactive elements have 3:1 minimum contrast
 - Focus indicators meet accessibility requirements
@@ -509,18 +553,21 @@ This document provides detailed layout specifications for every screen in the Lo
 ## 6. Animation Specifications
 
 ### Screen Transitions
+
 - **Tab Changes**: Cross-fade, 250ms standard curve
 - **Modal Open**: Slide up from bottom, 300ms decelerate curve
 - **Screen Push**: Slide left/right, 300ms standard curve
 - **Modal Dismiss**: Slide down to bottom, 250ms accelerate curve
 
 ### Micro-Interactions
+
 - **Button Press**: Scale to 0.98, 100ms sharp curve
 - **Photo Like**: Heart scale pulse, 400ms bounce effect
 - **Success State**: Check mark draw animation, 500ms
 - **Loading Spinner**: Continuous rotation, 1000ms linear
 
 ### Photo Interactions
+
 - **Photo Upload**: Progress bar with fade-in preview
 - **Photo Receive**: Gentle bounce in with fade
 - **Gallery Scroll**: Parallax effect on photo movement

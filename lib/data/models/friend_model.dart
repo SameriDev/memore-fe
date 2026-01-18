@@ -65,17 +65,12 @@ class FriendModel {
 
   /// Block friend
   FriendModel block() {
-    return copyWith(
-      status: FriendshipStatus.blocked,
-      isBlocked: true,
-    );
+    return copyWith(status: FriendshipStatus.blocked, isBlocked: true);
   }
 
   /// Unblock friend
   FriendModel unblock() {
-    return copyWith(
-      isBlocked: false,
-    );
+    return copyWith(isBlocked: false);
   }
 
   /// Update last interaction
@@ -146,12 +141,7 @@ class FriendModel {
 }
 
 /// Friendship status enum
-enum FriendshipStatus {
-  pending,
-  accepted,
-  declined,
-  blocked,
-}
+enum FriendshipStatus { pending, accepted, declined, blocked }
 
 /// Friend request model for managing incoming and outgoing requests
 class FriendRequest {
@@ -216,11 +206,7 @@ class FriendRequest {
 }
 
 /// Friend request status enum
-enum FriendRequestStatus {
-  pending,
-  accepted,
-  declined,
-}
+enum FriendRequestStatus { pending, accepted, declined }
 
 /// Mock data class for testing and development
 class MockFriends {
@@ -263,7 +249,7 @@ class MockFriends {
       id: 'request_001',
       fromUserId: 'potential_friend_001',
       toUserId: 'user_001',
-      message: 'Hi! Let\'s be friends on Locket!',
+      message: 'Hi! Let\'s be friends on memore!',
       createdAt: DateTime.now().subtract(const Duration(hours: 3)),
       status: FriendRequestStatus.pending,
     ),
@@ -291,20 +277,27 @@ class MockFriends {
   /// Get friends for a specific user
   static List<FriendModel> getFriendsForUser(String userId) {
     return sampleFriendships
-        .where((friendship) =>
-            (friendship.userId == userId || friendship.friendId == userId) &&
-            friendship.isActive)
+        .where(
+          (friendship) =>
+              (friendship.userId == userId || friendship.friendId == userId) &&
+              friendship.isActive,
+        )
         .toList()
-      ..sort((a, b) => (b.lastInteraction ?? b.createdAt)
-          .compareTo(a.lastInteraction ?? a.createdAt));
+      ..sort(
+        (a, b) => (b.lastInteraction ?? b.createdAt).compareTo(
+          a.lastInteraction ?? a.createdAt,
+        ),
+      );
   }
 
   /// Get pending friend requests for a user (incoming)
   static List<FriendRequest> getPendingRequests(String userId) {
     return sampleFriendRequests
-        .where((request) =>
-            request.toUserId == userId &&
-            request.status == FriendRequestStatus.pending)
+        .where(
+          (request) =>
+              request.toUserId == userId &&
+              request.status == FriendRequestStatus.pending,
+        )
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
@@ -312,35 +305,44 @@ class MockFriends {
   /// Get sent friend requests from a user (outgoing)
   static List<FriendRequest> getSentRequests(String userId) {
     return sampleSentRequests
-        .where((request) =>
-            request.fromUserId == userId &&
-            request.status == FriendRequestStatus.pending)
+        .where(
+          (request) =>
+              request.fromUserId == userId &&
+              request.status == FriendRequestStatus.pending,
+        )
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
   /// Check if users are friends
   static bool areFriends(String userId1, String userId2) {
-    return sampleFriendships.any((friendship) =>
-        ((friendship.userId == userId1 && friendship.friendId == userId2) ||
-            (friendship.userId == userId2 && friendship.friendId == userId1)) &&
-        friendship.isActive);
+    return sampleFriendships.any(
+      (friendship) =>
+          ((friendship.userId == userId1 && friendship.friendId == userId2) ||
+              (friendship.userId == userId2 &&
+                  friendship.friendId == userId1)) &&
+          friendship.isActive,
+    );
   }
 
   /// Check if there's a pending request between users
   static bool hasPendingRequest(String fromUserId, String toUserId) {
-    return sampleFriendRequests.any((request) =>
-        request.fromUserId == fromUserId &&
-        request.toUserId == toUserId &&
-        request.status == FriendRequestStatus.pending);
+    return sampleFriendRequests.any(
+      (request) =>
+          request.fromUserId == fromUserId &&
+          request.toUserId == toUserId &&
+          request.status == FriendRequestStatus.pending,
+    );
   }
 
   /// Get friendship relationship between two users
   static FriendModel? getFriendship(String userId1, String userId2) {
     try {
-      return sampleFriendships.firstWhere((friendship) =>
-          (friendship.userId == userId1 && friendship.friendId == userId2) ||
-          (friendship.userId == userId2 && friendship.friendId == userId1));
+      return sampleFriendships.firstWhere(
+        (friendship) =>
+            (friendship.userId == userId1 && friendship.friendId == userId2) ||
+            (friendship.userId == userId2 && friendship.friendId == userId1),
+      );
     } catch (e) {
       return null;
     }
@@ -378,9 +380,11 @@ class MockFriends {
   /// Get blocked users for a user
   static List<FriendModel> getBlockedUsers(String userId) {
     return sampleFriendships
-        .where((friendship) =>
-            (friendship.userId == userId || friendship.friendId == userId) &&
-            friendship.isBlocked)
+        .where(
+          (friendship) =>
+              (friendship.userId == userId || friendship.friendId == userId) &&
+              friendship.isBlocked,
+        )
         .toList();
   }
 
@@ -393,33 +397,39 @@ class MockFriends {
   static List<Map<String, dynamic>> searchUsers(String query) {
     // Mock search results
     return [
-      {
-        'id': 'search_result_001',
-        'displayName': 'Danny D',
-        'phoneNumber': '+1987654321',
-        'profilePicture': null,
-        'mutualFriends': 2,
-      },
-      {
-        'id': 'search_result_002',
-        'displayName': 'Alex M',
-        'phoneNumber': '+1555123456',
-        'profilePicture': null,
-        'mutualFriends': 0,
-      },
-    ].where((user) =>
-        (user['displayName'] as String).toLowerCase().contains(query.toLowerCase()) ||
-        (user['phoneNumber'] as String).contains(query)).toList();
+          {
+            'id': 'search_result_001',
+            'displayName': 'Danny D',
+            'phoneNumber': '+1987654321',
+            'profilePicture': null,
+            'mutualFriends': 2,
+          },
+          {
+            'id': 'search_result_002',
+            'displayName': 'Alex M',
+            'phoneNumber': '+1555123456',
+            'profilePicture': null,
+            'mutualFriends': 0,
+          },
+        ]
+        .where(
+          (user) =>
+              (user['displayName'] as String).toLowerCase().contains(
+                query.toLowerCase(),
+              ) ||
+              (user['phoneNumber'] as String).contains(query),
+        )
+        .toList();
   }
 
   /// Get mutual friends between two users
   static List<String> getMutualFriends(String userId1, String userId2) {
-    final user1Friends = getFriendsForUser(userId1)
-        .map((f) => f.userId == userId1 ? f.friendId : f.userId)
-        .toSet();
-    final user2Friends = getFriendsForUser(userId2)
-        .map((f) => f.userId == userId2 ? f.friendId : f.userId)
-        .toSet();
+    final user1Friends = getFriendsForUser(
+      userId1,
+    ).map((f) => f.userId == userId1 ? f.friendId : f.userId).toSet();
+    final user2Friends = getFriendsForUser(
+      userId2,
+    ).map((f) => f.userId == userId2 ? f.friendId : f.userId).toSet();
 
     return user1Friends.intersection(user2Friends).toList();
   }

@@ -3,7 +3,7 @@ import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 
 /// Text styles based on Material Design 3 type scale
-/// Configured for Locket clone app with consistent typography
+/// Configured for memore clone app with consistent typography
 class AppTextStyles {
   AppTextStyles._();
 

@@ -1,10 +1,11 @@
-# Locket Technical Implementation
+# memore Technical Implementation
 
 ## Architecture Overview
 
-This document provides the technical foundation for implementing Locket using **Flutter** with **Android-first** development approach. The architecture follows Clean Architecture principles with proper separation of concerns and scalability.
+This document provides the technical foundation for implementing memore using **Flutter** with **Android-first** development approach. The architecture follows Clean Architecture principles with proper separation of concerns and scalability.
 
 ### Technology Stack
+
 - **Frontend**: Flutter (Dart 3.0+)
 - **State Management**: Riverpod 2.0+
 - **Database**: SQLite (local) + Firebase Firestore (cloud sync)
@@ -175,7 +176,7 @@ android {
     compileSdkVersion 34
 
     defaultConfig {
-        applicationId "com.locket.app"
+        applicationId "com.memore.app"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
@@ -572,7 +573,7 @@ class CameraService {
 ```dart
 class NotificationService {
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
-    'locket_photos',
+    'memore_photos',
     'Photo Notifications',
     description: 'Notifications for new photos from friends',
     importance: Importance.high,
@@ -610,7 +611,7 @@ class NotificationService {
     Map<String, dynamic>? payload,
   }) async {
     const androidDetails = AndroidNotificationDetails(
-      'locket_photos',
+      'memore_photos',
       'Photo Notifications',
       channelDescription: 'Notifications for new photos from friends',
       importance: Importance.high,
@@ -707,7 +708,7 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'locket.db');
+    final path = join(dbPath, 'memore.db');
 
     return await openDatabase(
       path,
@@ -938,40 +939,40 @@ class PhotoRemoteDataSource {
 
 ```dart
 // Base Exception Class
-abstract class LocketException implements Exception {
+abstract class memoreException implements Exception {
   final String message;
-  const LocketException(this.message);
+  const memoreException(this.message);
 
   @override
   String toString() => message;
 }
 
 // Specific Exception Classes
-class NetworkException extends LocketException {
+class NetworkException extends memoreException {
   const NetworkException(super.message);
 }
 
-class CameraException extends LocketException {
+class CameraException extends memoreException {
   const CameraException(super.message);
 }
 
-class StorageException extends LocketException {
+class StorageException extends memoreException {
   const StorageException(super.message);
 }
 
-class AuthException extends LocketException {
+class AuthException extends memoreException {
   const AuthException(super.message);
 }
 
-class PhotoSendFailure extends LocketException {
+class PhotoSendFailure extends memoreException {
   const PhotoSendFailure(super.message);
 }
 
-class RemoteDataException extends LocketException {
+class RemoteDataException extends memoreException {
   const RemoteDataException(super.message);
 }
 
-class LocalDataException extends LocketException {
+class LocalDataException extends memoreException {
   const LocalDataException(super.message);
 }
 ```
@@ -1316,4 +1317,4 @@ class ApiSecurity {
 }
 ```
 
-This comprehensive technical implementation guide provides the foundation for building a complete Locket clone using Flutter with Android-first approach. The architecture is scalable, maintainable, and follows industry best practices for mobile app development.
+This comprehensive technical implementation guide provides the foundation for building a complete memore clone using Flutter with Android-first approach. The architecture is scalable, maintainable, and follows industry best practices for mobile app development.

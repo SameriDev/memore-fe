@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// App color constants based on Locket's design system
-/// Primary color: Purple #6366F1 (Locket brand color)
+/// App color constants based on memore's design system
+/// Primary color: Purple #6366F1 (memore brand color)
 class AppColors {
   AppColors._();
 
-  // Primary Colors - Locket Purple Theme
+  // Primary Colors - memore Purple Theme
   static const Color primary = Color(0xFF6366F1);
   static const Color primaryVariant = Color(0xFF4F46E5);
   static const Color primaryLight = Color(0xFF8B87FF);

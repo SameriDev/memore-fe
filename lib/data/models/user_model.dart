@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-/// User model representing a user in the Locket clone app
+/// User model representing a user in the memore clone app
 /// Contains all user-related data with placeholder structure for frontend-only implementation
 class UserModel {
   final String id;
@@ -85,9 +85,7 @@ class UserModel {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserModel &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is UserModel && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
@@ -122,9 +120,12 @@ class UserSettings {
     List<String>? blockedUserIds,
   }) {
     return UserSettings(
-      pushNotificationsEnabled: pushNotificationsEnabled ?? this.pushNotificationsEnabled,
-      photoNotificationsEnabled: photoNotificationsEnabled ?? this.photoNotificationsEnabled,
-      friendNotificationsEnabled: friendNotificationsEnabled ?? this.friendNotificationsEnabled,
+      pushNotificationsEnabled:
+          pushNotificationsEnabled ?? this.pushNotificationsEnabled,
+      photoNotificationsEnabled:
+          photoNotificationsEnabled ?? this.photoNotificationsEnabled,
+      friendNotificationsEnabled:
+          friendNotificationsEnabled ?? this.friendNotificationsEnabled,
       whoCanAddMe: whoCanAddMe ?? this.whoCanAddMe,
       blockedUserIds: blockedUserIds ?? this.blockedUserIds,
     );
@@ -164,11 +165,7 @@ class UserSettings {
 }
 
 /// Enum for who can add the user as a friend
-enum WhoCanAddMe {
-  everyone,
-  friendsOfFriends,
-  noOne,
-}
+enum WhoCanAddMe { everyone, friendsOfFriends, noOne }
 
 /// Mock data class for testing and development
 class MockUsers {
@@ -232,7 +229,8 @@ class MockUsers {
     return UserModel(
       id: _uuid.v4(),
       phoneNumber: '+1${DateTime.now().millisecondsSinceEpoch}',
-      displayName: '$name ${String.fromCharCode(65 + (DateTime.now().second % 26))}',
+      displayName:
+          '$name ${String.fromCharCode(65 + (DateTime.now().second % 26))}',
       profilePicture: null,
       friendIds: [],
       createdAt: DateTime.now().subtract(

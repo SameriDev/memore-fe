@@ -1,10 +1,11 @@
-# Locket Component Library
+# memore Component Library
 
 ## Component Design Philosophy
 
-Locket's component library follows **Material Design 3** principles adapted for authentic, intimate photo sharing. Components prioritize accessibility, consistency, and emotional warmth while maintaining technical excellence.
+memore's component library follows **Material Design 3** principles adapted for authentic, intimate photo sharing. Components prioritize accessibility, consistency, and emotional warmth while maintaining technical excellence.
 
 ### Design Principles
+
 - **Consistent**: Every component follows the same design language
 - **Accessible**: All components meet WCAG 2.1 AA standards
 - **Modular**: Components work independently and together
@@ -18,9 +19,10 @@ Locket's component library follows **Material Design 3** principles adapted for 
 ### 1.1 Primary Button
 
 #### Design Specifications
+
 ```
 Default State:
-- Background: Locket Purple (#6366F1)
+- Background: memore Purple (#6366F1)
 - Text Color: White (#FFFFFF)
 - Corner Radius: 8dp
 - Height: 48dp
@@ -40,17 +42,19 @@ Disabled State:
 ```
 
 #### Usage Guidelines
+
 - **Use for**: Primary actions like "Send Photo", "Get Started", "Save"
 - **Don't use for**: Secondary actions or when multiple primary actions compete
 - **Maximum per screen**: 1-2 primary buttons
 - **Text**: Use action verbs, keep under 20 characters
 
 #### Flutter Implementation Example
+
 ```dart
 ElevatedButton(
   onPressed: onPressed,
   style: ElevatedButton.styleFrom(
-    backgroundColor: AppColors.locketPurple,
+    backgroundColor: AppColors.memorePurple,
     foregroundColor: Colors.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8),
@@ -68,6 +72,7 @@ ElevatedButton(
 ### 1.2 Secondary Button
 
 #### Design Specifications
+
 ```
 Default State:
 - Background: Transparent
@@ -87,6 +92,7 @@ Disabled State:
 ```
 
 #### Usage Guidelines
+
 - **Use for**: Secondary actions like "Cancel", "Skip", "Edit Profile"
 - **Pairing**: Always pair with a primary button when both actions are available
 - **Text**: Use clear, descriptive action words
@@ -94,10 +100,11 @@ Disabled State:
 ### 1.3 Text Button
 
 #### Design Specifications
+
 ```
 Default State:
 - Background: Transparent
-- Text Color: Locket Purple (#6366F1)
+- Text Color: memore Purple (#6366F1)
 - Typography: Label Medium (14sp, Medium weight)
 - Padding: 8dp horizontal, 8dp vertical
 - Minimum Touch Target: 48x48dp
@@ -108,15 +115,17 @@ Pressed State:
 ```
 
 #### Usage Guidelines
+
 - **Use for**: Tertiary actions like "Learn More", "Skip", navigation links
 - **Accessibility**: Ensure 48dp minimum touch target with invisible padding
 
 ### 1.4 Floating Action Button (FAB)
 
 #### Design Specifications
+
 ```
 Default State:
-- Background: Locket Purple (#6366F1)
+- Background: memore Purple (#6366F1)
 - Icon Color: White (#FFFFFF)
 - Size: 56x56dp
 - Corner Radius: 16dp (Material 3 FAB style)
@@ -129,6 +138,7 @@ Pressed State:
 ```
 
 #### Usage Guidelines
+
 - **Use for**: Primary action on a screen (camera capture, add friend)
 - **Position**: Bottom right, 16dp from screen edges
 - **One per screen**: Only use one FAB per screen
@@ -140,6 +150,7 @@ Pressed State:
 ### 2.1 Text Field
 
 #### Design Specifications
+
 ```
 Default State:
 - Background: White (#FFFFFF)
@@ -150,8 +161,8 @@ Default State:
 - Label: Body Medium, Warm Gray 600
 
 Focused State:
-- Border: 2dp solid Locket Purple (#6366F1)
-- Label Color: Locket Purple
+- Border: 2dp solid memore Purple (#6366F1)
+- Label Color: memore Purple
 
 Error State:
 - Border: 1dp solid Error Red (#EF4444)
@@ -164,14 +175,16 @@ Disabled State:
 ```
 
 #### Usage Guidelines
+
 - **Labels**: Use clear, concise labels above the input
 - **Placeholder**: Provide helpful examples, not instructions
 - **Validation**: Show errors immediately after user interaction
-- **Required fields**: Use asterisk (*) after label text
+- **Required fields**: Use asterisk (\*) after label text
 
 ### 2.2 Phone Number Input
 
 #### Design Specifications
+
 ```
 Layout:
 ┌─────────────────────────────────────┐
@@ -191,6 +204,7 @@ Country Selector:
 ```
 
 #### Usage Guidelines
+
 - **Auto-detection**: Pre-select country based on device locale
 - **Formatting**: Auto-format phone number as user types
 - **Validation**: Real-time validation with clear error messages
@@ -198,6 +212,7 @@ Country Selector:
 ### 2.3 Search Bar
 
 #### Design Specifications
+
 ```
 Default State:
 - Background: Warm Gray 100 (#F5F5F4)
@@ -209,11 +224,12 @@ Default State:
 
 Active State:
 - Background: White (#FFFFFF)
-- Border: 1dp solid Locket Purple (#6366F1)
+- Border: 1dp solid memore Purple (#6366F1)
 - Trailing Icon: Clear (X) when text present
 ```
 
 #### Usage Guidelines
+
 - **Placeholder**: Use "Search friends", "Search photos", etc.
 - **Clear action**: Show X button when text is entered
 - **Auto-focus**: Focus immediately when screen opens (if appropriate)
@@ -225,6 +241,7 @@ Active State:
 ### 3.1 Checkbox
 
 #### Design Specifications
+
 ```
 Unchecked State:
 - Background: Transparent
@@ -233,16 +250,17 @@ Unchecked State:
 - Size: 20x20dp
 
 Checked State:
-- Background: Locket Purple (#6366F1)
+- Background: memore Purple (#6366F1)
 - Border: None
 - Check Mark: White, 2dp stroke width
 
 Indeterminate State:
-- Background: Locket Purple (#6366F1)
+- Background: memore Purple (#6366F1)
 - Dash Mark: White, 2dp stroke, 8dp width
 ```
 
 #### Usage Guidelines
+
 - **Touch Target**: 48x48dp minimum with invisible padding
 - **Labeling**: Clear, descriptive text to the right
 - **Group Behavior**: Use for multiple selections
@@ -250,6 +268,7 @@ Indeterminate State:
 ### 3.2 Radio Button
 
 #### Design Specifications
+
 ```
 Unselected State:
 - Background: Transparent
@@ -257,12 +276,13 @@ Unselected State:
 - Size: 20x20dp (circular)
 
 Selected State:
-- Border: 2dp solid Locket Purple (#6366F1)
-- Inner Circle: 8dp diameter, Locket Purple
+- Border: 2dp solid memore Purple (#6366F1)
+- Inner Circle: 8dp diameter, memore Purple
 - Center Position: Perfectly centered
 ```
 
 #### Usage Guidelines
+
 - **Single Selection**: Use when only one option can be selected
 - **Clear Options**: Ensure mutually exclusive choices
 - **Default Selection**: Pre-select the most common option
@@ -270,6 +290,7 @@ Selected State:
 ### 3.3 Toggle Switch
 
 #### Design Specifications
+
 ```
 Off State:
 - Track: Warm Gray 300 (#D6D3D1), 32x20dp rounded
@@ -277,7 +298,7 @@ Off State:
 - Position: Left side (2dp from edge)
 
 On State:
-- Track: Locket Purple (#6366F1)
+- Track: memore Purple (#6366F1)
 - Thumb: White circle, 16dp diameter
 - Position: Right side (2dp from edge)
 
@@ -287,6 +308,7 @@ Animation:
 ```
 
 #### Usage Guidelines
+
 - **Binary Settings**: Use for on/off preferences
 - **Immediate Effect**: Changes take effect immediately
 - **Clear States**: Use descriptive labels for both states
@@ -298,6 +320,7 @@ Animation:
 ### 4.1 Photo Card
 
 #### Design Specifications
+
 ```
 Card Container:
 - Background: White (#FFFFFF)
@@ -319,6 +342,7 @@ Metadata Overlay:
 ```
 
 #### Component Structure
+
 ```
 ┌─────────────────────────────────────┐
 │                                     │
@@ -331,6 +355,7 @@ Metadata Overlay:
 ```
 
 #### Usage Guidelines
+
 - **Loading States**: Show skeleton animation while loading
 - **Error Handling**: Graceful fallback for failed photo loads
 - **Interactions**: Single tap for full-screen, double tap for like
@@ -338,6 +363,7 @@ Metadata Overlay:
 ### 4.2 Friend List Item
 
 #### Design Specifications
+
 ```
 Container:
 - Height: 72dp
@@ -355,6 +381,7 @@ Content Layout:
 ```
 
 #### Component Structure
+
 ```
 ┌─────────────────────────────────────┐
 │ [🟢]  Sarah Johnson                │ 72dp height
@@ -364,6 +391,7 @@ Avatar  Name & Status           Action
 ```
 
 #### Usage Guidelines
+
 - **Status Indicators**: Green dot for online, gray for offline
 - **Action Buttons**: Keep consistent across different contexts
 - **Accessibility**: Provide clear content descriptions
@@ -371,6 +399,7 @@ Avatar  Name & Status           Action
 ### 4.3 Empty State
 
 #### Design Specifications
+
 ```
 Container:
 - Centered content with flexible spacing
@@ -393,6 +422,7 @@ Action Button:
 ```
 
 #### Usage Guidelines
+
 - **Helpful Messaging**: Explain why the state is empty
 - **Clear Actions**: Provide obvious next steps
 - **Positive Tone**: Use encouraging, not frustrating language
@@ -404,6 +434,7 @@ Action Button:
 ### 5.1 Bottom Navigation
 
 #### Design Specifications
+
 ```
 Container:
 - Height: 80dp (56dp content + 24dp safe area)
@@ -418,8 +449,8 @@ Tab Items:
 - Label: Body Small (12sp)
 
 Active State:
-- Icon Color: Locket Purple (#6366F1)
-- Label Color: Locket Purple
+- Icon Color: memore Purple (#6366F1)
+- Label Color: memore Purple
 - Background: Purple 50 ripple on press
 
 Inactive State:
@@ -428,6 +459,7 @@ Inactive State:
 ```
 
 #### Usage Guidelines
+
 - **3-5 Tabs**: Optimal number for mobile screens
 - **Clear Icons**: Use universally understood iconography
 - **Consistent Labeling**: Keep tab names short and consistent
@@ -435,6 +467,7 @@ Inactive State:
 ### 5.2 Top App Bar
 
 #### Design Specifications
+
 ```
 Standard App Bar:
 - Height: 56dp
@@ -454,6 +487,7 @@ Large Title (iOS Style):
 ```
 
 #### Usage Guidelines
+
 - **Clear Hierarchy**: Title should clearly indicate current screen
 - **Essential Actions**: Only include most important actions in app bar
 - **Platform Adaptation**: Follow platform conventions for navigation
@@ -461,6 +495,7 @@ Large Title (iOS Style):
 ### 5.3 Tab Bar (Secondary Navigation)
 
 #### Design Specifications
+
 ```
 Container:
 - Height: 48dp
@@ -475,7 +510,7 @@ Tab Items:
 
 Active State:
 - Background: White with 2dp bottom border (Purple)
-- Text Color: Locket Purple (#6366F1)
+- Text Color: memore Purple (#6366F1)
 
 Inactive State:
 - Background: Transparent
@@ -483,6 +518,7 @@ Inactive State:
 ```
 
 #### Usage Guidelines
+
 - **Content Organization**: Use for filtering or categorizing content
 - **Scrollable**: Allow horizontal scrolling if more than 3-4 tabs
 - **Clear Labels**: Use descriptive but concise tab names
@@ -494,6 +530,7 @@ Inactive State:
 ### 6.1 Toast/Snackbar
 
 #### Design Specifications
+
 ```
 Container:
 - Background: Warm Gray 800 (#292524)
@@ -509,12 +546,13 @@ Content:
 - Icon: 20dp (optional, left aligned)
 
 Action Button (optional):
-- Text Color: Locket Purple (#6366F1)
+- Text Color: memore Purple (#6366F1)
 - Typography: Label Medium
 - Padding: 8dp
 ```
 
 #### Usage Guidelines
+
 - **Brief Messages**: Keep text under 60 characters
 - **Auto-Dismiss**: 4 seconds for info, 6 seconds with action
 - **One at a Time**: Don't stack multiple toasts
@@ -522,6 +560,7 @@ Action Button (optional):
 ### 6.2 Alert Dialog
 
 #### Design Specifications
+
 ```
 Container:
 - Background: White (#FFFFFF)
@@ -541,6 +580,7 @@ Actions:
 ```
 
 #### Usage Guidelines
+
 - **Critical Actions**: Use for destructive or important actions
 - **Clear Options**: Provide clear positive and negative actions
 - **Escape Route**: Always provide a way to cancel/dismiss
@@ -548,21 +588,23 @@ Actions:
 ### 6.3 Progress Indicator
 
 #### Design Specifications
+
 ```
 Circular Progress:
 - Size: 24dp (small), 40dp (medium), 56dp (large)
 - Stroke Width: 2dp (small), 3dp (medium), 4dp (large)
-- Color: Locket Purple (#6366F1)
+- Color: memore Purple (#6366F1)
 - Animation: 1 second rotation, infinite
 
 Linear Progress:
 - Height: 4dp
 - Corner Radius: 2dp
 - Track Color: Warm Gray 200 (#E7E5E4)
-- Progress Color: Locket Purple (#6366F1)
+- Progress Color: memore Purple (#6366F1)
 ```
 
 #### Usage Guidelines
+
 - **Appropriate Size**: Match size to context and importance
 - **Determinate**: Show percentage when progress is known
 - **Indeterminate**: Use for unknown duration tasks
@@ -574,6 +616,7 @@ Linear Progress:
 ### 7.1 Status Badge
 
 #### Design Specifications
+
 ```
 Notification Badge:
 - Background: Error Red (#EF4444)
@@ -594,6 +637,7 @@ Activity Indicator:
 ```
 
 #### Usage Guidelines
+
 - **Count Display**: Show numbers 1-99, then "99+"
 - **Clear Meaning**: Use consistent colors for status types
 - **Appropriate Size**: Don't overwhelm the interface
@@ -601,6 +645,7 @@ Activity Indicator:
 ### 7.2 Chip/Tag
 
 #### Design Specifications
+
 ```
 Standard Chip:
 - Background: Warm Gray 100 (#F5F5F4)
@@ -612,7 +657,7 @@ Standard Chip:
 
 Selected Chip:
 - Background: Purple 100 (#E0E7FF)
-- Border: 1dp solid Locket Purple
+- Border: 1dp solid memore Purple
 - Text Color: Purple 700 (#5B21B6)
 
 Chip with Icon:
@@ -621,6 +666,7 @@ Chip with Icon:
 ```
 
 #### Usage Guidelines
+
 - **Filtering**: Use for selection and filtering options
 - **Removable**: Include X icon for removable tags
 - **Clear Labels**: Use descriptive, scannable text
@@ -632,16 +678,19 @@ Chip with Icon:
 ### Universal Requirements
 
 #### Touch Targets
+
 - **Minimum Size**: 48x48dp for all interactive elements
 - **Spacing**: 8dp minimum between adjacent touch targets
 - **Clear Boundaries**: Visual indication of interactive areas
 
 #### Color Contrast
+
 - **Text**: 4.5:1 ratio for normal text, 3:1 for large text
 - **Interactive Elements**: 3:1 ratio minimum
 - **Focus Indicators**: 2.4:1 ratio, 2dp minimum thickness
 
 #### Screen Reader Support
+
 ```dart
 // Example semantic labeling
 Semantics(
@@ -655,6 +704,7 @@ Semantics(
 ```
 
 #### Keyboard Navigation
+
 - **Focus Order**: Logical tab order through interface
 - **Focus Indicators**: Clear visual indication of focused element
 - **Keyboard Shortcuts**: Support for common actions (Space, Enter)
@@ -662,16 +712,19 @@ Semantics(
 ### Component-Specific Accessibility
 
 #### Buttons
+
 - Clear action descriptions in semantic labels
 - Loading states announced to screen readers
 - Disabled state clearly communicated
 
 #### Form Inputs
+
 - Associated labels with form controls
 - Error announcements for validation failures
 - Clear instructions for required fields
 
 #### Navigation
+
 - Current page/tab clearly indicated
 - Breadcrumb navigation for deep hierarchies
 - Skip links for complex navigation structures
@@ -681,18 +734,21 @@ Semantics(
 ## 9. Component Testing
 
 ### Visual Testing
+
 - **Multiple States**: Test all component states (default, pressed, disabled)
 - **Screen Sizes**: Verify layout on different screen densities
 - **Dark Mode**: Ensure components work in both light and dark themes
 - **Accessibility**: Test with high contrast and large text settings
 
 ### Interaction Testing
+
 - **Touch Response**: Verify appropriate touch feedback
 - **Loading States**: Test component behavior during loading
 - **Error Handling**: Verify graceful error state handling
 - **Performance**: Ensure smooth animations and interactions
 
 ### Cross-Platform Testing
+
 - **Android Versions**: Test on API levels 21+ (Android 5.0+)
 - **Screen Densities**: Test on different DPI devices
 - **Manufacturer Skins**: Verify consistency across device manufacturers

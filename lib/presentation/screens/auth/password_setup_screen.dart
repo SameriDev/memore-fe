@@ -6,18 +6,16 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
-/// Password Setup Screen matching Locket design
+/// Password Setup Screen matching memore design
 /// Second step in authentication flow - create password
 class PasswordSetupScreen extends ConsumerStatefulWidget {
   final String email;
 
-  const PasswordSetupScreen({
-    super.key,
-    required this.email,
-  });
+  const PasswordSetupScreen({super.key, required this.email});
 
   @override
-  ConsumerState<PasswordSetupScreen> createState() => _PasswordSetupScreenState();
+  ConsumerState<PasswordSetupScreen> createState() =>
+      _PasswordSetupScreenState();
 }
 
 class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
@@ -45,21 +43,13 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
-    _slideAnimation = Tween<double>(
-      begin: 30.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _slideAnimation = Tween<double>(begin: 30.0, end: 0.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -96,7 +86,9 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
       });
 
       // Navigate to name setup screen
-      context.push('/auth/name-setup?email=${widget.email}&password=${_passwordController.text}');
+      context.push(
+        '/auth/name-setup?email=${widget.email}&password=${_passwordController.text}',
+      );
     }
   }
 
@@ -137,13 +129,16 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.3),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: _animationController,
-                    curve: Curves.easeOut,
-                  )),
+                  position:
+                      Tween<Offset>(
+                        begin: const Offset(0, 0.3),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: _animationController,
+                          curve: Curves.easeOut,
+                        ),
+                      ),
                   child: Column(
                     children: [
                       // Title
@@ -244,12 +239,16 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                 width: double.infinity,
                 height: AppSizes.buttonHeightSm,
                 child: ElevatedButton(
-                  onPressed: _isValidPassword && !_isLoading ? _continueWithPassword : null,
+                  onPressed: _isValidPassword && !_isLoading
+                      ? _continueWithPassword
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidPassword
                         ? const Color(0xFFFFD700)
                         : const Color(0xFF404040),
-                    foregroundColor: _isValidPassword ? Colors.black : const Color(0xFF666666),
+                    foregroundColor: _isValidPassword
+                        ? Colors.black
+                        : const Color(0xFF666666),
                     elevation: 0,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -262,7 +261,9 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.black,
+                            ),
                           ),
                         )
                       : Row(
@@ -273,14 +274,18 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: _isValidPassword ? Colors.black : const Color(0xFF666666),
+                                color: _isValidPassword
+                                    ? Colors.black
+                                    : const Color(0xFF666666),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Icon(
                               Icons.arrow_forward,
                               size: 20,
-                              color: _isValidPassword ? Colors.black : const Color(0xFF666666),
+                              color: _isValidPassword
+                                  ? Colors.black
+                                  : const Color(0xFF666666),
                             ),
                           ],
                         ),

@@ -7,7 +7,7 @@ import '../../../data/models/photo_model.dart';
 import '../../../data/models/user_model.dart';
 
 /// Photo Feed Screen for displaying shared photos
-/// Shows recent photos from friends with interactive elements matching Locket design
+/// Shows recent photos from friends with interactive elements matching memore design
 class PhotoFeedScreen extends ConsumerStatefulWidget {
   const PhotoFeedScreen({super.key});
 
@@ -59,13 +59,9 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
       vsync: this,
     );
 
-    _heartAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.3,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
+    _heartAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
   }
 
   @override
@@ -103,8 +99,8 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
             // Main photo feed content
             Expanded(
               child: _mockPhotos.isNotEmpty
-                ? _buildPhotoFeed()
-                : _buildEmptyState(),
+                  ? _buildPhotoFeed()
+                  : _buildEmptyState(),
             ),
 
             // Bottom navigation with camera button
@@ -319,10 +315,7 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
               const SizedBox(width: 8),
               Text(
                 photo.timeAgo,
-                style: const TextStyle(
-                  color: Color(0xFF666666),
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Color(0xFF666666), fontSize: 14),
               ),
             ],
           ),
@@ -344,16 +337,15 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
               children: [
                 const Text(
                   'Send message...',
-                  style: TextStyle(
-                    color: Color(0xFF666666),
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Color(0xFF666666), fontSize: 14),
                 ),
                 const SizedBox(width: 12),
-                ...photo.reactions.map((emoji) => Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Text(emoji, style: const TextStyle(fontSize: 16)),
-                )),
+                ...photo.reactions.map(
+                  (emoji) => Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Text(emoji, style: const TextStyle(fontSize: 16)),
+                  ),
+                ),
               ],
             ),
           ),
@@ -380,10 +372,7 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
     return Positioned(
       left: MediaQuery.of(context).size.width * positions[index].dx,
       top: MediaQuery.of(context).size.height * positions[index].dy,
-      child: Text(
-        hearts[index],
-        style: const TextStyle(fontSize: 20),
-      ),
+      child: Text(hearts[index], style: const TextStyle(fontSize: 20)),
     );
   }
 
@@ -410,10 +399,7 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
           Text(
             'Share your first photo\nwith friends',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFF666666),
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Color(0xFF666666), fontSize: 14),
           ),
         ],
       ),
@@ -450,10 +436,7 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFFFFD700),
-                  width: 4,
-                ),
+                border: Border.all(color: const Color(0xFFFFD700), width: 4),
               ),
               child: Container(
                 margin: const EdgeInsets.all(8),
@@ -473,11 +456,7 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
               color: Colors.transparent,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.upload,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: const Icon(Icons.upload, color: Colors.white, size: 24),
           ),
         ],
       ),

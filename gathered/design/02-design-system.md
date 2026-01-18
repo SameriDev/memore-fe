@@ -1,10 +1,11 @@
-# Locket Design System
+# memore Design System
 
 ## Design Philosophy
 
-Locket's design system emphasizes **authentic intimacy** through a clean, approachable interface that gets out of the way of genuine human connections. The design prioritizes simplicity, warmth, and trust while maintaining a modern, youthful aesthetic.
+memore's design system emphasizes **authentic intimacy** through a clean, approachable interface that gets out of the way of genuine human connections. The design prioritizes simplicity, warmth, and trust while maintaining a modern, youthful aesthetic.
 
 ### Core Principles
+
 1. **Authentic over Perfect**: Encourage real moments without pressure
 2. **Intimate over Public**: Design for small circles, not broadcast
 3. **Simple over Complex**: Clear navigation and minimal cognitive load
@@ -18,12 +19,14 @@ Locket's design system emphasizes **authentic intimacy** through a clean, approa
 ### Primary Colors
 
 #### Brand Primary
-- **Locket Purple**: `#6366F1` (Purple 500)
+
+- **memore Purple**: `#6366F1` (Purple 500)
   - Usage: Primary buttons, active states, brand accents
   - Accessibility: WCAG AAA compliant on white backgrounds
   - Meaning: Trust, intimacy, connection
 
 #### Supporting Primary
+
 - **Soft Purple**: `#8B5CF6` (Violet 500)
   - Usage: Secondary actions, gradients, highlights
   - Accessibility: WCAG AA compliant
@@ -32,6 +35,7 @@ Locket's design system emphasizes **authentic intimacy** through a clean, approa
 ### Secondary Colors
 
 #### Warm Neutrals
+
 - **Warm Gray 50**: `#FAFAF9` - Background, cards
 - **Warm Gray 100**: `#F5F5F4` - Secondary backgrounds
 - **Warm Gray 200**: `#E7E5E4` - Borders, dividers
@@ -45,21 +49,25 @@ Locket's design system emphasizes **authentic intimacy** through a clean, approa
 ### Accent Colors
 
 #### Success (Photo Sharing Success)
+
 - **Success Green**: `#10B981` (Emerald 500)
 - **Success Light**: `#D1FAE5` (Emerald 100)
 - **Usage**: Photo upload success, friend connections
 
 #### Warning (Notifications)
+
 - **Warning Orange**: `#F59E0B` (Amber 500)
 - **Warning Light**: `#FEF3C7` (Amber 100)
 - **Usage**: Friend requests, pending actions
 
 #### Error (Connection Issues)
+
 - **Error Red**: `#EF4444` (Red 500)
 - **Error Light**: `#FEE2E2` (Red 100)
 - **Usage**: Upload failures, connection errors
 
 #### Info (Tips and Help)
+
 - **Info Blue**: `#3B82F6` (Blue 500)
 - **Info Light**: `#DBEAFE` (Blue 100)
 - **Usage**: Help text, tips, information
@@ -67,35 +75,41 @@ Locket's design system emphasizes **authentic intimacy** through a clean, approa
 ### Color Usage Guidelines
 
 #### Backgrounds
+
 - **Primary Surface**: Warm Gray 50 (`#FAFAF9`)
 - **Secondary Surface**: White (`#FFFFFF`)
 - **Card Background**: White with subtle shadow
 - **Modal Background**: Semi-transparent overlay
 
 #### Text Hierarchy
+
 - **Primary Text**: Warm Gray 800 (`#292524`)
 - **Secondary Text**: Warm Gray 500 (`#78716C`)
 - **Caption Text**: Warm Gray 400 (`#A8A29E`)
-- **Link Text**: Locket Purple (`#6366F1`)
+- **Link Text**: memore Purple (`#6366F1`)
 
 #### Interactive Elements
-- **Primary Action**: Locket Purple background
+
+- **Primary Action**: memore Purple background
 - **Secondary Action**: Warm Gray 100 background
 - **Danger Action**: Error Red background
-- **Link Action**: Locket Purple text
+- **Link Action**: memore Purple text
 
 ---
 
 ## Typography
 
 ### Font Family
+
 **Primary**: SF Pro (iOS) / Roboto (Android)
+
 - Reasoning: Platform-native fonts for optimal readability and performance
 - Fallback: System default sans-serif
 
 ### Type Scale
 
 #### Headings
+
 ```
 H1 - Display Large
 - Font Size: 32sp (Android) / 32pt (iOS)
@@ -127,6 +141,7 @@ H4 - Headline Large
 ```
 
 #### Body Text
+
 ```
 Body Large
 - Font Size: 16sp/pt
@@ -151,6 +166,7 @@ Body Small
 ```
 
 #### Labels & Buttons
+
 ```
 Label Large (Buttons)
 - Font Size: 16sp/pt
@@ -177,12 +193,14 @@ Label Small (Chips, Tags)
 ### Typography Usage Guidelines
 
 #### Accessibility
+
 - Minimum text size: 12sp/pt
 - Color contrast ratio: Minimum 4.5:1 for normal text
 - Color contrast ratio: Minimum 3:1 for large text (18sp+ or 14sp+ bold)
 - Support dynamic type scaling (iOS) and font scale preferences (Android)
 
 #### Content Hierarchy
+
 1. **Page Title** (H1): Main screen identification
 2. **Section Header** (H2): Major content sections
 3. **Content Header** (H3): Individual content items
@@ -195,6 +213,7 @@ Label Small (Chips, Tags)
 ## Iconography
 
 ### Icon Style
+
 - **Style**: Rounded, friendly icons with consistent stroke weight
 - **Stroke Width**: 2px at 24x24 size
 - **Corner Radius**: 2px radius on square elements
@@ -203,6 +222,7 @@ Label Small (Chips, Tags)
 ### Icon Library
 
 #### Navigation Icons
+
 - **Home**: House outline with rounded corners
 - **Camera**: Camera with circular lens, friendly styling
 - **Friends**: Two overlapping circles representing people
@@ -210,6 +230,7 @@ Label Small (Chips, Tags)
 - **History**: Clock with counter-clockwise arrow
 
 #### Action Icons
+
 - **Add/Plus**: Rounded plus symbol
 - **Send**: Paper airplane, angled upward
 - **Share**: Connected dots representing sharing
@@ -218,6 +239,7 @@ Label Small (Chips, Tags)
 - **Settings**: Gear with rounded teeth
 
 #### Status Icons
+
 - **Check/Success**: Rounded checkmark
 - **Warning**: Triangle with exclamation mark
 - **Error**: Circle with X
@@ -225,6 +247,7 @@ Label Small (Chips, Tags)
 - **Loading**: Animated circular progress
 
 #### Social Icons
+
 - **Heart**: Rounded heart for favorites
 - **Star**: Five-pointed star with rounded points
 - **Comment**: Speech bubble with rounded corners
@@ -232,14 +255,16 @@ Label Small (Chips, Tags)
 - **Online Status**: Small filled circle
 
 ### Icon Sizing
+
 - **Small**: 16x16dp (list items, inline text)
 - **Medium**: 24x24dp (primary actions, navigation)
 - **Large**: 32x32dp (prominent actions, headers)
 - **X-Large**: 48x48dp (empty states, onboarding)
 
 ### Icon Colors
+
 - **Primary**: Warm Gray 600 (`#57534E`)
-- **Active/Selected**: Locket Purple (`#6366F1`)
+- **Active/Selected**: memore Purple (`#6366F1`)
 - **Disabled**: Warm Gray 300 (`#D6D3D1`)
 - **Inverse**: White (`#FFFFFF`) on colored backgrounds
 
@@ -248,12 +273,14 @@ Label Small (Chips, Tags)
 ## Layout Principles
 
 ### Grid System
+
 - **Base Unit**: 8dp/pt grid system
 - **Column Grid**: 4 columns on mobile, 8+ on tablets
 - **Margins**: 16dp/pt on mobile, 24dp/pt on tablets
 - **Gutters**: 16dp/pt between columns
 
 ### Spacing Scale
+
 ```
 Micro: 2dp/pt
 Tiny: 4dp/pt
@@ -266,12 +293,14 @@ Huge: 64dp/pt
 ```
 
 ### Content Spacing
+
 - **Section Spacing**: 32dp/pt between major sections
 - **Content Spacing**: 16dp/pt between related items
 - **Text Spacing**: 8dp/pt between text blocks
 - **Element Spacing**: 4dp/pt between closely related elements
 
 ### Screen Margins
+
 - **Mobile**: 16dp/pt horizontal margins
 - **Tablet**: 24dp/pt horizontal margins
 - **Max Width**: 600dp/pt for optimal readability
@@ -283,6 +312,7 @@ Huge: 64dp/pt
 ### Elevation & Shadows
 
 #### Material Design 3 Elevation
+
 ```
 Level 0 (No Elevation)
 - Background surfaces
@@ -310,6 +340,7 @@ Level 5 (Highest)
 ```
 
 ### Border Radius
+
 - **Small**: 4dp/pt (buttons, small cards)
 - **Medium**: 8dp/pt (standard cards, inputs)
 - **Large**: 12dp/pt (modal dialogs)
@@ -317,15 +348,17 @@ Level 5 (Highest)
 - **Pill**: 999dp/pt (circular buttons, badges)
 
 ### Border Styles
+
 - **Standard Border**: 1dp/pt solid, Warm Gray 200
-- **Focus Border**: 2dp/pt solid, Locket Purple
+- **Focus Border**: 2dp/pt solid, memore Purple
 - **Error Border**: 1dp/pt solid, Error Red
 - **Disabled Border**: 1dp/pt solid, Warm Gray 100
 
 ### Gradients
+
 ```
 Brand Gradient (Primary)
-- Start: Locket Purple (#6366F1)
+- Start: memore Purple (#6366F1)
 - End: Soft Purple (#8B5CF6)
 - Angle: 135° (diagonal)
 
@@ -345,12 +378,14 @@ Success Gradient (Confirmations)
 ## Animation & Motion
 
 ### Animation Principles
+
 - **Subtle**: Animations should enhance, not distract
 - **Fast**: Keep animations under 300ms for interactions
 - **Natural**: Use easing curves that feel organic
 - **Purposeful**: Every animation should serve a function
 
 ### Timing Functions
+
 ```
 Standard Curve
 - CSS: cubic-bezier(0.2, 0.0, 0.2, 1.0)
@@ -374,6 +409,7 @@ Sharp Curve
 ```
 
 ### Common Animations
+
 - **Button Press**: Scale down to 0.95, 100ms sharp curve
 - **Card Appear**: Slide up 20dp + fade in, 250ms decelerate
 - **Page Transition**: Slide horizontal, 300ms standard curve
@@ -385,24 +421,28 @@ Sharp Curve
 ## Accessibility
 
 ### Color Accessibility
+
 - All text meets WCAG 2.1 AA contrast requirements
 - Interactive elements have 3:1 minimum contrast ratio
 - Color is never the only indicator of state or meaning
 - High contrast mode support for low vision users
 
 ### Touch Accessibility
+
 - Minimum touch target: 44x44dp/pt
 - Interactive elements spaced at least 8dp/pt apart
 - Clear visual feedback for all interactive states
 - Support for device accessibility features
 
 ### Screen Reader Support
+
 - All images have descriptive alt text
 - Interactive elements have appropriate labels
 - Content hierarchy is properly structured
 - Navigation landmarks are defined
 
 ### Keyboard Navigation
+
 - All interactive elements are focusable
 - Focus indicators meet 2.4:1 contrast requirement
 - Logical tab order throughout the interface
@@ -413,18 +453,21 @@ Sharp Curve
 ## Platform Considerations
 
 ### Android Material Design 3
+
 - Follow Material You dynamic theming guidelines
 - Implement proper elevation and surface colors
 - Use Material Components for consistency
 - Support Android 12+ themed icons
 
 ### iOS Human Interface Guidelines
+
 - Respect iOS navigation patterns and conventions
 - Implement proper iOS typography scaling
 - Use SF Symbols where appropriate
 - Support iOS accessibility features like Voice Control
 
 ### Cross-Platform Consistency
+
 - Maintain brand identity across platforms
 - Adapt to platform-specific patterns when necessary
 - Ensure feature parity between iOS and Android

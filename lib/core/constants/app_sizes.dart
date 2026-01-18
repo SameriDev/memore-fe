@@ -1,5 +1,5 @@
 /// App size constants for consistent spacing, font sizes, and dimensions
-/// Based on Material Design 3 spacing system and Locket app measurements
+/// Based on Material Design 3 spacing system and memore app measurements
 class AppSizes {
   AppSizes._();
 
@@ -7,12 +7,12 @@ class AppSizes {
   static const double baseUnit = 8.0;
 
   // Spacing - Material Design 3 8pt grid system
-  static const double spacing2xs = 2.0;  // baseUnit * 0.25
-  static const double spacingXs = 4.0;   // baseUnit * 0.5
-  static const double spacingSm = 8.0;   // baseUnit * 1
-  static const double spacingMd = 16.0;  // baseUnit * 2
-  static const double spacingLg = 24.0;  // baseUnit * 3
-  static const double spacingXl = 32.0;  // baseUnit * 4
+  static const double spacing2xs = 2.0; // baseUnit * 0.25
+  static const double spacingXs = 4.0; // baseUnit * 0.5
+  static const double spacingSm = 8.0; // baseUnit * 1
+  static const double spacingMd = 16.0; // baseUnit * 2
+  static const double spacingLg = 24.0; // baseUnit * 3
+  static const double spacingXl = 32.0; // baseUnit * 4
   static const double spacing2xl = 40.0; // baseUnit * 5
   static const double spacing3xl = 48.0; // baseUnit * 6
 

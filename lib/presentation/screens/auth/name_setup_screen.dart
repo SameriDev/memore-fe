@@ -7,7 +7,7 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../providers/auth_provider.dart';
 
-/// Name Setup Screen matching Locket design
+/// Name Setup Screen matching memore design
 /// Final step in authentication flow - set first and last name
 class NameSetupScreen extends ConsumerStatefulWidget {
   final String email;
@@ -50,21 +50,13 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
-    _slideAnimation = Tween<double>(
-      begin: 30.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _slideAnimation = Tween<double>(begin: 30.0, end: 0.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -97,11 +89,14 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
 
     try {
       // Create account with auth provider
-      final success = await ref.read(authProvider.notifier).signUp(
-        phoneNumber: widget.email, // Using email as identifier
-        password: widget.password,
-        displayName: '${_firstNameController.text} ${_lastNameController.text}',
-      );
+      final success = await ref
+          .read(authProvider.notifier)
+          .signUp(
+            phoneNumber: widget.email, // Using email as identifier
+            password: widget.password,
+            displayName:
+                '${_firstNameController.text} ${_lastNameController.text}',
+          );
 
       if (mounted) {
         setState(() {
@@ -131,10 +126,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A2A),
-        title: const Text(
-          'Error',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Error', style: TextStyle(color: Colors.white)),
         content: Text(
           message,
           style: const TextStyle(color: Color(0xFFB3B3B3)),
@@ -142,10 +134,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'OK',
-              style: TextStyle(color: Color(0xFFFFD700)),
-            ),
+            child: const Text('OK', style: TextStyle(color: Color(0xFFFFD700))),
           ),
         ],
       ),
@@ -189,13 +178,16 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.3),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: _animationController,
-                    curve: Curves.easeOut,
-                  )),
+                  position:
+                      Tween<Offset>(
+                        begin: const Offset(0, 0.3),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: _animationController,
+                          curve: Curves.easeOut,
+                        ),
+                      ),
                   child: Column(
                     children: [
                       // Title
@@ -294,12 +286,16 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                 width: double.infinity,
                 height: AppSizes.buttonHeightSm,
                 child: ElevatedButton(
-                  onPressed: _isValidNames && !_isLoading ? _completeRegistration : null,
+                  onPressed: _isValidNames && !_isLoading
+                      ? _completeRegistration
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidNames
                         ? const Color(0xFFFFD700)
                         : const Color(0xFF404040),
-                    foregroundColor: _isValidNames ? Colors.black : const Color(0xFF666666),
+                    foregroundColor: _isValidNames
+                        ? Colors.black
+                        : const Color(0xFF666666),
                     elevation: 0,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -312,7 +308,9 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.black,
+                            ),
                           ),
                         )
                       : Row(
@@ -323,14 +321,18 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: _isValidNames ? Colors.black : const Color(0xFF666666),
+                                color: _isValidNames
+                                    ? Colors.black
+                                    : const Color(0xFF666666),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Icon(
                               Icons.arrow_forward,
                               size: 20,
-                              color: _isValidNames ? Colors.black : const Color(0xFF666666),
+                              color: _isValidNames
+                                  ? Colors.black
+                                  : const Color(0xFF666666),
                             ),
                           ],
                         ),

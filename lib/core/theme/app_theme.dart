@@ -4,8 +4,8 @@ import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 import 'text_styles.dart';
 
-/// Material Design 3 theme configuration for the Locket clone app
-/// Based on Locket's purple color scheme and modern Material Design principles
+/// Material Design 3 theme configuration for the memore clone app
+/// Based on memore's purple color scheme and modern Material Design principles
 class AppTheme {
   AppTheme._();
 
@@ -54,7 +54,7 @@ class AppTheme {
     );
   }
 
-  /// Light color scheme based on Locket's purple theme
+  /// Light color scheme based on memore's purple theme
   static const ColorScheme _lightColorScheme = ColorScheme.light(
     primary: AppColors.primary,
     onPrimary: AppColors.onPrimary,
@@ -148,109 +148,99 @@ class AppTheme {
 
   /// Text button theme
   static TextButtonThemeData get _textButtonTheme => TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
-          minimumSize: const Size(0, AppSizes.buttonHeight),
-          textStyle: const TextStyle(
-            fontSize: AppSizes.fontSizeButtonLarge,
-            fontWeight: FontWeight.w600,
-            letterSpacing: AppSizes.letterSpacingWide,
-          ),
-        ),
-      );
+    style: TextButton.styleFrom(
+      foregroundColor: AppColors.primary,
+      minimumSize: const Size(0, AppSizes.buttonHeight),
+      textStyle: const TextStyle(
+        fontSize: AppSizes.fontSizeButtonLarge,
+        fontWeight: FontWeight.w600,
+        letterSpacing: AppSizes.letterSpacingWide,
+      ),
+    ),
+  );
 
   /// Input decoration theme
-  static InputDecorationTheme get _inputDecorationTheme =>
-      const InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.surfaceContainer,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingMd,
-          vertical: AppSizes.paddingSm,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusMd),
-          ),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusMd),
-          ),
-          borderSide: BorderSide(
-            color: AppColors.outline,
-            width: AppSizes.borderWidthThin,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusMd),
-          ),
-          borderSide: BorderSide(
-            color: AppColors.primary,
-            width: AppSizes.borderWidthMedium,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusMd),
-          ),
-          borderSide: BorderSide(
-            color: AppColors.error,
-            width: AppSizes.borderWidthThin,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusMd),
-          ),
-          borderSide: BorderSide(
-            color: AppColors.error,
-            width: AppSizes.borderWidthMedium,
-          ),
-        ),
-        labelStyle: TextStyle(
-          fontSize: AppSizes.fontSizeBody,
-          color: AppColors.onSurfaceVariant,
-        ),
-        hintStyle: TextStyle(
-          fontSize: AppSizes.fontSizeBody,
-          color: AppColors.onSurfaceVariant,
-        ),
-      );
+  static InputDecorationTheme
+  get _inputDecorationTheme => const InputDecorationTheme(
+    filled: true,
+    fillColor: AppColors.surfaceContainer,
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: AppSizes.paddingMd,
+      vertical: AppSizes.paddingSm,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusMd)),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusMd)),
+      borderSide: BorderSide(
+        color: AppColors.outline,
+        width: AppSizes.borderWidthThin,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusMd)),
+      borderSide: BorderSide(
+        color: AppColors.primary,
+        width: AppSizes.borderWidthMedium,
+      ),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusMd)),
+      borderSide: BorderSide(
+        color: AppColors.error,
+        width: AppSizes.borderWidthThin,
+      ),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusMd)),
+      borderSide: BorderSide(
+        color: AppColors.error,
+        width: AppSizes.borderWidthMedium,
+      ),
+    ),
+    labelStyle: TextStyle(
+      fontSize: AppSizes.fontSizeBody,
+      color: AppColors.onSurfaceVariant,
+    ),
+    hintStyle: TextStyle(
+      fontSize: AppSizes.fontSizeBody,
+      color: AppColors.onSurfaceVariant,
+    ),
+  );
 
   /// Card theme
   static CardThemeData get _cardTheme => const CardThemeData(
-        elevation: AppSizes.cardElevation,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.cardBorderRadius),
-          ),
-        ),
-        color: AppColors.surface,
-        surfaceTintColor: AppColors.primary,
-        margin: EdgeInsets.all(AppSizes.marginSm),
-      );
+    elevation: AppSizes.cardElevation,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(AppSizes.cardBorderRadius),
+      ),
+    ),
+    color: AppColors.surface,
+    surfaceTintColor: AppColors.primary,
+    margin: EdgeInsets.all(AppSizes.marginSm),
+  );
 
   /// Chip theme
   static ChipThemeData get _chipTheme => const ChipThemeData(
-        backgroundColor: AppColors.surfaceContainer,
-        selectedColor: AppColors.primary,
-        labelStyle: TextStyle(
-          fontSize: AppSizes.fontSizeLabel,
-          color: AppColors.onSurface,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingSm,
-          vertical: AppSizes.paddingXs,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusCircular),
-          ),
-        ),
-      );
+    backgroundColor: AppColors.surfaceContainer,
+    selectedColor: AppColors.primary,
+    labelStyle: TextStyle(
+      fontSize: AppSizes.fontSizeLabel,
+      color: AppColors.onSurface,
+    ),
+    padding: EdgeInsets.symmetric(
+      horizontal: AppSizes.paddingSm,
+      vertical: AppSizes.paddingXs,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(AppSizes.borderRadiusCircular),
+      ),
+    ),
+  );
 
   /// Floating action button theme
   static FloatingActionButtonThemeData get _fabTheme =>
@@ -281,91 +271,85 @@ class AppTheme {
 
   /// Tab bar theme
   static TabBarThemeData get _tabBarTheme => const TabBarThemeData(
-        labelColor: AppColors.primary,
-        unselectedLabelColor: AppColors.onSurfaceVariant,
-        indicator: UnderlineTabIndicator(
-          borderSide: BorderSide(
-            color: AppColors.primary,
-            width: AppSizes.borderWidthMedium,
-          ),
-        ),
-        labelStyle: TextStyle(
-          fontSize: AppSizes.fontSizeLabel,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: AppSizes.fontSizeLabel,
-          fontWeight: FontWeight.normal,
-        ),
-      );
+    labelColor: AppColors.primary,
+    unselectedLabelColor: AppColors.onSurfaceVariant,
+    indicator: UnderlineTabIndicator(
+      borderSide: BorderSide(
+        color: AppColors.primary,
+        width: AppSizes.borderWidthMedium,
+      ),
+    ),
+    labelStyle: TextStyle(
+      fontSize: AppSizes.fontSizeLabel,
+      fontWeight: FontWeight.w600,
+    ),
+    unselectedLabelStyle: TextStyle(
+      fontSize: AppSizes.fontSizeLabel,
+      fontWeight: FontWeight.normal,
+    ),
+  );
 
   /// Dialog theme
   static DialogThemeData get _dialogTheme => const DialogThemeData(
-        backgroundColor: AppColors.surface,
-        elevation: AppSizes.elevation4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusLg),
-          ),
-        ),
-        titleTextStyle: TextStyle(
-          fontSize: AppSizes.fontSizeH5,
-          fontWeight: FontWeight.w600,
-          color: AppColors.onSurface,
-        ),
-        contentTextStyle: TextStyle(
-          fontSize: AppSizes.fontSizeBody,
-          color: AppColors.onSurface,
-        ),
-      );
+    backgroundColor: AppColors.surface,
+    elevation: AppSizes.elevation4,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusLg)),
+    ),
+    titleTextStyle: TextStyle(
+      fontSize: AppSizes.fontSizeH5,
+      fontWeight: FontWeight.w600,
+      color: AppColors.onSurface,
+    ),
+    contentTextStyle: TextStyle(
+      fontSize: AppSizes.fontSizeBody,
+      color: AppColors.onSurface,
+    ),
+  );
 
   /// Snackbar theme
   static SnackBarThemeData get _snackBarTheme => const SnackBarThemeData(
-        backgroundColor: AppColors.onSurface,
-        contentTextStyle: TextStyle(
-          fontSize: AppSizes.fontSizeBody,
-          color: AppColors.surface,
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusSm),
-          ),
-        ),
-      );
+    backgroundColor: AppColors.onSurface,
+    contentTextStyle: TextStyle(
+      fontSize: AppSizes.fontSizeBody,
+      color: AppColors.surface,
+    ),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusSm)),
+    ),
+  );
 
   /// List tile theme
   static ListTileThemeData get _listTileTheme => const ListTileThemeData(
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingMd,
-          vertical: AppSizes.paddingSm,
-        ),
-        titleTextStyle: TextStyle(
-          fontSize: AppSizes.fontSizeBody,
-          fontWeight: FontWeight.w500,
-          color: AppColors.onSurface,
-        ),
-        subtitleTextStyle: TextStyle(
-          fontSize: AppSizes.fontSizeBodySmall,
-          color: AppColors.onSurfaceVariant,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppSizes.borderRadiusSm),
-          ),
-        ),
-      );
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: AppSizes.paddingMd,
+      vertical: AppSizes.paddingSm,
+    ),
+    titleTextStyle: TextStyle(
+      fontSize: AppSizes.fontSizeBody,
+      fontWeight: FontWeight.w500,
+      color: AppColors.onSurface,
+    ),
+    subtitleTextStyle: TextStyle(
+      fontSize: AppSizes.fontSizeBodySmall,
+      color: AppColors.onSurfaceVariant,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(AppSizes.borderRadiusSm)),
+    ),
+  );
 
   /// Divider theme
   static DividerThemeData get _dividerTheme => const DividerThemeData(
-        color: AppColors.outlineVariant,
-        thickness: AppSizes.borderWidthThin,
-        space: AppSizes.spacingSm,
-      );
+    color: AppColors.outlineVariant,
+    thickness: AppSizes.borderWidthThin,
+    space: AppSizes.spacingSm,
+  );
 
   /// Icon theme
   static IconThemeData get _iconTheme => const IconThemeData(
-        color: AppColors.onSurface,
-        size: AppSizes.iconSizeMd,
-      );
+    color: AppColors.onSurface,
+    size: AppSizes.iconSizeMd,
+  );
 }

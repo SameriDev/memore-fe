@@ -6,7 +6,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../data/models/user_model.dart';
 
 /// Enhanced Settings Screen for app preferences and account management
-/// Provides comprehensive settings interface matching Locket design
+/// Provides comprehensive settings interface matching memore design
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
@@ -31,13 +31,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -58,11 +54,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         backgroundColor: const Color(0xFF000000),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-            size: 24,
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
           onPressed: () => context.pop(),
         ),
         title: const Text(
@@ -90,104 +82,93 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
               const SizedBox(height: AppSizes.spacingXl),
 
               // Settings Sections
-              _buildSettingsSection(
-                'Account',
-                [
-                  _buildSettingItem(
-                    icon: Icons.person_outline,
-                    title: 'Edit Profile',
-                    subtitle: 'Change your name and avatar',
-                    onTap: () => _navigateToProfileEdit(),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.lock_outline,
-                    title: 'Privacy & Security',
-                    subtitle: 'Control who can add you and see your content',
-                    onTap: () => _navigateToPrivacy(),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.block,
-                    title: 'Blocked Users',
-                    subtitle: '${currentUser.settings.blockedUserIds.length} blocked',
-                    onTap: () => _navigateToBlockedUsers(),
-                  ),
-                ],
-              ),
+              _buildSettingsSection('Account', [
+                _buildSettingItem(
+                  icon: Icons.person_outline,
+                  title: 'Edit Profile',
+                  subtitle: 'Change your name and avatar',
+                  onTap: () => _navigateToProfileEdit(),
+                ),
+                _buildSettingItem(
+                  icon: Icons.lock_outline,
+                  title: 'Privacy & Security',
+                  subtitle: 'Control who can add you and see your content',
+                  onTap: () => _navigateToPrivacy(),
+                ),
+                _buildSettingItem(
+                  icon: Icons.block,
+                  title: 'Blocked Users',
+                  subtitle:
+                      '${currentUser.settings.blockedUserIds.length} blocked',
+                  onTap: () => _navigateToBlockedUsers(),
+                ),
+              ]),
 
               const SizedBox(height: AppSizes.spacingXl),
 
-              _buildSettingsSection(
-                'Preferences',
-                [
-                  _buildSettingToggle(
-                    icon: Icons.notifications_outlined,
-                    title: 'Push Notifications',
-                    subtitle: 'Get notified about new photos and friends',
-                    value: currentUser.settings.pushNotificationsEnabled,
-                    onChanged: (value) => _toggleNotifications(value),
-                  ),
-                  _buildSettingToggle(
-                    icon: Icons.photo_camera_outlined,
-                    title: 'Photo Notifications',
-                    subtitle: 'Get notified when friends share photos',
-                    value: currentUser.settings.photoNotificationsEnabled,
-                    onChanged: (value) => _togglePhotoNotifications(value),
-                  ),
-                  _buildSettingToggle(
-                    icon: Icons.people_outline,
-                    title: 'Friend Notifications',
-                    subtitle: 'Get notified about friend requests',
-                    value: currentUser.settings.friendNotificationsEnabled,
-                    onChanged: (value) => _toggleFriendNotifications(value),
-                  ),
-                ],
-              ),
+              _buildSettingsSection('Preferences', [
+                _buildSettingToggle(
+                  icon: Icons.notifications_outlined,
+                  title: 'Push Notifications',
+                  subtitle: 'Get notified about new photos and friends',
+                  value: currentUser.settings.pushNotificationsEnabled,
+                  onChanged: (value) => _toggleNotifications(value),
+                ),
+                _buildSettingToggle(
+                  icon: Icons.photo_camera_outlined,
+                  title: 'Photo Notifications',
+                  subtitle: 'Get notified when friends share photos',
+                  value: currentUser.settings.photoNotificationsEnabled,
+                  onChanged: (value) => _togglePhotoNotifications(value),
+                ),
+                _buildSettingToggle(
+                  icon: Icons.people_outline,
+                  title: 'Friend Notifications',
+                  subtitle: 'Get notified about friend requests',
+                  value: currentUser.settings.friendNotificationsEnabled,
+                  onChanged: (value) => _toggleFriendNotifications(value),
+                ),
+              ]),
 
               const SizedBox(height: AppSizes.spacingXl),
 
-              _buildSettingsSection(
-                'Storage & Data',
-                [
-                  _buildSettingItem(
-                    icon: Icons.storage_outlined,
-                    title: 'Storage Management',
-                    subtitle: 'Manage photo cache and app data',
-                    onTap: () => _navigateToStorage(),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.download_outlined,
-                    title: 'Download Options',
-                    subtitle: 'Photo quality and auto-download settings',
-                    onTap: () => _showDownloadOptions(),
-                  ),
-                ],
-              ),
+              _buildSettingsSection('Storage & Data', [
+                _buildSettingItem(
+                  icon: Icons.storage_outlined,
+                  title: 'Storage Management',
+                  subtitle: 'Manage photo cache and app data',
+                  onTap: () => _navigateToStorage(),
+                ),
+                _buildSettingItem(
+                  icon: Icons.download_outlined,
+                  title: 'Download Options',
+                  subtitle: 'Photo quality and auto-download settings',
+                  onTap: () => _showDownloadOptions(),
+                ),
+              ]),
 
               const SizedBox(height: AppSizes.spacingXl),
 
-              _buildSettingsSection(
-                'Support & About',
-                [
-                  _buildSettingItem(
-                    icon: Icons.help_outline,
-                    title: 'Help & Support',
-                    subtitle: 'Get help or contact support',
-                    onTap: () => _navigateToSupport(),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.info_outline,
-                    title: 'About Locket',
-                    subtitle: 'Version 1.0.0',
-                    onTap: () => _navigateToAbout(),
-                  ),
-                  _buildSettingItem(
-                    icon: Icons.description_outlined,
-                    title: 'Terms & Privacy',
-                    subtitle: 'Read our terms and privacy policy',
-                    onTap: () => _showTermsAndPrivacy(),
-                  ),
-                ],
-              ),
+              _buildSettingsSection('Support & About', [
+                _buildSettingItem(
+                  icon: Icons.help_outline,
+                  title: 'Help & Support',
+                  subtitle: 'Get help or contact support',
+                  onTap: () => _navigateToSupport(),
+                ),
+                _buildSettingItem(
+                  icon: Icons.info_outline,
+                  title: 'About memore',
+                  subtitle: 'Version 1.0.0',
+                  onTap: () => _navigateToAbout(),
+                ),
+                _buildSettingItem(
+                  icon: Icons.description_outlined,
+                  title: 'Terms & Privacy',
+                  subtitle: 'Read our terms and privacy policy',
+                  onTap: () => _showTermsAndPrivacy(),
+                ),
+              ]),
 
               const SizedBox(height: AppSizes.spacingXl),
 
@@ -208,10 +189,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF2A2A2A),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFF2A2A2A), width: 1),
       ),
       child: Row(
         children: [
@@ -222,10 +200,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             decoration: BoxDecoration(
               color: const Color(0xFFFFD700),
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(
-                color: const Color(0xFF2A2A2A),
-                width: 2,
-              ),
+              border: Border.all(color: const Color(0xFF2A2A2A), width: 2),
             ),
             child: Center(
               child: Text(
@@ -323,14 +298,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
           decoration: BoxDecoration(
             color: const Color(0xFF1A1A1A),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: const Color(0xFF2A2A2A),
-              width: 1,
-            ),
+            border: Border.all(color: const Color(0xFF2A2A2A), width: 1),
           ),
-          child: Column(
-            children: children,
-          ),
+          child: Column(children: children),
         ),
       ],
     );
@@ -347,11 +317,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         horizontal: AppSizes.paddingMd,
         vertical: AppSizes.paddingSm,
       ),
-      leading: Icon(
-        icon,
-        color: const Color(0xFFFFD700),
-        size: 24,
-      ),
+      leading: Icon(icon, color: const Color(0xFFFFD700), size: 24),
       title: Text(
         title,
         style: const TextStyle(
@@ -362,10 +328,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(
-          color: Color(0xFF666666),
-          fontSize: 14,
-        ),
+        style: const TextStyle(color: Color(0xFF666666), fontSize: 14),
       ),
       trailing: const Icon(
         Icons.chevron_right,
@@ -388,11 +351,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         horizontal: AppSizes.paddingMd,
         vertical: AppSizes.paddingSm,
       ),
-      leading: Icon(
-        icon,
-        color: const Color(0xFFFFD700),
-        size: 24,
-      ),
+      leading: Icon(icon, color: const Color(0xFFFFD700), size: 24),
       title: Text(
         title,
         style: const TextStyle(
@@ -403,10 +362,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(
-          color: Color(0xFF666666),
-          fontSize: 14,
-        ),
+        style: const TextStyle(color: Color(0xFF666666), fontSize: 14),
       ),
       trailing: Switch(
         value: value,
@@ -426,10 +382,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF2A2A2A),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFF404040),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFF404040), width: 1),
       ),
       child: TextButton(
         onPressed: () => _showSignOutDialog(),
@@ -533,10 +486,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 
             const Text(
               'Configure how photos are downloaded and stored',
-              style: TextStyle(
-                color: Color(0xFF666666),
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Color(0xFF666666), fontSize: 14),
             ),
             const SizedBox(height: AppSizes.spacingXl),
           ],
@@ -606,21 +556,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A2A),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: const Text(
           'Sign Out',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         content: const Text(
           'Are you sure you want to sign out?',
-          style: TextStyle(
-            color: Color(0xFF666666),
-          ),
+          style: TextStyle(color: Color(0xFF666666)),
         ),
         actions: [
           TextButton(
@@ -656,9 +599,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A2A),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(
           feature,
           style: const TextStyle(
@@ -668,9 +609,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         ),
         content: const Text(
           'This feature is coming soon!',
-          style: TextStyle(
-            color: Color(0xFF666666),
-          ),
+          style: TextStyle(color: Color(0xFF666666)),
         ),
         actions: [
           TextButton(

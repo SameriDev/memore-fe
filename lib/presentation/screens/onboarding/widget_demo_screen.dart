@@ -5,7 +5,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
-/// Widget Demo Screen that shows users how to add the Locket widget to their home screen
+/// Widget Demo Screen that shows users how to add the memore widget to their home screen
 /// Displays a step-by-step tutorial with phone mockups and instructions
 class WidgetDemoScreen extends StatefulWidget {
   const WidgetDemoScreen({super.key});
@@ -37,13 +37,9 @@ class _WidgetDemoScreenState extends State<WidgetDemoScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   @override
@@ -131,11 +127,7 @@ class _WidgetDemoScreenState extends State<WidgetDemoScreen>
                       _currentPage = page;
                     });
                   },
-                  children: [
-                    _buildStep1(),
-                    _buildStep2(),
-                    _buildStep3(),
-                  ],
+                  children: [_buildStep1(), _buildStep2(), _buildStep3()],
                 ),
               ),
             ),
@@ -240,11 +232,7 @@ class _WidgetDemoScreenState extends State<WidgetDemoScreen>
           const Text(
             'Hold down on any app\nto edit your Home Screen',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-              height: 1.4,
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.white, height: 1.4),
           ),
 
           const Spacer(flex: 1),
@@ -286,11 +274,7 @@ class _WidgetDemoScreenState extends State<WidgetDemoScreen>
           const Text(
             'Tap the Plus button\nin the top left corner',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-              height: 1.4,
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.white, height: 1.4),
           ),
 
           const Spacer(flex: 1),
@@ -320,7 +304,7 @@ class _WidgetDemoScreenState extends State<WidgetDemoScreen>
 
           const Spacer(flex: 2),
 
-          // Phone mockup for step 3 - Search for Locket
+          // Phone mockup for step 3 - Search for memore
           PhoneWidgetMockup(
             step: 3,
             height: MediaQuery.of(context).size.height * 0.35,
@@ -330,13 +314,9 @@ class _WidgetDemoScreenState extends State<WidgetDemoScreen>
 
           // Instruction
           const Text(
-            'Search for Locket\nand add the widget',
+            'Search for memore\nand add the widget',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-              height: 1.4,
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.white, height: 1.4),
           ),
 
           const Spacer(flex: 1),
@@ -351,11 +331,7 @@ class PhoneWidgetMockup extends StatelessWidget {
   final int step;
   final double height;
 
-  const PhoneWidgetMockup({
-    super.key,
-    required this.step,
-    this.height = 400,
-  });
+  const PhoneWidgetMockup({super.key, required this.step, this.height = 400});
 
   @override
   Widget build(BuildContext context) {
@@ -367,10 +343,7 @@ class PhoneWidgetMockup extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF2A2A2A),
         borderRadius: BorderRadius.circular(48),
-        border: Border.all(
-          color: const Color(0xFF404040),
-          width: 6,
-        ),
+        border: Border.all(color: const Color(0xFF404040), width: 6),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.5),
@@ -390,9 +363,7 @@ class PhoneWidgetMockup extends StatelessWidget {
               const SizedBox(height: 32),
 
               // Content based on step
-              Expanded(
-                child: _buildStepContent(),
-              ),
+              Expanded(child: _buildStepContent()),
 
               // Home indicator
               Container(
@@ -501,19 +472,12 @@ class PhoneWidgetMockup extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.black,
-                  size: 18,
-                ),
+                child: const Icon(Icons.add, color: Colors.black, size: 18),
               ),
               const Spacer(),
               const Text(
                 'Done',
-                style: TextStyle(
-                  color: Color(0xFFB3B3B3),
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Color(0xFFB3B3B3), fontSize: 14),
               ),
             ],
           ),
@@ -561,18 +525,11 @@ class PhoneWidgetMockup extends StatelessWidget {
             ),
             child: const Row(
               children: [
-                Icon(
-                  Icons.search,
-                  color: Color(0xFFB3B3B3),
-                  size: 16,
-                ),
+                Icon(Icons.search, color: Color(0xFFB3B3B3), size: 16),
                 SizedBox(width: 8),
                 Text(
-                  'Locket',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+                  'memore',
+                  style: TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ],
             ),
@@ -580,7 +537,7 @@ class PhoneWidgetMockup extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Locket widget preview
+          // memore widget preview
           Container(
             width: double.infinity,
             height: 80,
@@ -588,10 +545,7 @@ class PhoneWidgetMockup extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF2A2A2A),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: const Color(0xFFFFD700),
-                width: 2,
-              ),
+              border: Border.all(color: const Color(0xFFFFD700), width: 2),
             ),
             child: Row(
               children: [
@@ -617,7 +571,7 @@ class PhoneWidgetMockup extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Locket Widget',
+                        'memore Widget',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -642,11 +596,7 @@ class PhoneWidgetMockup extends StatelessWidget {
                     color: const Color(0xFFFFD700),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.black,
-                    size: 18,
-                  ),
+                  child: const Icon(Icons.add, color: Colors.black, size: 18),
                 ),
               ],
             ),

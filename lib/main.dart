@@ -60,7 +60,7 @@ void main() {
   runApp(const ProviderScope(child: MemoreApp()));
 }
 
-/// Main application widget for Memore (Locket clone)
+/// Main application widget for Memore (memore clone)
 /// Integrates Riverpod for state management and GoRouter for navigation
 class MemoreApp extends ConsumerWidget {
   const MemoreApp({super.key});

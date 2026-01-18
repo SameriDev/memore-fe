@@ -35,29 +35,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
-    _slideAnimation = Tween<double>(
-      begin: 30.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation = Tween<double>(begin: 30.0, end: 0.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
 
     _animationController.forward();
   }
@@ -90,11 +78,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
           color: Color(0xFFFFD700),
           shape: BoxShape.circle,
         ),
-        child: const Icon(
-          Icons.photo_camera,
-          color: Colors.black,
-          size: 30,
-        ),
+        child: const Icon(Icons.photo_camera, color: Colors.black, size: 30),
       ),
     );
   }
@@ -107,11 +91,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
         backgroundColor: const Color(0xFF000000),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-            size: 24,
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
           onPressed: () => context.pop(),
         ),
         title: const Text(
@@ -172,10 +152,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
                 // Footer
                 AnimatedBuilder(
                   animation: _fadeAnimation,
-                  builder: (context, child) => Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: child,
-                  ),
+                  builder: (context, child) =>
+                      Opacity(opacity: _fadeAnimation.value, child: child),
                   child: _buildFooter(),
                 ),
               ],
@@ -204,11 +182,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
               ),
             ],
           ),
-          child: const Icon(
-            Icons.photo_camera,
-            color: Colors.black,
-            size: 60,
-          ),
+          child: const Icon(Icons.photo_camera, color: Colors.black, size: 60),
         ),
 
         const SizedBox(height: AppSizes.spacingLg),
@@ -228,10 +202,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
 
         // Version
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 6,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: const Color(0xFF2A2A2A),
             borderRadius: BorderRadius.circular(20),
@@ -252,11 +223,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
         const Text(
           'Share Moments with Your Loved Ones',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Color(0xFF666666),
-            fontSize: 16,
-            height: 1.5,
-          ),
+          style: TextStyle(color: Color(0xFF666666), fontSize: 16, height: 1.5),
         ),
       ],
     );
@@ -267,22 +234,22 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF2A2A2A),
-        ),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
       child: Column(
         children: [
           _buildLinkTile(
             icon: Icons.description_outlined,
             title: 'Terms of Service',
-            onTap: () => _showWebView('Terms of Service', 'https://memore.app/terms'),
+            onTap: () =>
+                _showWebView('Terms of Service', 'https://memore.app/terms'),
           ),
           _buildDivider(),
           _buildLinkTile(
             icon: Icons.privacy_tip_outlined,
             title: 'Privacy Policy',
-            onTap: () => _showWebView('Privacy Policy', 'https://memore.app/privacy'),
+            onTap: () =>
+                _showWebView('Privacy Policy', 'https://memore.app/privacy'),
           ),
           _buildDivider(),
           _buildLinkTile(
@@ -294,7 +261,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
           _buildLinkTile(
             icon: Icons.help_outline,
             title: 'Support Center',
-            onTap: () => _showWebView('Support Center', 'https://memore.app/support'),
+            onTap: () =>
+                _showWebView('Support Center', 'https://memore.app/support'),
           ),
         ],
       ),
@@ -307,20 +275,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF2A2A2A),
-        ),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
       child: Column(
         children: [
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.code,
-                color: Color(0xFFFFD700),
-                size: 20,
-              ),
+              Icon(Icons.code, color: Color(0xFFFFD700), size: 20),
               SizedBox(width: 8),
               Text(
                 'Made with Love',
@@ -331,18 +293,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
                 ),
               ),
               SizedBox(width: 8),
-              Icon(
-                Icons.favorite,
-                color: Color(0xFFEF4444),
-                size: 20,
-              ),
+              Icon(Icons.favorite, color: Color(0xFFEF4444), size: 20),
             ],
           ),
 
           const SizedBox(height: AppSizes.spacingMd),
 
           const Text(
-            'Memore is a photo sharing app inspired by Locket, built with Flutter for a seamless cross-platform experience.',
+            'Memore is a photo sharing app inspired by memore, built with Flutter for a seamless cross-platform experience.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xFF666666),
@@ -364,7 +322,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
               const SizedBox(width: AppSizes.spacingMd),
               _buildSocialButton(
                 icon: Icons.mail_outline,
-                onTap: () => _showWebView('Contact', 'mailto:contact@memore.app'),
+                onTap: () =>
+                    _showWebView('Contact', 'mailto:contact@memore.app'),
               ),
               const SizedBox(width: AppSizes.spacingMd),
               _buildSocialButton(
@@ -383,43 +342,28 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
       children: [
         const Text(
           '© 2024 Memore Inc.',
-          style: TextStyle(
-            color: Color(0xFF666666),
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Color(0xFF666666), fontSize: 12),
         ),
         const SizedBox(height: 4),
         const Text(
           'All rights reserved',
-          style: TextStyle(
-            color: Color(0xFF666666),
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Color(0xFF666666), fontSize: 12),
         ),
 
         const SizedBox(height: AppSizes.spacingLg),
 
         // Special thanks
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 10,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFF2A2A2A),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFF404040),
-            ),
+            border: Border.all(color: const Color(0xFF404040)),
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.auto_awesome,
-                color: Color(0xFFFFD700),
-                size: 16,
-              ),
+              Icon(Icons.auto_awesome, color: Color(0xFFFFD700), size: 16),
               SizedBox(width: 6),
               Text(
                 'Thank you for using Memore!',
@@ -430,11 +374,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
                 ),
               ),
               SizedBox(width: 6),
-              Icon(
-                Icons.auto_awesome,
-                color: Color(0xFFFFD700),
-                size: 16,
-              ),
+              Icon(Icons.auto_awesome, color: Color(0xFFFFD700), size: 16),
             ],
           ),
         ),
@@ -448,11 +388,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(
-        icon,
-        color: const Color(0xFFFFD700),
-        size: 24,
-      ),
+      leading: Icon(icon, color: const Color(0xFFFFD700), size: 24),
       title: Text(
         title,
         style: const TextStyle(
@@ -483,15 +419,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
         decoration: BoxDecoration(
           color: const Color(0xFF2A2A2A),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFF404040),
-          ),
+          border: Border.all(color: const Color(0xFF404040)),
         ),
-        child: Icon(
-          icon,
-          color: const Color(0xFFFFD700),
-          size: 20,
-        ),
+        child: Icon(icon, color: const Color(0xFFFFD700), size: 20),
       ),
     );
   }

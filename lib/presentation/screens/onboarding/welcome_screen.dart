@@ -7,8 +7,8 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../providers/auth_provider.dart';
 
-/// Welcome screen that introduces users to Locket/Memore
-/// Matches the Locket design with dark background, phone mockup, and call-to-action buttons
+/// Welcome screen that introduces users to memore/Memore
+/// Matches the memore design with dark background, phone mockup, and call-to-action buttons
 class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -106,7 +106,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                           opacity: _contentAnimation.value,
                           child: Column(
                             children: [
-                              // Locket logo and title
+                              // memore logo and title
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -136,7 +136,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                   ),
                                   const SizedBox(width: AppSizes.spacingMd),
                                   const Text(
-                                    'Locket',
+                                    'memore',
                                     style: TextStyle(
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold,
@@ -244,7 +244,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
   }
 }
 
-/// Phone mockup widget showing Locket widget demonstration
+/// Phone mockup widget showing memore widget demonstration
 class PhoneMockup extends StatelessWidget {
   final double height;
 
@@ -293,7 +293,7 @@ class PhoneMockup extends StatelessWidget {
                         ),
                     itemCount: 16,
                     itemBuilder: (context, index) {
-                      // Highlight the Locket widget (position 4)
+                      // Highlight the memore widget (position 4)
                       if (index == 4) {
                         return Container(
                           decoration: BoxDecoration(
