@@ -194,7 +194,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                 const Icon(Icons.people, color: Colors.white, size: 16),
                 const SizedBox(width: 6),
                 const Text(
-                  '1 Friend',
+                  'n Friend',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
