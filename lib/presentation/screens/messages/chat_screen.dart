@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -62,12 +63,12 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.darkOnBackground),
           onPressed: () => context.pop(),
         ),
         title: Row(
@@ -75,11 +76,11 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundColor: const Color(0xFF6B4EFF),
+              backgroundColor: AppColors.primary,
               child: Text(
                 widget.userName.substring(0, 1).toUpperCase(),
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.onPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
@@ -89,7 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Text(
               widget.userName,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.darkOnBackground,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -114,7 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
       return const Center(
         child: Text(
           'No messages yet',
-          style: TextStyle(color: Color(0xFF666666)),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
       );
     }
@@ -154,7 +155,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A),
+              color: AppColors.darkSurface,
               borderRadius: BorderRadius.circular(16),
             ),
             child: ClipRRect(
@@ -168,14 +169,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Colors.grey.shade800, Colors.grey.shade900],
+                        colors: [AppColors.darkSurface, AppColors.darkBackground],
                       ),
                     ),
                     child: const Center(
                       child: Icon(
                         Icons.image,
                         size: 48,
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -188,18 +189,18 @@ class _ChatScreenState extends State<ChatScreen> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
+                        color: AppColors.overlayDark,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: const [
-                          Icon(Icons.cloud, color: Colors.white, size: 14),
+                          Icon(Icons.cloud, color: AppColors.darkOnBackground, size: 14),
                           SizedBox(width: 4),
                           Text(
                             '49°F',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.darkOnBackground,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -218,13 +219,13 @@ class _ChatScreenState extends State<ChatScreen> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFD700),
+                          color: AppColors.accentGold,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(
                           'You',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: AppColors.onBackground,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
@@ -238,7 +239,7 @@ class _ChatScreenState extends State<ChatScreen> {
           const SizedBox(height: 4),
           Text(
             message.time,
-            style: const TextStyle(color: Color(0xFF666666), fontSize: 11),
+            style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
           ),
         ],
       ),
@@ -250,12 +251,12 @@ class _ChatScreenState extends State<ChatScreen> {
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: message.isMe ? const Color(0xFF6B4EFF) : const Color(0xFF2A2A2A),
+        color: message.isMe ? AppColors.primary : AppColors.darkSurface,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         message.text,
-        style: const TextStyle(color: Colors.white, fontSize: 15),
+        style: const TextStyle(color: AppColors.onPrimary, fontSize: 15),
       ),
     );
   }
@@ -264,8 +265,8 @@ class _ChatScreenState extends State<ChatScreen> {
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingMd),
       decoration: const BoxDecoration(
-        color: Color(0xFF000000),
-        border: Border(top: BorderSide(color: Color(0xFF2A2A2A), width: 1)),
+        color: AppColors.darkBackground,
+        border: Border(top: BorderSide(color: AppColors.darkSurface, width: 1)),
       ),
       child: Row(
         children: [
@@ -273,7 +274,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
+                color: AppColors.darkSurface,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Row(
@@ -281,10 +282,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       controller: _messageController,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: AppColors.darkOnBackground),
                       decoration: const InputDecoration(
                         hintText: 'Send message...',
-                        hintStyle: TextStyle(color: Color(0xFF666666)),
+                        hintStyle: TextStyle(color: AppColors.textSecondary),
                         border: InputBorder.none,
                       ),
                       onSubmitted: (_) => _sendMessage(),
@@ -304,10 +305,10 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 44,
               height: 44,
               decoration: const BoxDecoration(
-                color: Color(0xFF2A2A2A),
+                color: AppColors.darkSurface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.send, color: Colors.white, size: 20),
+              child: const Icon(Icons.send, color: AppColors.darkOnBackground, size: 20),
             ),
           ),
         ],

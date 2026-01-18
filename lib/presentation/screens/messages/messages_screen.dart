@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/app_sizes.dart';
 
@@ -9,18 +10,18 @@ class MessagesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.darkOnBackground),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           'Messages',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -46,11 +47,11 @@ class MessagesScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.message_outlined, size: 64, color: Colors.grey.shade700),
+            Icon(Icons.message_outlined, size: 64, color: AppColors.textSecondary),
             const SizedBox(height: 16),
             Text(
               'No messages yet',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
             ),
           ],
         ),
@@ -77,11 +78,11 @@ class MessagesScreen extends StatelessWidget {
         ),
         leading: CircleAvatar(
           radius: 28,
-          backgroundColor: const Color(0xFF6B4EFF),
+          backgroundColor: AppColors.primary,
           child: Text(
             message.userName.substring(0, 1).toUpperCase(),
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.onPrimary,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -93,7 +94,7 @@ class MessagesScreen extends StatelessWidget {
               child: Text(
                 message.userName,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.darkOnBackground,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -101,19 +102,19 @@ class MessagesScreen extends StatelessWidget {
             ),
             Text(
               message.time,
-              style: const TextStyle(color: Color(0xFF666666), fontSize: 12),
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
           ],
         ),
         subtitle: Text(
           message.lastMessage,
-          style: const TextStyle(color: Color(0xFF999999), fontSize: 14),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         trailing: const Icon(
           Icons.chevron_right,
-          color: Color(0xFF666666),
+          color: AppColors.textSecondary,
           size: 20,
         ),
         onTap: () {

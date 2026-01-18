@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../core/constants/app_colors.dart';
 
 class Comment {
   final String id;
@@ -23,11 +24,7 @@ class CommentBottomSheet extends StatefulWidget {
   final String photoId;
   final VoidCallback? onClose;
 
-  const CommentBottomSheet({
-    required this.photoId,
-    this.onClose,
-    super.key,
-  });
+  const CommentBottomSheet({required this.photoId, this.onClose, super.key});
 
   @override
   State<CommentBottomSheet> createState() => _CommentBottomSheetState();
@@ -147,7 +144,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: const BoxDecoration(
-        color: Color(0xFF1A1A1A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -158,7 +155,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFF666666),
+              color: AppColors.textSecondary,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -180,7 +177,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                 IconButton(
                   icon: const Icon(
                     Icons.close,
-                    color: Color(0xFF666666),
+                    color: AppColors.textSecondary,
                     size: 24,
                   ),
                   onPressed: () {
@@ -202,20 +199,18 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
           Expanded(
             child: _isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFFFFD700),
-                    ),
+                    child: CircularProgressIndicator(color: Color(0xFFFFD700)),
                   )
                 : _comments.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.all(AppSizes.paddingMd),
-                        itemCount: _comments.length,
-                        itemBuilder: (context, index) {
-                          return _buildCommentItem(_comments[index]);
-                        },
-                      ),
+                ? _buildEmptyState()
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(AppSizes.paddingMd),
+                    itemCount: _comments.length,
+                    itemBuilder: (context, index) {
+                      return _buildCommentItem(_comments[index]);
+                    },
+                  ),
           ),
 
           // Input section
@@ -223,16 +218,14 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
             padding: EdgeInsets.only(
               left: AppSizes.paddingMd,
               right: AppSizes.paddingMd,
-              bottom: MediaQuery.of(context).viewInsets.bottom + AppSizes.paddingMd,
+              bottom:
+                  MediaQuery.of(context).viewInsets.bottom + AppSizes.paddingMd,
               top: AppSizes.paddingSm,
             ),
             decoration: const BoxDecoration(
               color: Color(0xFF2A2A2A),
               border: Border(
-                top: BorderSide(
-                  color: Color(0xFF404040),
-                  width: 0.5,
-                ),
+                top: BorderSide(color: Color(0xFF404040), width: 0.5),
               ),
             ),
             child: Row(
@@ -258,18 +251,15 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                   child: TextField(
                     controller: _commentController,
                     focusNode: _focusNode,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'Add a comment...',
                       hintStyle: const TextStyle(
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                         fontSize: 14,
                       ),
                       filled: true,
-                      fillColor: const Color(0xFF1A1A1A),
+                      fillColor: AppColors.darkSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide.none,
@@ -319,14 +309,14 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
         children: [
           Icon(
             Icons.comment_outlined,
-            color: const Color(0xFF666666).withValues(alpha: 0.5),
+            color: AppColors.textSecondary.withValues(alpha: 0.5),
             size: 64,
           ),
           const SizedBox(height: AppSizes.spacingMd),
           const Text(
             'No comments yet',
             style: TextStyle(
-              color: Color(0xFF666666),
+              color: AppColors.textSecondary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -334,10 +324,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
           const SizedBox(height: AppSizes.spacingSm),
           const Text(
             'Be the first to comment!',
-            style: TextStyle(
-              color: Color(0xFF666666),
-              fontSize: 14,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
         ],
       ),
@@ -386,7 +373,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                     Text(
                       _getTimeAgo(comment.timestamp),
                       style: const TextStyle(
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                         fontSize: 12,
                       ),
                     ),
@@ -422,16 +409,20 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ...comment.reactions.take(3).map((reaction) => Text(
-                                  reaction,
-                                  style: const TextStyle(fontSize: 12),
-                                )),
+                            ...comment.reactions
+                                .take(3)
+                                .map(
+                                  (reaction) => Text(
+                                    reaction,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
                             if (comment.reactions.length > 3) ...[
                               const SizedBox(width: 4),
                               Text(
                                 '+${comment.reactions.length - 3}',
                                 style: const TextStyle(
-                                  color: Color(0xFF666666),
+                                  color: AppColors.textSecondary,
                                   fontSize: 12,
                                 ),
                               ),
@@ -450,7 +441,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
           IconButton(
             icon: const Icon(
               Icons.more_horiz,
-              color: Color(0xFF666666),
+              color: AppColors.textSecondary,
               size: 20,
             ),
             onPressed: () => _showCommentOptions(comment),
@@ -463,7 +454,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
   void _showCommentOptions(Comment comment) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: AppColors.darkSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -480,10 +471,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
               ),
               title: const Text(
                 'React to comment',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 16),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -499,10 +487,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                 ),
                 title: const Text(
                   'Delete comment',
-                  style: TextStyle(
-                    color: Color(0xFFEF4444),
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Color(0xFFEF4444), fontSize: 16),
                 ),
                 onTap: () {
                   Navigator.pop(context);

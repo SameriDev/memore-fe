@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../data/models/user_model.dart';
@@ -64,7 +65,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -262,7 +263,7 @@ class CameraScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF000000),
+      color: AppColors.darkBackground,
       child: Column(
         children: [
           Expanded(
@@ -404,7 +405,7 @@ class FriendsListScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF000000),
+      color: AppColors.darkBackground,
       padding: const EdgeInsets.all(AppSizes.paddingMd),
       child: Column(
         children: [
@@ -496,7 +497,7 @@ class SettingsScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF000000),
+      color: AppColors.darkBackground,
       padding: const EdgeInsets.all(AppSizes.paddingMd),
       child: Column(
         children: [

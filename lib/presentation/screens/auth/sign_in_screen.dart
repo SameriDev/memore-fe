@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
@@ -110,7 +111,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Forgot password feature coming soon'),
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -122,14 +123,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             size: 24,
           ),
           onPressed: () => context.pop(),
@@ -151,7 +152,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   const Text(
                     'Welcome Back',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.darkOnBackground,
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
@@ -162,7 +163,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   const Text(
                     'Sign in to continue sharing moments',
                     style: TextStyle(
-                      color: Color(0xFF666666),
+                      color: AppColors.textSecondary,
                       fontSize: 16,
                     ),
                   ),
@@ -176,17 +177,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       padding: const EdgeInsets.all(AppSizes.paddingMd),
                       margin: const EdgeInsets.only(bottom: AppSizes.spacingLg),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                        color: AppColors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                          color: AppColors.error.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
                         children: [
                           const Icon(
                             Icons.error_outline,
-                            color: Color(0xFFEF4444),
+                            color: AppColors.error,
                             size: 20,
                           ),
                           const SizedBox(width: AppSizes.spacingSm),
@@ -194,7 +195,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                             child: Text(
                               _errorMessage!,
                               style: const TextStyle(
-                                color: Color(0xFFEF4444),
+                                color: AppColors.error,
                                 fontSize: 14,
                               ),
                             ),
@@ -210,53 +211,53 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.darkOnBackground,
                       fontSize: 16,
                     ),
                     decoration: InputDecoration(
                       labelText: 'Email',
                       labelStyle: TextStyle(
                         color: _emailFocusNode.hasFocus
-                            ? const Color(0xFFFFD700)
-                            : const Color(0xFF666666),
+                            ? AppColors.accentGold
+                            : AppColors.textSecondary,
                       ),
                       filled: true,
-                      fillColor: const Color(0xFF1A1A1A),
+                      fillColor: AppColors.darkSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFF404040),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFF404040),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFFFFD700),
+                          color: AppColors.accentGold,
                           width: 2,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFFEF4444),
+                          color: AppColors.error,
                         ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFFEF4444),
+                          color: AppColors.error,
                           width: 2,
                         ),
                       ),
                       prefixIcon: const Icon(
                         Icons.email_outlined,
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                     validator: _validateEmail,
@@ -274,60 +275,60 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                     obscureText: _obscurePassword,
                     textInputAction: TextInputAction.done,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.darkOnBackground,
                       fontSize: 16,
                     ),
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: TextStyle(
                         color: _passwordFocusNode.hasFocus
-                            ? const Color(0xFFFFD700)
-                            : const Color(0xFF666666),
+                            ? AppColors.accentGold
+                            : AppColors.textSecondary,
                       ),
                       filled: true,
-                      fillColor: const Color(0xFF1A1A1A),
+                      fillColor: AppColors.darkSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFF404040),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFF404040),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFFFFD700),
+                          color: AppColors.accentGold,
                           width: 2,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFFEF4444),
+                          color: AppColors.error,
                         ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFFEF4444),
+                          color: AppColors.error,
                           width: 2,
                         ),
                       ),
                       prefixIcon: const Icon(
                         Icons.lock_outline,
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
-                          color: const Color(0xFF666666),
+                          color: AppColors.textSecondary,
                         ),
                         onPressed: () {
                           setState(() {
@@ -350,7 +351,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       child: const Text(
                         'Forgot Password?',
                         style: TextStyle(
-                          color: Color(0xFFFFD700),
+                          color: AppColors.accentGold,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -367,9 +368,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _signIn,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFD700),
-                        foregroundColor: Colors.black,
-                        disabledBackgroundColor: const Color(0xFFFFD700).withValues(alpha: 0.5),
+                        backgroundColor: AppColors.accentGold,
+                        foregroundColor: AppColors.darkBackground,
+                        disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -382,7 +383,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.black,
+                                  AppColors.darkBackground,
                                 ),
                               ),
                             )
@@ -406,7 +407,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       const Text(
                         "Don't have an account? ",
                         style: TextStyle(
-                          color: Color(0xFF666666),
+                          color: AppColors.textSecondary,
                           fontSize: 14,
                         ),
                       ),
@@ -417,7 +418,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                         child: const Text(
                           'Sign Up',
                           style: TextStyle(
-                            color: Color(0xFFFFD700),
+                            color: AppColors.accentGold,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),

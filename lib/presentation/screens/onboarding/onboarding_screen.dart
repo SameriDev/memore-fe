@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
@@ -33,7 +34,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
       icon: Icons.people_outline,
       iconColor: Color(0xFF06B6D4),
       title: 'Connect with Friends',
-      description: 'Add friends and family to your private photo sharing circle',
+      description:
+          'Add friends and family to your private photo sharing circle',
       backgroundColor: Color(0xFF1A1A1A),
     ),
     OnboardingSlide(
@@ -64,13 +66,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -101,7 +99,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -259,11 +257,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                         ),
                       ),
                       // Icon
-                      Icon(
-                        slide.icon,
-                        color: slide.iconColor,
-                        size: 64,
-                      ),
+                      Icon(slide.icon, color: slide.iconColor, size: 64),
                     ],
                   ),
                 ),

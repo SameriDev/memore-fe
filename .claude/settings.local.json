@@ -15,7 +15,8 @@
       "Bash(flutter build apk --dry-run)",
       "Bash(timeout 30 flutter build apk --debug --target-platform android-arm64)",
       "Bash(flutter analyze lib/presentation/screens/friends/add_friend_screen.dart --suppress-analytics)",
-      "Bash(flutter clean)"
+      "Bash(flutter clean)",
+      "Bash(flutter analyze --no-fatal-infos lib/presentation/screens/camera/)"
     ]
   }
 }

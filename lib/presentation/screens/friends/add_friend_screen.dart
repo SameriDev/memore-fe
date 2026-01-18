@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../data/models/friend_model.dart';
 
@@ -122,21 +123,21 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
         title: const Text(
           'Friend Request Sent!',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
           'Friend request sent to ${user['displayName']}',
           style: const TextStyle(
-            color: Color(0xFF666666),
+            color: AppColors.textSecondary,
           ),
         ),
         actions: [
@@ -145,7 +146,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
             child: const Text(
               'OK',
               style: TextStyle(
-                color: Color(0xFFFFD700),
+                color: AppColors.accentGold,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -158,14 +159,14 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             size: 24,
           ),
           onPressed: () => context.pop(),
@@ -173,7 +174,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
         title: const Text(
           'Add Friends',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -194,11 +195,11 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
                   Container(
                     height: 48,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A2A),
+                      color: AppColors.darkSurface,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _searchFocusNode.hasFocus
-                            ? const Color(0xFFFFD700)
+                            ? AppColors.accentGold
                             : Colors.transparent,
                         width: 2,
                       ),
@@ -207,13 +208,13 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
                       controller: _searchController,
                       focusNode: _searchFocusNode,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.darkOnBackground,
                         fontSize: 16,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Search by username...',
                         hintStyle: const TextStyle(
-                          color: Color(0xFF666666),
+                          color: AppColors.textSecondary,
                           fontSize: 16,
                         ),
                         border: InputBorder.none,
@@ -223,14 +224,14 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
                         ),
                         prefixIcon: const Icon(
                           Icons.search,
-                          color: Color(0xFF666666),
+                          color: AppColors.textSecondary,
                           size: 20,
                         ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(
                                   Icons.clear,
-                                  color: Color(0xFF666666),
+                                  color: AppColors.textSecondary,
                                   size: 20,
                                 ),
                                 onPressed: _clearSearch,
@@ -247,7 +248,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
                     const Text(
                       'Search for friends by their username',
                       style: TextStyle(
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                         fontSize: 14,
                       ),
                     ),
@@ -269,7 +270,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: Color(0xFFFFD700),
+          color: AppColors.accentGold,
           strokeWidth: 2,
         ),
       );
@@ -292,12 +293,12 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
+                color: AppColors.darkSurface,
                 borderRadius: BorderRadius.circular(40),
               ),
               child: const Icon(
                 Icons.person_search,
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 size: 40,
               ),
             ),
@@ -307,7 +308,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
             const Text(
               'No users found',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.darkOnBackground,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -318,7 +319,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
             const Text(
               'Try searching with a different username',
               style: TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),

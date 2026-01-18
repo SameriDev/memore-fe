@@ -95,7 +95,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSizes.paddingLg),
@@ -110,12 +110,12 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
+                        color: AppColors.darkSurface,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Colors.white,
+                        color: AppColors.darkOnBackground,
                         size: 20,
                       ),
                     ),
@@ -147,7 +147,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.darkOnBackground,
                           height: 1.2,
                         ),
                       ),
@@ -157,11 +157,11 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                       // Password input field
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: AppColors.darkSurface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _passwordFocusNode.hasFocus
-                                ? const Color(0xFFFFD700)
+                                ? AppColors.accentGold
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -173,14 +173,14 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => _continueWithPassword(),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.darkOnBackground,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
                           decoration: InputDecoration(
                             hintText: 'Password',
                             hintStyle: const TextStyle(
-                              color: Color(0xFF666666),
+                              color: AppColors.textSecondary,
                               fontSize: 16,
                             ),
                             border: InputBorder.none,
@@ -190,7 +190,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                                 _obscurePassword
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: const Color(0xFF666666),
+                                color: AppColors.textSecondary,
                                 size: 20,
                               ),
                               onPressed: () {
@@ -211,7 +211,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                           Text(
                             'Your password must be at least ',
                             style: const TextStyle(
-                              color: Color(0xFF666666),
+                              color: AppColors.textSecondary,
                               fontSize: 14,
                             ),
                           ),
@@ -219,8 +219,8 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                             '8 characters',
                             style: TextStyle(
                               color: _isValidPassword
-                                  ? const Color(0xFF00FF00)
-                                  : const Color(0xFFFFD700),
+                                  ? AppColors.success
+                                  : AppColors.accentGold,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -244,11 +244,11 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidPassword
-                        ? const Color(0xFFFFD700)
-                        : const Color(0xFF404040),
+                        ? AppColors.accentGold
+                        : AppColors.textSecondary,
                     foregroundColor: _isValidPassword
-                        ? Colors.black
-                        : const Color(0xFF666666),
+                        ? AppColors.darkBackground
+                        : AppColors.textSecondary,
                     elevation: 0,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -262,7 +262,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.black,
+                              AppColors.darkBackground,
                             ),
                           ),
                         )
@@ -275,8 +275,8 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: _isValidPassword
-                                    ? Colors.black
-                                    : const Color(0xFF666666),
+                                    ? AppColors.darkBackground
+                                    : AppColors.textSecondary,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -284,8 +284,8 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                               Icons.arrow_forward,
                               size: 20,
                               color: _isValidPassword
-                                  ? Colors.black
-                                  : const Color(0xFF666666),
+                                  ? AppColors.darkBackground
+                                  : AppColors.textSecondary,
                             ),
                           ],
                         ),

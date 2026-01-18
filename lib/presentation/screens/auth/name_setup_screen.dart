@@ -125,16 +125,16 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
-        title: const Text('Error', style: TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.darkSurface,
+        title: const Text('Error', style: TextStyle(color: AppColors.darkOnBackground)),
         content: Text(
           message,
-          style: const TextStyle(color: Color(0xFFB3B3B3)),
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK', style: TextStyle(color: Color(0xFFFFD700))),
+            child: const Text('OK', style: TextStyle(color: AppColors.accentGold)),
           ),
         ],
       ),
@@ -144,7 +144,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSizes.paddingLg),
@@ -159,7 +159,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
+                        color: AppColors.darkSurface,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
@@ -196,7 +196,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.darkOnBackground,
                           height: 1.2,
                         ),
                       ),
@@ -206,11 +206,11 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                       // First name input field
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: AppColors.darkSurface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _firstNameFocusNode.hasFocus
-                                ? const Color(0xFFFFD700)
+                                ? AppColors.accentGold
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -222,14 +222,14 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                           textInputAction: TextInputAction.next,
                           onSubmitted: (_) => _lastNameFocusNode.requestFocus(),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.darkOnBackground,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
                           decoration: const InputDecoration(
                             hintText: 'Virgil',
                             hintStyle: TextStyle(
-                              color: Color(0xFF666666),
+                              color: AppColors.textSecondary,
                               fontSize: 16,
                             ),
                             border: InputBorder.none,
@@ -243,11 +243,11 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                       // Last name input field
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: AppColors.darkSurface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _lastNameFocusNode.hasFocus
-                                ? const Color(0xFFFFD700)
+                                ? AppColors.accentGold
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -259,14 +259,14 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => _completeRegistration(),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.darkOnBackground,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
                           decoration: const InputDecoration(
                             hintText: 'Howell',
                             hintStyle: TextStyle(
-                              color: Color(0xFF666666),
+                              color: AppColors.textSecondary,
                               fontSize: 16,
                             ),
                             border: InputBorder.none,
@@ -291,11 +291,11 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidNames
-                        ? const Color(0xFFFFD700)
-                        : const Color(0xFF404040),
+                        ? AppColors.accentGold
+                        : AppColors.textSecondary,
                     foregroundColor: _isValidNames
-                        ? Colors.black
-                        : const Color(0xFF666666),
+                        ? AppColors.darkBackground
+                        : AppColors.textSecondary,
                     elevation: 0,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -309,7 +309,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.black,
+                              AppColors.darkBackground,
                             ),
                           ),
                         )
@@ -322,8 +322,8 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: _isValidNames
-                                    ? Colors.black
-                                    : const Color(0xFF666666),
+                                    ? AppColors.darkBackground
+                                    : AppColors.textSecondary,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -331,8 +331,8 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                               Icons.arrow_forward,
                               size: 20,
                               color: _isValidNames
-                                  ? Colors.black
-                                  : const Color(0xFF666666),
+                                  ? AppColors.darkBackground
+                                  : AppColors.textSecondary,
                             ),
                           ],
                         ),

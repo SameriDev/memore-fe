@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../data/models/user_model.dart';
@@ -130,7 +131,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Please select at least one friend'),
-          backgroundColor: const Color(0xFF2A2A2A),
+          backgroundColor: AppColors.darkSurface,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -170,9 +171,9 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -197,7 +198,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
             child: Text(
               _selectAll ? 'Deselect All' : 'Select All',
               style: const TextStyle(
-                color: Color(0xFFFFD700),
+                color: AppColors.accentGold,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -216,11 +217,11 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                 child: Container(
                   height: 44,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2A2A2A),
+                    color: AppColors.darkSurface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _searchFocusNode.hasFocus
-                          ? const Color(0xFFFFD700)
+                          ? AppColors.accentGold
                           : Colors.transparent,
                       width: 2,
                     ),
@@ -235,7 +236,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                     decoration: const InputDecoration(
                       hintText: 'Search friends...',
                       hintStyle: TextStyle(
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                         fontSize: 16,
                       ),
                       border: InputBorder.none,
@@ -245,7 +246,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                       ),
                       prefixIcon: Icon(
                         Icons.search,
-                        color: Color(0xFF666666),
+                        color: AppColors.textSecondary,
                         size: 20,
                       ),
                     ),
@@ -267,11 +268,11 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                       horizontal: AppSizes.paddingMd,
                       vertical: AppSizes.paddingSm,
                     ),
-                    color: const Color(0xFF1A1A1A),
+                    color: AppColors.darkSurface,
                     child: Text(
                       '${_selectedFriendIds.length} friend${_selectedFriendIds.length > 1 ? 's' : ''} selected',
                       style: const TextStyle(
-                        color: Color(0xFFFFD700),
+                        color: AppColors.accentGold,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -309,10 +310,10 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
               Container(
                 padding: const EdgeInsets.all(AppSizes.paddingLg),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF000000),
+                  color: AppColors.darkBackground,
                   border: Border(
                     top: BorderSide(
-                      color: const Color(0xFF404040).withValues(alpha: 0.3),
+                      color: AppColors.outline.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -326,9 +327,9 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                           ? null
                           : _sendPhoto,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFD700),
+                        backgroundColor: AppColors.accentGold,
                         foregroundColor: Colors.black,
-                        disabledBackgroundColor: const Color(0xFFFFD700).withValues(alpha: 0.5),
+                        disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -380,12 +381,12 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A),
+              color: AppColors.darkSurface,
               borderRadius: BorderRadius.circular(40),
             ),
             child: const Icon(
               Icons.person_search,
-              color: Color(0xFF666666),
+              color: AppColors.textSecondary,
               size: 40,
             ),
           ),
@@ -402,7 +403,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
           const Text(
             'Try searching with a different name',
             style: TextStyle(
-              color: Color(0xFF666666),
+              color: AppColors.textSecondary,
               fontSize: 14,
             ),
           ),
@@ -416,13 +417,13 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
       margin: const EdgeInsets.only(bottom: AppSizes.spacingSm),
       decoration: BoxDecoration(
         color: isSelected
-            ? const Color(0xFFFFD700).withValues(alpha: 0.1)
-            : const Color(0xFF1A1A1A),
+            ? AppColors.accentGold.withValues(alpha: 0.1)
+            : AppColors.darkSurface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isSelected
-              ? const Color(0xFFFFD700)
-              : const Color(0xFF2A2A2A),
+              ? AppColors.accentGold
+              : AppColors.outline,
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -453,7 +454,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                   width: 20,
                   height: 20,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFFD700),
+                    color: AppColors.accentGold,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -477,8 +478,8 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
           friend.isOnline ? 'Online' : 'Offline',
           style: TextStyle(
             color: friend.isOnline
-                ? const Color(0xFF00FF00)
-                : const Color(0xFF666666),
+                ? AppColors.friendOnline
+                : AppColors.textSecondary,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -490,7 +491,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
 
   Color _getAvatarColor(String id) {
     final colors = [
-      const Color(0xFFFFD700), // Yellow
+      AppColors.accentGold, // Brown-gold
       const Color(0xFF8B5CF6), // Purple
       const Color(0xFF06B6D4), // Cyan
       const Color(0xFFEF4444), // Red

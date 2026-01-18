@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
@@ -76,7 +77,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -100,11 +101,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         width: 120,
                         height: 120,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFD700),
+                          color: AppColors.accentGold,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFFD700).withValues(alpha: 0.3),
+                              color: AppColors.accentGold.withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 5,
                             ),
@@ -112,7 +113,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         ),
                         child: const Icon(
                           Icons.photo_camera,
-                          color: Colors.black,
+                          color: AppColors.darkBackground,
                           size: 60,
                         ),
                       ),
@@ -123,7 +124,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       const Text(
                         'Memore',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.darkOnBackground,
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.5,
@@ -137,7 +138,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         'Share moments with your loved ones',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xFF666666),
+                          color: AppColors.textSecondary,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           height: 1.5,
@@ -165,8 +166,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         child: ElevatedButton(
                           onPressed: _navigateToSignIn,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFFD700),
-                            foregroundColor: Colors.black,
+                            backgroundColor: AppColors.accentGold,
+                            foregroundColor: AppColors.darkBackground,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -192,9 +193,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         child: OutlinedButton(
                           onPressed: _navigateToSignUp,
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
+                            foregroundColor: AppColors.darkOnBackground,
                             side: const BorderSide(
-                              color: Color(0xFF404040),
+                              color: AppColors.textSecondary,
                               width: 2,
                             ),
                             shape: RoundedRectangleBorder(
@@ -218,7 +219,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                       const Text(
                         'By continuing, you agree to our',
                         style: TextStyle(
-                          color: Color(0xFF666666),
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -233,7 +234,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                             child: const Text(
                               'Terms of Service',
                               style: TextStyle(
-                                color: Color(0xFFFFD700),
+                                color: AppColors.accentGold,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,
@@ -243,7 +244,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                           const Text(
                             ' and ',
                             style: TextStyle(
-                              color: Color(0xFF666666),
+                              color: AppColors.textSecondary,
                               fontSize: 12,
                             ),
                           ),
@@ -254,7 +255,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                             child: const Text(
                               'Privacy Policy',
                               style: TextStyle(
-                                color: Color(0xFFFFD700),
+                                color: AppColors.accentGold,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,

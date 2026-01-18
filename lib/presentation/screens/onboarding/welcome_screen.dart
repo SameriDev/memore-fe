@@ -59,7 +59,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -114,15 +114,11 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: const Color(
-                                        0xFFFFD700,
-                                      ), // Yellow/gold
+                                      color: AppColors.accentGold, // Brown-gold
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: const Color(
-                                            0xFFFFD700,
-                                          ).withOpacity(0.3),
+                                          color: AppColors.accentGold.withValues(alpha: 0.3),
                                           blurRadius: 12,
                                           spreadRadius: 2,
                                         ),
@@ -130,7 +126,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                     ),
                                     child: const Icon(
                                       Icons.camera_alt_rounded,
-                                      color: Colors.black,
+                                      color: AppColors.darkBackground,
                                       size: 28,
                                     ),
                                   ),
@@ -140,7 +136,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                     style: TextStyle(
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: AppColors.darkOnBackground,
                                       letterSpacing: 1.2,
                                     ),
                                   ),
@@ -155,7 +151,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Color(0xFFB3B3B3),
+                                  color: AppColors.textSecondary,
                                   height: 1.4,
                                   letterSpacing: 0.5,
                                 ),
@@ -172,8 +168,8 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                     context.go('/auth/email-input');
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFFD700),
-                                    foregroundColor: Colors.black,
+                                    backgroundColor: AppColors.accentGold,
+                                    foregroundColor: AppColors.darkBackground,
                                     elevation: 0,
                                     shadowColor: Colors.transparent,
                                     shape: RoundedRectangleBorder(
@@ -211,7 +207,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                   }
                                 },
                                 style: TextButton.styleFrom(
-                                  foregroundColor: const Color(0xFFB3B3B3),
+                                  foregroundColor: AppColors.textSecondary,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: AppSizes.paddingLg,
                                     vertical: AppSizes.paddingMd,
@@ -258,12 +254,12 @@ class PhoneMockup extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(48),
-        border: Border.all(color: const Color(0xFF404040), width: 8),
+        border: Border.all(color: AppColors.textSecondary, width: 8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: AppColors.darkBackground.withValues(alpha: 0.5),
             blurRadius: 30,
             spreadRadius: 5,
             offset: const Offset(0, 10),
@@ -273,7 +269,7 @@ class PhoneMockup extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),
         child: Container(
-          color: const Color(0xFF000000),
+          color: AppColors.darkBackground,
           child: Column(
             children: [
               // Status bar area
@@ -299,12 +295,12 @@ class PhoneMockup extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: const Color(0xFFFFD700),
+                              color: AppColors.accentGold,
                               width: 3,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFFD700).withOpacity(0.4),
+                                color: AppColors.accentGold.withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 spreadRadius: 2,
                               ),
@@ -313,11 +309,11 @@ class PhoneMockup extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(13),
                             child: Container(
-                              color: const Color(0xFF1A1A1A),
+                              color: AppColors.darkSurface,
                               child: const Center(
                                 child: Icon(
                                   Icons.camera_alt,
-                                  color: Color(0xFFFFD700),
+                                  color: AppColors.accentGold,
                                   size: 24,
                                 ),
                               ),
@@ -329,7 +325,7 @@ class PhoneMockup extends StatelessWidget {
                       // Regular app icons
                       return Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF404040),
+                          color: AppColors.textSecondary,
                           borderRadius: BorderRadius.circular(16),
                         ),
                       );
@@ -344,7 +340,7 @@ class PhoneMockup extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.darkOnBackground,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

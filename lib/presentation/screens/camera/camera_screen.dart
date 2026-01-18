@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_routes.dart';
 
 /// Full-screen camera interface matching memore design
 /// Features camera preview, controls, and capture functionality
@@ -102,14 +100,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.cameraBackground,
       body: SafeArea(
         child: Stack(
           children: [
             // Camera preview area (mock)
             Positioned.fill(
               child: Container(
-                color: const Color(0xFF000000),
+                color: AppColors.cameraBackground,
                 child: const Center(
                   child: Text(
                     'Camera Preview',
@@ -168,11 +166,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: _isFlashOn
-                    ? const Color(0xFF2A2A2A)
-                    : Colors.transparent,
+                color: _isFlashOn ? AppColors.darkSurface : Colors.transparent,
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF404040), width: 1),
+                border: Border.all(color: AppColors.outline, width: 1),
               ),
               child: Icon(
                 _isFlashOn ? Icons.flash_on : Icons.flash_off,
@@ -189,7 +185,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               vertical: AppSizes.paddingXs,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A),
+              color: AppColors.darkSurface,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -218,7 +214,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF404040), width: 1),
+                border: Border.all(color: AppColors.outline, width: 1),
               ),
               child: const Icon(
                 Icons.message_outlined,
@@ -235,7 +231,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   Widget _buildBottomControls() {
     return Container(
       height: 180,
-      padding: const EdgeInsets.all(AppSizes.paddingLg),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingLg,
+        vertical: AppSizes.paddingMd,
+      ),
       child: Column(
         children: [
           // Main control row
@@ -270,7 +269,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFFFFD700),
+                            color: AppColors.accentGold,
                             width: 4,
                           ),
                         ),
@@ -307,7 +306,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             ],
           ),
 
-          const SizedBox(height: AppSizes.spacingMd),
+          const SizedBox(height: AppSizes.spacingSm),
 
           // History button
           GestureDetector(
@@ -328,7 +327,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF404040),
+                      color: AppColors.outline,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -353,7 +352,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFF404040),
+              color: AppColors.outline,
               borderRadius: BorderRadius.circular(2),
             ),
           ),

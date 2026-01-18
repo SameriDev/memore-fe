@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/models/photo_model.dart';
@@ -175,7 +176,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         body: Center(
           child: CircularProgressIndicator(
             color: Color(0xFFFFD700),
@@ -185,9 +186,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(

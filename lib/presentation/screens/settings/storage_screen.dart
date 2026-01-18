@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_colors.dart';
 
 /// Storage Screen
 /// Manages app storage and cache settings
@@ -113,7 +114,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cache cleared successfully'),
-          backgroundColor: Color(0xFF10B981),
+          backgroundColor: AppColors.success,
         ),
       );
     }
@@ -123,7 +124,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -137,7 +138,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
         content: Text(
           'This will clear ${_formatSize(_cacheSize)} of cached data. Your photos and personal data will not be affected.',
           style: const TextStyle(
-            color: Color(0xFF666666),
+            color: AppColors.textSecondary,
           ),
         ),
         actions: [
@@ -146,7 +147,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             child: const Text(
               'Cancel',
               style: TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -159,7 +160,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             child: const Text(
               'Clear',
               style: TextStyle(
-                color: Color(0xFFFFD700),
+                color: AppColors.accentGold,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -173,7 +174,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -216,8 +217,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? const Color(0xFFFFD700)
-                      : const Color(0xFF666666),
+                      ? AppColors.accentGold
+                      : AppColors.textSecondary,
                   width: 2,
                 ),
               ),
@@ -228,7 +229,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                         height: 10,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFFFFD700),
+                          color: AppColors.accentGold,
                         ),
                       ),
                     )
@@ -250,7 +251,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                   Text(
                     description,
                     style: const TextStyle(
-                      color: Color(0xFF666666),
+                      color: AppColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -266,9 +267,9 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -294,7 +295,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
           child: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(
-                    color: Color(0xFFFFD700),
+                    color: AppColors.accentGold,
                   ),
                 )
               : SingleChildScrollView(
@@ -330,7 +331,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                       const Text(
                         'Storage Settings',
                         style: TextStyle(
-                          color: Color(0xFFFFD700),
+                          color: AppColors.accentGold,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
@@ -373,10 +374,10 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingLg),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF2A2A2A),
+          color: AppColors.darkSurface,
         ),
       ),
       child: Column(
@@ -396,7 +397,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
               Text(
                 '${(percentUsed * 100).toStringAsFixed(1)}%',
                 style: const TextStyle(
-                  color: Color(0xFFFFD700),
+                  color: AppColors.accentGold,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -415,7 +416,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                   Container(
                     height: 8,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A2A),
+                      color: AppColors.darkSurface,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -426,8 +427,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [
-                            Color(0xFFFFD700),
-                            Color(0xFFFFA500),
+                            AppColors.accentGold,
+                            AppColors.warning,
                           ],
                         ),
                         borderRadius: BorderRadius.circular(4),
@@ -447,14 +448,14 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
               Text(
                 '${_formatSize(_usedStorage)} used',
                 style: const TextStyle(
-                  color: Color(0xFF666666),
+                  color: AppColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
               Text(
                 '${_formatSize(_totalStorage - _usedStorage)} free',
                 style: const TextStyle(
-                  color: Color(0xFF666666),
+                  color: AppColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -469,10 +470,10 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingLg),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF2A2A2A),
+          color: AppColors.darkSurface,
         ),
       ),
       child: Column(
@@ -481,21 +482,21 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             icon: Icons.photo,
             label: 'Photos',
             size: _photosSize,
-            color: const Color(0xFFFFD700),
+            color: AppColors.accentGold,
           ),
           const SizedBox(height: AppSizes.spacingMd),
           _buildStorageItem(
             icon: Icons.cached,
             label: 'Cache',
             size: _cacheSize,
-            color: const Color(0xFF8B5CF6),
+            color: AppColors.primary,
           ),
           const SizedBox(height: AppSizes.spacingMd),
           _buildStorageItem(
             icon: Icons.storage,
             label: 'Other',
             size: _otherSize,
-            color: const Color(0xFF06B6D4),
+            color: AppColors.textSecondary,
           ),
         ],
       ),
@@ -540,7 +541,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
               Text(
                 _formatSize(size),
                 style: const TextStyle(
-                  color: Color(0xFF666666),
+                  color: AppColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -554,10 +555,10 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
   Widget _buildStorageSettings() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF2A2A2A),
+          color: AppColors.darkSurface,
         ),
       ),
       child: Column(
@@ -574,13 +575,13 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             subtitle: Text(
               _getPhotoQualityText(),
               style: const TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
             trailing: const Icon(
               Icons.chevron_right,
-              color: Color(0xFF666666),
+              color: AppColors.textSecondary,
               size: 24,
             ),
             onTap: _showPhotoQualityDialog,
@@ -598,7 +599,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             subtitle: const Text(
               'Download photos automatically',
               style: TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -608,7 +609,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                 _autoDownload = value;
               });
             },
-            activeThumbColor: const Color(0xFFFFD700),
+            activeThumbColor: AppColors.accentGold,
           ),
           _buildDivider(),
           SwitchListTile(
@@ -623,7 +624,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             subtitle: const Text(
               'Save received photos to your gallery',
               style: TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -633,7 +634,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                 _saveToCameraRoll = value;
               });
             },
-            activeThumbColor: const Color(0xFFFFD700),
+            activeThumbColor: AppColors.accentGold,
           ),
         ],
       ),
@@ -649,9 +650,9 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             ? null
             : _showClearCacheDialog,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFFD700),
+          backgroundColor: AppColors.accentGold,
           foregroundColor: Colors.black,
-          disabledBackgroundColor: const Color(0xFFFFD700).withValues(alpha: 0.5),
+          disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -683,7 +684,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
   Widget _buildDivider() {
     return Container(
       height: 1,
-      color: const Color(0xFF404040).withValues(alpha: 0.3),
+      color: AppColors.overlayDark.withValues(alpha: 0.3),
     );
   }
 

@@ -74,7 +74,7 @@ class _WidgetDemoScreenState extends State<WidgetDemoScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -356,7 +356,7 @@ class PhoneWidgetMockup extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(42),
         child: Container(
-          color: const Color(0xFF000000),
+          color: AppColors.darkBackground,
           child: Column(
             children: [
               // Status bar area

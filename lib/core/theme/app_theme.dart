@@ -5,7 +5,7 @@ import '../constants/app_sizes.dart';
 import 'text_styles.dart';
 
 /// Material Design 3 theme configuration for the memore clone app
-/// Based on memore's purple color scheme and modern Material Design principles
+/// Based on memore's brown/tan color scheme and modern Material Design principles
 class AppTheme {
   AppTheme._();
 
@@ -54,7 +54,7 @@ class AppTheme {
     );
   }
 
-  /// Light color scheme based on memore's purple theme
+  /// Light color scheme based on memore's brown/tan theme
   static const ColorScheme _lightColorScheme = ColorScheme.light(
     primary: AppColors.primary,
     onPrimary: AppColors.onPrimary,

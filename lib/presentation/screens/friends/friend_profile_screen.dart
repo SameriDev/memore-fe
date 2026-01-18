@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/models/photo_model.dart';
@@ -108,7 +109,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
   void _showOptionsMenu() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: AppColors.darkSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -127,7 +128,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFF666666),
+              color: AppColors.textSecondary,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -171,7 +172,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    Color color = Colors.white,
+    Color color = AppColors.darkOnBackground,
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
@@ -200,7 +201,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Messaging feature coming soon'),
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -213,21 +214,21 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
         title: const Text(
           'Remove Friend',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
           'Are you sure you want to remove ${_friend?.displayName ?? 'this friend'}? You won\'t be able to share photos with them anymore.',
           style: const TextStyle(
-            color: Color(0xFF666666),
+            color: AppColors.textSecondary,
           ),
         ),
         actions: [
@@ -236,7 +237,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             child: const Text(
               'Cancel',
               style: TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -249,7 +250,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             child: const Text(
               'Remove',
               style: TextStyle(
-                color: Color(0xFFEF4444),
+                color: AppColors.error,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -263,21 +264,21 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
         title: const Text(
           'Block User',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
           'Are you sure you want to block ${_friend?.displayName ?? 'this user'}? They won\'t be able to contact you or share photos with you.',
           style: const TextStyle(
-            color: Color(0xFF666666),
+            color: AppColors.textSecondary,
           ),
         ),
         actions: [
@@ -286,7 +287,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             child: const Text(
               'Cancel',
               style: TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -299,7 +300,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             child: const Text(
               'Block',
               style: TextStyle(
-                color: Color(0xFFEF4444),
+                color: AppColors.error,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -314,7 +315,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Friend removed'),
-        backgroundColor: Color(0xFF10B981),
+        backgroundColor: AppColors.success,
       ),
     );
     context.pop();
@@ -325,7 +326,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('User blocked'),
-        backgroundColor: Color(0xFFEF4444),
+        backgroundColor: AppColors.error,
       ),
     );
     context.pop();
@@ -335,10 +336,10 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         body: Center(
           child: CircularProgressIndicator(
-            color: Color(0xFFFFD700),
+            color: AppColors.accentGold,
           ),
         ),
       );
@@ -346,37 +347,37 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
 
     if (_friend == null) {
       return Scaffold(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF000000),
+          backgroundColor: AppColors.darkBackground,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: AppColors.darkOnBackground),
             onPressed: () => context.pop(),
           ),
         ),
         body: const Center(
           child: Text(
             'Friend not found',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: AppColors.darkOnBackground, fontSize: 18),
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: CustomScrollView(
         slivers: [
           // App Bar
           SliverAppBar(
-            backgroundColor: const Color(0xFF000000),
+            backgroundColor: AppColors.darkBackground,
             elevation: 0,
             pinned: true,
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back,
-                color: Colors.white,
+                color: AppColors.darkOnBackground,
                 size: 24,
               ),
               onPressed: () => context.pop(),
@@ -385,7 +386,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
               IconButton(
                 icon: const Icon(
                   Icons.more_vert,
-                  color: Colors.white,
+                  color: AppColors.darkOnBackground,
                   size: 24,
                 ),
                 onPressed: _showOptionsMenu,
@@ -409,14 +410,14 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
                 children: [
                   const Icon(
                     Icons.photo_library_outlined,
-                    color: Color(0xFFFFD700),
+                    color: AppColors.accentGold,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Shared Photos (${_sharedPhotos.length})',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.darkOnBackground,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -485,7 +486,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
               child: Text(
                 _friend!.displayName?.substring(0, 1).toUpperCase() ?? 'F',
                 style: const TextStyle(
-                  color: Colors.black,
+                  color: AppColors.darkBackground,
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                 ),
@@ -499,7 +500,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
           Text(
             _friend!.displayName ?? 'Friend',
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.darkOnBackground,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -516,8 +517,8 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
                 height: 8,
                 decoration: BoxDecoration(
                   color: _friend!.isOnline
-                      ? const Color(0xFF00FF00)
-                      : const Color(0xFF666666),
+                      ? AppColors.friendOnline
+                      : AppColors.textSecondary,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -526,8 +527,8 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
                 _friend!.isOnline ? 'Online' : 'Last seen recently',
                 style: TextStyle(
                   color: _friend!.isOnline
-                      ? const Color(0xFF00FF00)
-                      : const Color(0xFF666666),
+                      ? AppColors.friendOnline
+                      : AppColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -542,8 +543,8 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             child: ElevatedButton.icon(
               onPressed: _sendMessage,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFD700),
-                foregroundColor: Colors.black,
+                backgroundColor: AppColors.accentGold,
+                foregroundColor: AppColors.darkBackground,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(22),
@@ -572,7 +573,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
       },
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF2A2A2A),
+          color: AppColors.darkSurface,
           borderRadius: BorderRadius.circular(4),
         ),
         child: ClipRRect(
@@ -582,10 +583,10 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return Container(
-                color: const Color(0xFF2A2A2A),
+                color: AppColors.darkSurface,
                 child: const Icon(
                   Icons.image,
-                  color: Color(0xFF666666),
+                  color: AppColors.textSecondary,
                   size: 32,
                 ),
               );
@@ -598,12 +599,12 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
 
   Color _getAvatarColor() {
     final colors = [
-      const Color(0xFFFFD700), // Yellow
-      const Color(0xFF8B5CF6), // Purple
-      const Color(0xFF06B6D4), // Cyan
-      const Color(0xFFEF4444), // Red
-      const Color(0xFF10B981), // Green
-      const Color(0xFFF59E0B), // Orange
+      AppColors.accentGold, // Brown-gold
+      AppColors.primary, // SaddleBrown
+      AppColors.primaryVariant, // Sienna
+      AppColors.primaryLight, // Peru
+      AppColors.primaryDark, // DarkBrown
+      AppColors.textSecondary, // Medium brown
     ];
     final index = widget.friendId.hashCode % colors.length;
     return colors[index];

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../data/models/user_model.dart';
 
@@ -111,8 +112,8 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
             accept ? 'Friend request accepted!' : 'Friend request declined',
           ),
           backgroundColor: accept
-              ? const Color(0xFF10B981)
-              : const Color(0xFF2A2A2A),
+              ? AppColors.success
+              : AppColors.darkSurface,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -125,14 +126,14 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             size: 24,
           ),
           onPressed: () => context.pop(),
@@ -140,7 +141,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
         title: const Text(
           'Friend Requests',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.darkOnBackground,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -153,7 +154,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
           child: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(
-                    color: Color(0xFFFFD700),
+                    color: AppColors.accentGold,
                   ),
                 )
               : _pendingRequests.isEmpty
@@ -181,12 +182,12 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                   width: 100,
                   height: 100,
                   decoration: const BoxDecoration(
-                    color: Color(0xFF2A2A2A),
+                    color: AppColors.darkSurface,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.person_add_disabled,
-                    color: Color(0xFF666666),
+                    color: AppColors.textSecondary,
                     size: 48,
                   ),
                 ),
@@ -199,7 +200,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
           const Text(
             'No Friend Requests',
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.darkOnBackground,
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
@@ -211,7 +212,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
             'When someone wants to add you,\ntheir request will appear here',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF666666),
+              color: AppColors.textSecondary,
               fontSize: 14,
               height: 1.5,
             ),
@@ -226,25 +227,25 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
               vertical: 12,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
+              color: AppColors.darkSurface,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: const Color(0xFF404040),
+                color: AppColors.textSecondary,
               ),
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
-              children: const [
+              children: [
                 Icon(
                   Icons.share_outlined,
-                  color: Color(0xFFFFD700),
+                  color: AppColors.accentGold,
                   size: 20,
                 ),
                 SizedBox(width: 8),
                 Text(
                   'Share your code',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.darkOnBackground,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -260,8 +261,8 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
   Widget _buildRequestsList() {
     return RefreshIndicator(
       onRefresh: _loadFriendRequests,
-      color: const Color(0xFFFFD700),
-      backgroundColor: const Color(0xFF2A2A2A),
+      color: AppColors.accentGold,
+      backgroundColor: AppColors.darkSurface,
       child: ListView.builder(
         padding: const EdgeInsets.all(AppSizes.paddingMd),
         itemCount: _pendingRequests.length + 1,
@@ -277,13 +278,13 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFD700),
+                      color: AppColors.accentGold,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       '${_pendingRequests.length}',
                       style: const TextStyle(
-                        color: Colors.black,
+                        color: AppColors.darkBackground,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -293,7 +294,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                   const Text(
                     'Pending Requests',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.darkOnBackground,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -323,10 +324,10 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: AppSizes.spacingMd),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF2A2A2A),
+          color: AppColors.textSecondary,
         ),
       ),
       child: Padding(
@@ -349,7 +350,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                     child: Text(
                       request.from.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                       style: const TextStyle(
-                        color: Colors.black,
+                        color: AppColors.darkBackground,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -367,7 +368,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                       Text(
                         request.from.displayName ?? 'New Friend',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.darkOnBackground,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -376,7 +377,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                       Text(
                         _getTimeAgo(request.timestamp),
                         style: const TextStyle(
-                          color: Color(0xFF666666),
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -390,7 +391,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                     width: 8,
                     height: 8,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF00FF00),
+                      color: AppColors.friendOnline,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -403,13 +404,13 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
               Container(
                 padding: const EdgeInsets.all(AppSizes.paddingSm),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
+                  color: AppColors.darkBackground,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   request.message!,
                   style: const TextStyle(
-                    color: Color(0xFF666666),
+                    color: AppColors.textSecondary,
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -431,9 +432,9 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                           ? null
                           : () => _handleRequest(request.id, false),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF666666),
+                        foregroundColor: AppColors.textSecondary,
                         side: const BorderSide(
-                          color: Color(0xFF404040),
+                          color: AppColors.textSecondary,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -461,9 +462,9 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                           ? null
                           : () => _handleRequest(request.id, true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFD700),
-                        foregroundColor: Colors.black,
-                        disabledBackgroundColor: const Color(0xFFFFD700).withValues(alpha: 0.5),
+                        backgroundColor: AppColors.accentGold,
+                        foregroundColor: AppColors.darkBackground,
+                        disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -476,7 +477,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.black,
+                                  AppColors.darkBackground,
                                 ),
                               ),
                             )
@@ -517,12 +518,12 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
 
   Color _getAvatarColor(String id) {
     final colors = [
-      const Color(0xFFFFD700), // Yellow
-      const Color(0xFF8B5CF6), // Purple
-      const Color(0xFF06B6D4), // Cyan
-      const Color(0xFFEF4444), // Red
-      const Color(0xFF10B981), // Green
-      const Color(0xFFF59E0B), // Orange
+      AppColors.accentGold, // Brown-gold
+      AppColors.primary, // SaddleBrown
+      AppColors.primaryVariant, // Sienna
+      AppColors.primaryLight, // Peru
+      AppColors.primaryDark, // DarkBrown
+      AppColors.textSecondary, // Medium brown
     ];
     final index = id.hashCode % colors.length;
     return colors[index];

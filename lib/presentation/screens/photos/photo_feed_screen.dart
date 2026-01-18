@@ -89,7 +89,7 @@ class _PhotoFeedScreenState extends ConsumerState<PhotoFeedScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: Column(
           children: [

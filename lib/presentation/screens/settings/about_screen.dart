@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_colors.dart';
 
 /// About Screen
 /// Displays app information, version, and legal links
@@ -86,9 +87,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
@@ -341,7 +342,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
     return Column(
       children: [
         const Text(
-          '© 2024 Memore Inc.',
+          'Â© 2024 Memore Inc.',
           style: TextStyle(color: Color(0xFF666666), fontSize: 12),
         ),
         const SizedBox(height: 4),

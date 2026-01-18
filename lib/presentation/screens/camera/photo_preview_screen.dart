@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
 
@@ -93,7 +94,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.cameraBackground,
       body: SafeArea(
         child: Stack(
           children: [
@@ -111,7 +112,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
-                                color: const Color(0xFF2A2A2A),
+                                color: AppColors.darkSurface,
                                 child: const Icon(
                                   Icons.error_outline,
                                   color: Color(0xFF666666),
@@ -125,7 +126,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
-                                color: const Color(0xFF2A2A2A),
+                                color: AppColors.darkSurface,
                                 child: const Icon(
                                   Icons.error_outline,
                                   color: Color(0xFF666666),
@@ -222,12 +223,12 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                       // Caption input
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A).withValues(alpha: 0.8),
+                          color: AppColors.darkSurface.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: _isKeyboardVisible
-                                ? const Color(0xFFFFD700)
-                                : const Color(0xFF404040),
+                                ? AppColors.accentGold
+                                : AppColors.outline,
                             width: 2,
                           ),
                         ),
@@ -243,7 +244,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                           decoration: const InputDecoration(
                             hintText: 'Add a caption...',
                             hintStyle: TextStyle(
-                              color: Color(0xFF666666),
+                              color: AppColors.textSecondary,
                               fontSize: 16,
                             ),
                             border: InputBorder.none,
@@ -266,7 +267,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   side: const BorderSide(
-                                    color: Color(0xFF404040),
+                                    color: AppColors.outline,
                                     width: 2,
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -304,7 +305,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                               child: ElevatedButton(
                                 onPressed: _continueToFriendSelect,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFFD700),
+                                  backgroundColor: AppColors.accentGold,
                                   foregroundColor: Colors.black,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(

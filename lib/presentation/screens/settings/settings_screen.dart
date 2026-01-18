@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_routes.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../data/models/user_model.dart';
 
 /// Enhanced Settings Screen for app preferences and account management
@@ -49,9 +50,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     final currentUser = MockUsers.currentUser;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
@@ -187,9 +188,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingLg),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF2A2A2A), width: 1),
+        border: Border.all(color: AppColors.darkSurface, width: 1),
       ),
       child: Row(
         children: [
@@ -198,9 +199,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: const Color(0xFFFFD700),
+              color: AppColors.accentGold,
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: const Color(0xFF2A2A2A), width: 2),
+              border: Border.all(color: AppColors.darkSurface, width: 2),
             ),
             child: Center(
               child: Text(
@@ -233,7 +234,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 Text(
                   user.phoneNumber,
                   style: const TextStyle(
-                    color: Color(0xFF666666),
+                    color: AppColors.textSecondary,
                     fontSize: 14,
                   ),
                 ),
@@ -245,8 +246,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       height: 8,
                       decoration: BoxDecoration(
                         color: user.isOnline
-                            ? const Color(0xFF00FF00)
-                            : const Color(0xFF666666),
+                            ? AppColors.success
+                            : AppColors.textSecondary,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -255,8 +256,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       user.isOnline ? 'Online' : 'Offline',
                       style: TextStyle(
                         color: user.isOnline
-                            ? const Color(0xFF00FF00)
-                            : const Color(0xFF666666),
+                            ? AppColors.success
+                            : AppColors.textSecondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -272,7 +273,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             onPressed: () => _navigateToProfileEdit(),
             icon: const Icon(
               Icons.edit_outlined,
-              color: Color(0xFFFFD700),
+              color: AppColors.accentGold,
               size: 24,
             ),
           ),
@@ -288,7 +289,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFFFFD700),
+            color: AppColors.accentGold,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -296,9 +297,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         const SizedBox(height: AppSizes.spacingMd),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A),
+            color: AppColors.darkSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF2A2A2A), width: 1),
+            border: Border.all(color: AppColors.darkSurface, width: 1),
           ),
           child: Column(children: children),
         ),
@@ -317,7 +318,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         horizontal: AppSizes.paddingMd,
         vertical: AppSizes.paddingSm,
       ),
-      leading: Icon(icon, color: const Color(0xFFFFD700), size: 24),
+      leading: Icon(icon, color: AppColors.accentGold, size: 24),
       title: Text(
         title,
         style: const TextStyle(
@@ -328,11 +329,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(color: Color(0xFF666666), fontSize: 14),
+        style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
       ),
       trailing: const Icon(
         Icons.chevron_right,
-        color: Color(0xFF666666),
+        color: AppColors.textSecondary,
         size: 20,
       ),
       onTap: onTap,
@@ -351,7 +352,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         horizontal: AppSizes.paddingMd,
         vertical: AppSizes.paddingSm,
       ),
-      leading: Icon(icon, color: const Color(0xFFFFD700), size: 24),
+      leading: Icon(icon, color: AppColors.accentGold, size: 24),
       title: Text(
         title,
         style: const TextStyle(
@@ -362,15 +363,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(color: Color(0xFF666666), fontSize: 14),
+        style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
       ),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: const Color(0xFFFFD700),
-        activeTrackColor: const Color(0xFFFFD700).withOpacity(0.3),
-        inactiveTrackColor: const Color(0xFF2A2A2A),
-        inactiveThumbColor: const Color(0xFF666666),
+        activeColor: AppColors.accentGold,
+        activeTrackColor: AppColors.accentGold.withOpacity(0.3),
+        inactiveTrackColor: AppColors.darkSurface,
+        inactiveThumbColor: AppColors.textSecondary,
       ),
     );
   }
@@ -380,16 +381,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       width: double.infinity,
       height: 52,
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF404040), width: 1),
+        border: Border.all(color: AppColors.outline, width: 1),
       ),
       child: TextButton(
         onPressed: () => _showSignOutDialog(),
         child: const Text(
           'Sign Out',
           style: TextStyle(
-            color: Color(0xFFEF4444),
+            color: AppColors.error,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -454,7 +455,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   void _showDownloadOptions() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: AppColors.darkSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -468,7 +469,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFF666666),
+                color: AppColors.textSecondary,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -486,7 +487,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 
             const Text(
               'Configure how photos are downloaded and stored',
-              style: TextStyle(color: Color(0xFF666666), fontSize: 14),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
             ),
             const SizedBox(height: AppSizes.spacingXl),
           ],
@@ -498,7 +499,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   void _showTermsAndPrivacy() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: AppColors.darkSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -511,7 +512,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFF666666),
+                color: AppColors.textSecondary,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -532,7 +533,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 'Terms of Service',
                 style: TextStyle(color: Colors.white),
               ),
-              trailing: const Icon(Icons.open_in_new, color: Color(0xFFFFD700)),
+              trailing: const Icon(Icons.open_in_new, color: AppColors.accentGold),
               onTap: () {},
             ),
             ListTile(
@@ -540,7 +541,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 'Privacy Policy',
                 style: TextStyle(color: Colors.white),
               ),
-              trailing: const Icon(Icons.open_in_new, color: Color(0xFFFFD700)),
+              trailing: const Icon(Icons.open_in_new, color: AppColors.accentGold),
               onTap: () {},
             ),
 
@@ -555,7 +556,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: const Text(
           'Sign Out',
@@ -563,7 +564,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         ),
         content: const Text(
           'Are you sure you want to sign out?',
-          style: TextStyle(color: Color(0xFF666666)),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
@@ -571,7 +572,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             child: const Text(
               'Cancel',
               style: TextStyle(
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -584,7 +585,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             child: const Text(
               'Sign Out',
               style: TextStyle(
-                color: Color(0xFFEF4444),
+                color: AppColors.error,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -598,7 +599,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(
           feature,
@@ -609,7 +610,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         ),
         content: const Text(
           'This feature is coming soon!',
-          style: TextStyle(color: Color(0xFF666666)),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
@@ -617,7 +618,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             child: const Text(
               'OK',
               style: TextStyle(
-                color: Color(0xFFFFD700),
+                color: AppColors.accentGold,
                 fontWeight: FontWeight.w600,
               ),
             ),

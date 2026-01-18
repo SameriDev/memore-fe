@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../data/models/photo_model.dart';
 import '../../../data/models/user_model.dart';
 import '../../widgets/comment_bottom_sheet.dart';
@@ -150,11 +151,11 @@ class _PhotoViewScreenState extends ConsumerState<PhotoViewScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildReactionOption('❤️', 'Love'),
-              _buildReactionOption('😂', 'Haha'),
-              _buildReactionOption('😮', 'Wow'),
-              _buildReactionOption('😢', 'Sad'),
-              _buildReactionOption('👍', 'Like'),
+              _buildReactionOption('â¤ï¸', 'Love'),
+              _buildReactionOption('ðŸ˜‚', 'Haha'),
+              _buildReactionOption('ðŸ˜®', 'Wow'),
+              _buildReactionOption('ðŸ˜¢', 'Sad'),
+              _buildReactionOption('ðŸ‘', 'Like'),
             ],
           ),
 
@@ -429,7 +430,7 @@ class _PhotoViewScreenState extends ConsumerState<PhotoViewScreen>
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Color(0xFF000000),
+        backgroundColor: AppColors.darkBackground,
         body: Center(
           child: CircularProgressIndicator(
             color: Color(0xFFFFD700),
@@ -439,7 +440,7 @@ class _PhotoViewScreenState extends ConsumerState<PhotoViewScreen>
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: Stack(

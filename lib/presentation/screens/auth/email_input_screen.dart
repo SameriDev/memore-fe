@@ -92,7 +92,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: AppColors.darkBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSizes.paddingLg),
@@ -107,12 +107,12 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
+                        color: AppColors.darkSurface,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Colors.white,
+                        color: AppColors.darkOnBackground,
                         size: 20,
                       ),
                     ),
@@ -144,7 +144,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.darkOnBackground,
                           height: 1.2,
                         ),
                       ),
@@ -154,11 +154,11 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                       // Email input field
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: AppColors.darkSurface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _emailFocusNode.hasFocus
-                                ? const Color(0xFFFFD700)
+                                ? AppColors.accentGold
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -170,14 +170,14 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => _continueWithEmail(),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.darkOnBackground,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
                           decoration: const InputDecoration(
                             hintText: 'Email address',
                             hintStyle: TextStyle(
-                              color: Color(0xFF666666),
+                              color: AppColors.textSecondary,
                               fontSize: 16,
                             ),
                             border: InputBorder.none,
@@ -193,7 +193,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                         textAlign: TextAlign.center,
                         text: const TextSpan(
                           style: TextStyle(
-                            color: Color(0xFF666666),
+                            color: AppColors.textSecondary,
                             fontSize: 12,
                             height: 1.4,
                           ),
@@ -205,7 +205,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                             TextSpan(
                               text: 'Terms of Service',
                               style: TextStyle(
-                                color: Color(0xFFFFD700),
+                                color: AppColors.accentGold,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -213,7 +213,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                             TextSpan(
                               text: 'Privacy Policy',
                               style: TextStyle(
-                                color: Color(0xFFFFD700),
+                                color: AppColors.accentGold,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -237,11 +237,11 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidEmail
-                        ? const Color(0xFFFFD700)
-                        : const Color(0xFF404040),
+                        ? AppColors.accentGold
+                        : AppColors.textSecondary,
                     foregroundColor: _isValidEmail
-                        ? Colors.black
-                        : const Color(0xFF666666),
+                        ? AppColors.darkBackground
+                        : AppColors.textSecondary,
                     elevation: 0,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -255,7 +255,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.black,
+                              AppColors.darkBackground,
                             ),
                           ),
                         )
@@ -268,8 +268,8 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: _isValidEmail
-                                    ? Colors.black
-                                    : const Color(0xFF666666),
+                                    ? AppColors.darkBackground
+                                    : AppColors.textSecondary,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -277,8 +277,8 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                               Icons.arrow_forward,
                               size: 20,
                               color: _isValidEmail
-                                  ? Colors.black
-                                  : const Color(0xFF666666),
+                                  ? AppColors.darkBackground
+                                  : AppColors.textSecondary,
                             ),
                           ],
                         ),
