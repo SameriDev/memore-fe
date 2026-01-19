@@ -219,7 +219,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.accentGold,
+                          color: AppColors.primary,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(

@@ -158,7 +158,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _emailFocusNode.hasFocus
-                                ? AppColors.accentGold
+                                ? AppColors.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -205,7 +205,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                             TextSpan(
                               text: 'Terms of Service',
                               style: TextStyle(
-                                color: AppColors.accentGold,
+                                color: AppColors.primary,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -213,7 +213,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                             TextSpan(
                               text: 'Privacy Policy',
                               style: TextStyle(
-                                color: AppColors.accentGold,
+                                color: AppColors.primary,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -237,7 +237,7 @@ class _EmailInputScreenState extends ConsumerState<EmailInputScreen>
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidEmail
-                        ? AppColors.accentGold
+                        ? AppColors.primary
                         : AppColors.textSecondary,
                     foregroundColor: _isValidEmail
                         ? AppColors.darkBackground

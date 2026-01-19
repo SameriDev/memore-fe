@@ -7,9 +7,9 @@ import '../../../core/constants/app_routes.dart';
 import '../../../data/models/user_model.dart';
 import '../../../providers/auth_provider.dart';
 
-/// Main screen with bottom navigation
+/// Main screen with side navigation drawer
 /// Serves as the primary entry point after authentication
-/// Contains camera, friends, and settings tabs
+/// Contains navigation menu with photos, friends, messages, and settings
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
@@ -17,357 +17,299 @@ class MainScreen extends ConsumerStatefulWidget {
   ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends ConsumerState<MainScreen>
-    with SingleTickerProviderStateMixin {
-  late PageController _pageController;
-  late AnimationController _animationController;
-  int _currentIndex = 1; // Start with camera tab (center)
+class _MainScreenState extends ConsumerState<MainScreen> {
+  int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const FriendsListScreenContent(), // Friends tab
-    const CameraScreenContent(), // Camera tab (main)
-    const SettingsScreenContent(), // Settings tab
+    const PhotoFeedScreenContent(), // Photos feed
+    const FriendsListScreenContent(), // Friends
+    const MessagesScreenContent(), // Messages
+    const SettingsScreenContent(), // Settings
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(initialPage: _currentIndex);
-    _setupAnimations();
-  }
-
-  void _setupAnimations() {
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
+  final List<String> _titles = [
+    'Photos',
+    'Friends',
+    'Messages',
+    'Settings',
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top navigation bar
-            Container(
-              height: 80,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingMd,
-                vertical: AppSizes.paddingXs,
-              ),
-              child: _buildTopNavigationBar(),
+      appBar: AppBar(
+        title: Text(_titles[_selectedIndex]),
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.onBackground,
+        elevation: 0,
+        actions: [
+          if (_selectedIndex == 0) // Show camera icon only on photos page
+            IconButton(
+              icon: const Icon(Icons.camera_alt),
+              onPressed: () {
+                context.push(AppRoutes.camera);
+              },
             ),
-
-            // Main content with PageView
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                children: _screens,
-              ),
-            ),
-
-            // Bottom navigation bar
-            _buildBottomNavigationBar(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTopNavigationBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Settings/Profile button (left)
-        GestureDetector(
-          onTap: () => _onTabTapped(2), // Settings tab
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: _currentIndex == 2
-                  ? const Color(0xFF2A2A2A)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-              border: _currentIndex == 2
-                  ? null
-                  : Border.all(color: const Color(0xFF404040)),
-            ),
-            child: const Icon(
-              Icons.person_outline,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-        ),
-
-        // Center - App title or friend count
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSizes.paddingMd,
-            vertical: AppSizes.paddingXs,
-          ),
-          decoration: BoxDecoration(
-            color: const Color(0xFF2A2A2A),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.people_outline, color: Colors.white, size: 16),
-              const SizedBox(width: 6),
-              Text(
-                _currentIndex == 0 ? 'Friends' : '1 Friend',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Messages button (right)
-        GestureDetector(
-          onTap: () {
-            context.push(AppRoutes.messages);
-          },
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF404040)),
-            ),
-            child: const Icon(
-              Icons.message_outlined,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      height: 100,
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingLg),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          // Gallery/Grid button
-          _buildNavButton(
-            icon: Icons.grid_view_rounded,
-            isActive: _currentIndex == 0,
-            onTap: () => _onTabTapped(0),
-          ),
-
-          // Camera capture button (center)
-          _buildCameraButton(),
-
-          // Switch camera button
-          _buildNavButton(
-            icon: Icons.cameraswitch_outlined,
-            isActive: false,
-            onTap: () {
-              // Handle camera switch
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              // Handle search
             },
+          ),
+        ],
+      ),
+      drawer: _buildDrawer(),
+      body: _screens[_selectedIndex],
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: Column(
+        children: [
+          // Drawer header
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Consumer(
+                  builder: (context, ref, child) {
+                    final user = ref.watch(currentUserProvider);
+                    return CircleAvatar(
+                      radius: 30,
+                      backgroundColor: AppColors.onPrimary,
+                      child: Text(
+                        user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final user = ref.watch(currentUserProvider);
+                    return Text(
+                      user?.displayName ?? 'User',
+                      style: const TextStyle(
+                        color: AppColors.onPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  },
+                ),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final user = ref.watch(currentUserProvider);
+                    return Text(
+                      user?.phoneNumber ?? '+1234567890',
+                      style: TextStyle(
+                        color: AppColors.onPrimary.withOpacity(0.8),
+                        fontSize: 14,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Drawer menu items
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(
+                  icon: Icons.photo_library,
+                  title: 'Photos',
+                  isSelected: _selectedIndex == 0,
+                  onTap: () => _onDrawerItemSelected(0),
+                ),
+                _buildDrawerItem(
+                  icon: Icons.people,
+                  title: 'Friends',
+                  isSelected: _selectedIndex == 1,
+                  onTap: () => _onDrawerItemSelected(1),
+                ),
+                _buildDrawerItem(
+                  icon: Icons.message,
+                  title: 'Messages',
+                  isSelected: _selectedIndex == 2,
+                  onTap: () => _onDrawerItemSelected(2),
+                ),
+                _buildDrawerItem(
+                  icon: Icons.settings,
+                  title: 'Settings',
+                  isSelected: _selectedIndex == 3,
+                  onTap: () => _onDrawerItemSelected(3),
+                ),
+                const Divider(),
+                _buildDrawerItem(
+                  icon: Icons.help_outline,
+                  title: 'Help & Support',
+                  isSelected: false,
+                  onTap: () {
+                    // Handle help
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.feedback_outlined,
+                  title: 'Send Feedback',
+                  isSelected: false,
+                  onTap: () {
+                    // Handle feedback
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Sign out button
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton.icon(
+              onPressed: _showSignOutDialog,
+              icon: const Icon(Icons.logout),
+              label: const Text('Sign Out'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.error,
+                foregroundColor: AppColors.onError,
+                minimumSize: const Size(double.infinity, 48),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildNavButton({
+  Widget _buildDrawerItem({
     required IconData icon,
-    required bool isActive,
+    required String title,
+    required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          color: isActive ? Colors.black : Colors.white,
-          size: 24,
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? AppColors.primary : AppColors.onSurface,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
+      selected: isSelected,
+      selectedColor: AppColors.primary,
+      onTap: onTap,
     );
   }
 
-  Widget _buildCameraButton() {
-    return GestureDetector(
-      onTap: () {
-        // Handle photo capture
-        context.push(AppRoutes.camera);
-      },
-      child: Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFFFD700), width: 4),
-        ),
-        child: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
+  void _onDrawerItemSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    Navigator.pop(context); // Close the drawer
+  }
+
+  void _showSignOutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
-        ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Handle sign out
+              context.go(AppRoutes.welcome);
+            },
+            child: Text(
+              'Sign Out',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// Camera screen content
-class CameraScreenContent extends StatelessWidget {
-  const CameraScreenContent({super.key});
+/// Photo feed screen content
+class PhotoFeedScreenContent extends StatelessWidget {
+  const PhotoFeedScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.darkBackground,
+      color: AppColors.background,
       child: Column(
         children: [
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Mock camera preview area
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A2A),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: const Color(0xFF404040),
-                        width: 2,
-                      ),
-                    ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.camera_alt_outlined,
-                            color: Color(0xFF666666),
-                            size: 48,
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            'Camera preview',
-                            style: TextStyle(
-                              color: Color(0xFF666666),
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Take a photo to share with friends',
-                            style: TextStyle(
-                              color: Color(0xFF444444),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Flash and timer controls
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildControlButton(Icons.flash_off, 'Auto'),
-                      const SizedBox(width: 32),
-                      _buildControlButton(Icons.timer, '1x'),
-                    ],
-                  ),
-                ],
-              ),
+          // Quick stats
+          Container(
+            padding: const EdgeInsets.all(AppSizes.paddingMd),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatCard('Photos', '128', Icons.photo),
+                _buildStatCard('Shared', '42', Icons.share),
+                _buildStatCard('Friends', '8', Icons.people),
+              ],
             ),
           ),
 
-          // History button
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSizes.paddingLg),
-            child: GestureDetector(
-              onTap: () {
-                // Navigate to photo history
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.paddingMd,
-                  vertical: AppSizes.paddingXs,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF404040),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'History',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+          const SizedBox(height: AppSizes.spacingMd),
+
+          // Photo grid
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(AppSizes.paddingMd),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: AppSizes.spacingXs,
+                mainAxisSpacing: AppSizes.spacingXs,
               ),
+              itemCount: 9, // Mock data
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceVariant,
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusSm),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusSm),
+                    child: Image.network(
+                      'https://picsum.photos/seed/${index + 1}/300/300',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: AppColors.surface,
+                          child: const Icon(
+                            Icons.broken_image,
+                            color: AppColors.onSurfaceVariant,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -375,25 +317,42 @@ class CameraScreenContent extends StatelessWidget {
     );
   }
 
-  Widget _buildControlButton(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF404040)),
+  Widget _buildStatCard(String title, String value, IconData icon) {
+    return Container(
+      width: 100,
+      padding: const EdgeInsets.all(AppSizes.paddingSm),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusMd),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black25,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-          child: Icon(icon, color: Colors.white, size: 20),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(color: Color(0xFF666666), fontSize: 12),
-        ),
-      ],
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: AppColors.primary, size: 24),
+          const SizedBox(height: AppSizes.spacingXs),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.onSurface,
+            ),
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -405,7 +364,7 @@ class FriendsListScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.darkBackground,
+      color: AppColors.background,
       padding: const EdgeInsets.all(AppSizes.paddingMd),
       child: Column(
         children: [
@@ -415,7 +374,7 @@ class FriendsListScreenContent extends StatelessWidget {
               const Text(
                 'Friends',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.onBackground,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -425,12 +384,34 @@ class FriendsListScreenContent extends StatelessWidget {
                 onPressed: () {
                   context.push(AppRoutes.addFriend);
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.person_add_outlined,
-                  color: Colors.white,
+                  color: AppColors.primary,
                 ),
               ),
             ],
+          ),
+
+          const SizedBox(height: AppSizes.spacingMd),
+
+          // Search bar
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingXs),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search friends...',
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: AppColors.onSurfaceVariant,
+                ),
+                filled: true,
+                fillColor: AppColors.surface,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.borderRadiusMd),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
           ),
 
           const SizedBox(height: AppSizes.spacingMd),
@@ -453,6 +434,10 @@ class FriendsListScreenContent extends StatelessWidget {
   Widget _buildFriendTile(UserModel friend, BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSizes.spacingSm),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusMd),
+      ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSizes.paddingMd,
@@ -460,11 +445,11 @@ class FriendsListScreenContent extends StatelessWidget {
         ),
         leading: CircleAvatar(
           radius: 24,
-          backgroundColor: const Color(0xFFFFD700),
+          backgroundColor: AppColors.primary,
           child: Text(
             friend.displayName?.substring(0, 1).toUpperCase() ?? 'F',
             style: const TextStyle(
-              color: Colors.black,
+              color: AppColors.onPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -472,18 +457,158 @@ class FriendsListScreenContent extends StatelessWidget {
         title: Text(
           friend.displayName ?? 'Friend',
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.onSurface,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
         ),
-        subtitle: const Text(
-          'Online',
-          style: TextStyle(color: Color(0xFF00FF00), fontSize: 12),
+        subtitle: Text(
+          'Last seen recently',
+          style: TextStyle(
+            color: AppColors.onSurfaceVariant,
+            fontSize: 12,
+          ),
         ),
-        trailing: const Icon(Icons.chevron_right, color: Color(0xFF666666)),
+        trailing: Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: AppColors.friendOnline,
+            shape: BoxShape.circle,
+          ),
+        ),
         onTap: () {
           context.push('${AppRoutes.friends}/profile?friendId=${friend.id}');
+        },
+      ),
+    );
+  }
+}
+
+/// Messages screen content
+class MessagesScreenContent extends StatelessWidget {
+  const MessagesScreenContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.background,
+      padding: const EdgeInsets.all(AppSizes.paddingMd),
+      child: Column(
+        children: [
+          // Messages header
+          Row(
+            children: [
+              const Text(
+                'Messages',
+                style: TextStyle(
+                  color: AppColors.onBackground,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              IconButton(
+                onPressed: () {
+                  // Handle new message
+                },
+                icon: Icon(
+                  Icons.edit_outlined,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: AppSizes.spacingMd),
+
+          // Mock conversations list
+          Expanded(
+            child: ListView.builder(
+              itemCount: MockUsers.sampleFriends.length,
+              itemBuilder: (context, index) {
+                final friend = MockUsers.sampleFriends[index];
+                return _buildConversationTile(friend, context);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConversationTile(UserModel friend, BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSizes.spacingSm),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusMd),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingMd,
+          vertical: AppSizes.paddingXs,
+        ),
+        leading: CircleAvatar(
+          radius: 24,
+          backgroundColor: AppColors.primary,
+          child: Text(
+            friend.displayName?.substring(0, 1).toUpperCase() ?? 'F',
+            style: const TextStyle(
+              color: AppColors.onPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        title: Text(
+          friend.displayName ?? 'Friend',
+          style: const TextStyle(
+            color: AppColors.onSurface,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          'Hey there! How are you doing?',
+          style: TextStyle(
+            color: AppColors.onSurfaceVariant,
+            fontSize: 14,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              '10:30 AM',
+              style: TextStyle(
+                color: AppColors.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Center(
+                child: Text(
+                  '3',
+                  style: TextStyle(
+                    color: AppColors.onPrimary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          context.push('${AppRoutes.messages}/chat?userId=${friend.id}&userName=${friend.displayName}');
         },
       ),
     );
@@ -497,7 +622,7 @@ class SettingsScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.darkBackground,
+      color: AppColors.background,
       padding: const EdgeInsets.all(AppSizes.paddingMd),
       child: Column(
         children: [
@@ -505,26 +630,26 @@ class SettingsScreenContent extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppSizes.paddingMd),
             decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A),
-              borderRadius: BorderRadius.circular(12),
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppSizes.borderRadiusMd),
             ),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: const Color(0xFFFFD700),
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      final user = ref.watch(currentUserProvider);
-                      return Text(
+                Consumer(
+                  builder: (context, ref, child) {
+                    final user = ref.watch(currentUserProvider);
+                    return CircleAvatar(
+                      radius: 30,
+                      backgroundColor: AppColors.primary,
+                      child: Text(
                         user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: AppColors.onPrimary,
                           fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(width: AppSizes.spacingMd),
                 Expanded(
@@ -537,7 +662,7 @@ class SettingsScreenContent extends StatelessWidget {
                           return Text(
                             user?.displayName ?? 'User',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.onSurface,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
@@ -549,8 +674,8 @@ class SettingsScreenContent extends StatelessWidget {
                           final user = ref.watch(currentUserProvider);
                           return Text(
                             user?.phoneNumber ?? '+1234567890',
-                            style: const TextStyle(
-                              color: Color(0xFF666666),
+                            style: TextStyle(
+                              color: AppColors.onSurfaceVariant,
                               fontSize: 14,
                             ),
                           );
@@ -559,7 +684,15 @@ class SettingsScreenContent extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: Color(0xFF666666)),
+                IconButton(
+                  onPressed: () {
+                    context.push('${AppRoutes.settings}/edit');
+                  },
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    color: AppColors.primary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -570,6 +703,13 @@ class SettingsScreenContent extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
+                _buildSettingsTile(
+                  icon: Icons.account_circle_outlined,
+                  title: 'Account',
+                  onTap: () {
+                    context.push('${AppRoutes.settings}/profile');
+                  },
+                ),
                 _buildSettingsTile(
                   icon: Icons.notifications_outlined,
                   title: 'Notifications',
@@ -598,15 +738,6 @@ class SettingsScreenContent extends StatelessWidget {
                     context.push('${AppRoutes.settings}/about');
                   },
                 ),
-                const SizedBox(height: AppSizes.spacingLg),
-                _buildSettingsTile(
-                  icon: Icons.logout,
-                  title: 'Sign Out',
-                  isDestructive: true,
-                  onTap: () {
-                    _showSignOutDialog(context);
-                  },
-                ),
               ],
             ),
           ),
@@ -619,10 +750,13 @@ class SettingsScreenContent extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    bool isDestructive = false,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSizes.spacingXs),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusMd),
+      ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSizes.paddingMd,
@@ -630,49 +764,21 @@ class SettingsScreenContent extends StatelessWidget {
         ),
         leading: Icon(
           icon,
-          color: isDestructive ? Colors.red : Colors.white,
-          size: 24,
+          color: AppColors.primary,
         ),
         title: Text(
           title,
-          style: TextStyle(
-            color: isDestructive ? Colors.red : Colors.white,
+          style: const TextStyle(
+            color: AppColors.onSurface,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
         ),
-        trailing: isDestructive
-            ? null
-            : const Icon(Icons.chevron_right, color: Color(0xFF666666)),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  void _showSignOutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
-        title: const Text('Sign Out', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'Are you sure you want to sign out?',
-          style: TextStyle(color: Color(0xFFB3B3B3)),
+        trailing: Icon(
+          Icons.chevron_right,
+          color: AppColors.onSurfaceVariant,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Handle sign out
-              context.go(AppRoutes.welcome);
-            },
-            child: const Text('Sign Out', style: TextStyle(color: Colors.red)),
-          ),
-        ],
+        onTap: onTap,
       ),
     );
   }

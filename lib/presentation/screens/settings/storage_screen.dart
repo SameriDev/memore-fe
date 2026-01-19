@@ -160,7 +160,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             child: const Text(
               'Clear',
               style: TextStyle(
-                color: AppColors.accentGold,
+                color: AppColors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -217,7 +217,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? AppColors.accentGold
+                      ? AppColors.primary
                       : AppColors.textSecondary,
                   width: 2,
                 ),
@@ -229,7 +229,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                         height: 10,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.accentGold,
+                          color: AppColors.primary,
                         ),
                       ),
                     )
@@ -295,7 +295,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
           child: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(
-                    color: AppColors.accentGold,
+                    color: AppColors.primary,
                   ),
                 )
               : SingleChildScrollView(
@@ -331,7 +331,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                       const Text(
                         'Storage Settings',
                         style: TextStyle(
-                          color: AppColors.accentGold,
+                          color: AppColors.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
@@ -397,7 +397,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
               Text(
                 '${(percentUsed * 100).toStringAsFixed(1)}%',
                 style: const TextStyle(
-                  color: AppColors.accentGold,
+                  color: AppColors.primary,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -427,7 +427,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [
-                            AppColors.accentGold,
+                            AppColors.primary,
                             AppColors.warning,
                           ],
                         ),
@@ -482,7 +482,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             icon: Icons.photo,
             label: 'Photos',
             size: _photosSize,
-            color: AppColors.accentGold,
+            color: AppColors.primary,
           ),
           const SizedBox(height: AppSizes.spacingMd),
           _buildStorageItem(
@@ -609,7 +609,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                 _autoDownload = value;
               });
             },
-            activeThumbColor: AppColors.accentGold,
+            activeThumbColor: AppColors.primary,
           ),
           _buildDivider(),
           SwitchListTile(
@@ -634,7 +634,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
                 _saveToCameraRoll = value;
               });
             },
-            activeThumbColor: AppColors.accentGold,
+            activeThumbColor: AppColors.primary,
           ),
         ],
       ),
@@ -650,9 +650,9 @@ class _StorageScreenState extends ConsumerState<StorageScreen>
             ? null
             : _showClearCacheDialog,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accentGold,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.black,
-          disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
+          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

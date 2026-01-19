@@ -101,11 +101,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         width: 120,
                         height: 120,
                         decoration: BoxDecoration(
-                          color: AppColors.accentGold,
+                          color: AppColors.primary,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.accentGold.withValues(alpha: 0.3),
+                              color: AppColors.primary.withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 5,
                             ),
@@ -166,7 +166,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         child: ElevatedButton(
                           onPressed: _navigateToSignIn,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentGold,
+                            backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.darkBackground,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -234,7 +234,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                             child: const Text(
                               'Terms of Service',
                               style: TextStyle(
-                                color: AppColors.accentGold,
+                                color: AppColors.primary,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,
@@ -255,7 +255,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                             child: const Text(
                               'Privacy Policy',
                               style: TextStyle(
-                                color: AppColors.accentGold,
+                                color: AppColors.primary,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,

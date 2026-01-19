@@ -114,11 +114,11 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: AppColors.accentGold, // Brown-gold
+                                      color: AppColors.primary, // Modern blue
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColors.accentGold.withValues(alpha: 0.3),
+                                          color: AppColors.primary.withValues(alpha: 0.3),
                                           blurRadius: 12,
                                           spreadRadius: 2,
                                         ),
@@ -168,7 +168,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                                     context.go('/auth/email-input');
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.accentGold,
+                                    backgroundColor: AppColors.primary,
                                     foregroundColor: AppColors.darkBackground,
                                     elevation: 0,
                                     shadowColor: Colors.transparent,
@@ -295,12 +295,12 @@ class PhoneMockup extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: AppColors.accentGold,
+                              color: AppColors.primary,
                               width: 3,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.accentGold.withValues(alpha: 0.4),
+                                color: AppColors.primary.withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 spreadRadius: 2,
                               ),
@@ -313,7 +313,7 @@ class PhoneMockup extends StatelessWidget {
                               child: const Center(
                                 child: Icon(
                                   Icons.camera_alt,
-                                  color: AppColors.accentGold,
+                                  color: AppColors.primary,
                                   size: 24,
                                 ),
                               ),

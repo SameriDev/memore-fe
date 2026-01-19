@@ -198,7 +198,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
             child: Text(
               _selectAll ? 'Deselect All' : 'Select All',
               style: const TextStyle(
-                color: AppColors.accentGold,
+                color: AppColors.primary,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -221,7 +221,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _searchFocusNode.hasFocus
-                          ? AppColors.accentGold
+                          ? AppColors.primary
                           : Colors.transparent,
                       width: 2,
                     ),
@@ -272,7 +272,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                     child: Text(
                       '${_selectedFriendIds.length} friend${_selectedFriendIds.length > 1 ? 's' : ''} selected',
                       style: const TextStyle(
-                        color: AppColors.accentGold,
+                        color: AppColors.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -327,9 +327,9 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                           ? null
                           : _sendPhoto,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentGold,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.black,
-                        disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
+                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -417,12 +417,12 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
       margin: const EdgeInsets.only(bottom: AppSizes.spacingSm),
       decoration: BoxDecoration(
         color: isSelected
-            ? AppColors.accentGold.withValues(alpha: 0.1)
+            ? AppColors.primary.withValues(alpha: 0.1)
             : AppColors.darkSurface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isSelected
-              ? AppColors.accentGold
+              ? AppColors.primary
               : AppColors.outline,
           width: isSelected ? 2 : 1,
         ),
@@ -454,7 +454,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
                   width: 20,
                   height: 20,
                   decoration: const BoxDecoration(
-                    color: AppColors.accentGold,
+                    color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -491,7 +491,7 @@ class _FriendSelectScreenState extends ConsumerState<FriendSelectScreen>
 
   Color _getAvatarColor(String id) {
     final colors = [
-      AppColors.accentGold, // Brown-gold
+      AppColors.primary, // Modern blue
       const Color(0xFF8B5CF6), // Purple
       const Color(0xFF06B6D4), // Cyan
       const Color(0xFFEF4444), // Red

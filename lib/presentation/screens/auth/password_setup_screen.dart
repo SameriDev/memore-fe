@@ -161,7 +161,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _passwordFocusNode.hasFocus
-                                ? AppColors.accentGold
+                                ? AppColors.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -220,7 +220,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                             style: TextStyle(
                               color: _isValidPassword
                                   ? AppColors.success
-                                  : AppColors.accentGold,
+                                  : AppColors.primary,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -244,7 +244,7 @@ class _PasswordSetupScreenState extends ConsumerState<PasswordSetupScreen>
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidPassword
-                        ? AppColors.accentGold
+                        ? AppColors.primary
                         : AppColors.textSecondary,
                     foregroundColor: _isValidPassword
                         ? AppColors.darkBackground

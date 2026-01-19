@@ -154,7 +154,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
           child: _isLoading
               ? const Center(
                   child: CircularProgressIndicator(
-                    color: AppColors.accentGold,
+                    color: AppColors.primary,
                   ),
                 )
               : _pendingRequests.isEmpty
@@ -238,7 +238,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
               children: [
                 Icon(
                   Icons.share_outlined,
-                  color: AppColors.accentGold,
+                  color: AppColors.primary,
                   size: 20,
                 ),
                 SizedBox(width: 8),
@@ -261,7 +261,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
   Widget _buildRequestsList() {
     return RefreshIndicator(
       onRefresh: _loadFriendRequests,
-      color: AppColors.accentGold,
+      color: AppColors.primary,
       backgroundColor: AppColors.darkSurface,
       child: ListView.builder(
         padding: const EdgeInsets.all(AppSizes.paddingMd),
@@ -278,7 +278,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.accentGold,
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -462,9 +462,9 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
                           ? null
                           : () => _handleRequest(request.id, true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentGold,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.darkBackground,
-                        disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
+                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -518,7 +518,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen>
 
   Color _getAvatarColor(String id) {
     final colors = [
-      AppColors.accentGold, // Brown-gold
+      AppColors.primary, // Modern blue
       AppColors.primary, // SaddleBrown
       AppColors.primaryVariant, // Sienna
       AppColors.primaryLight, // Peru

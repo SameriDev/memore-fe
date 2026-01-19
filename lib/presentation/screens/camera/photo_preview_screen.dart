@@ -227,7 +227,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: _isKeyboardVisible
-                                ? AppColors.accentGold
+                                ? AppColors.primary
                                 : AppColors.outline,
                             width: 2,
                           ),
@@ -305,7 +305,7 @@ class _PhotoPreviewScreenState extends ConsumerState<PhotoPreviewScreen>
                               child: ElevatedButton(
                                 onPressed: _continueToFriendSelect,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.accentGold,
+                                  backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.black,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(

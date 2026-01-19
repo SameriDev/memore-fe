@@ -1,63 +1,63 @@
 import 'package:flutter/material.dart';
 
-/// App color constants based on memore's design system
-/// Primary color: Brown #8B4513 (memore brand color - matching camera icon)
+/// App color constants based on modern design system
+/// Primary color: Modern Blue theme
 class AppColors {
   AppColors._();
 
-  // Primary Colors - memore Brown/Tan Theme
-  static const Color primary = Color(0xFF8B4513); // SaddleBrown
-  static const Color primaryVariant = Color(0xFFA0522D); // Sienna
-  static const Color primaryLight = Color(0xFFCD853F); // Peru
-  static const Color primaryDark = Color(0xFF654321); // DarkBrown
+  // Primary Colors - Modern Blue Theme
+  static const Color primary = Color(0xFF2196F3); // Blue 500
+  static const Color primaryVariant = Color(0xFF1976D2); // Blue 700
+  static const Color primaryLight = Color(0xFFBBDEFB); // Blue 100
+  static const Color primaryDark = Color(0xFF0D47A1); // Blue 900
 
-  // Background Colors - Warm Brown/Tan Theme
-  static const Color background = Color(0xFFFDF5E6); // OldLace - warm white
-  static const Color surface = Color(0xFFF5DEB3); // Wheat - light tan
+  // Background Colors - Modern Light Theme
+  static const Color background = Color(0xFFFFFFFF); // Pure white
+  static const Color surface = Color(0xFFF5F7FA); // Very light gray-blue
   static const Color surfaceVariant = Color(
-    0xFFDEB887,
-  ); // BurlyWood - medium tan
-  static const Color surfaceContainerLowest = Color(0xFFFDF5E6);
+    0xFFECEFF1,
+  ); // Light gray-blue
+  static const Color surfaceContainerLowest = Color(0xFFFFFFFF);
   static const Color surfaceContainer = Color(
-    0xFFF0E68C,
-  ); // Khaki - soft container
+    0xFFE3F2FD,
+  ); // Light blue container
 
-  // Text Colors - Brown Theme
-  static const Color onPrimary = Color(0xFFFFFFFF); // White text on brown
+  // Text Colors - Modern Theme
+  static const Color onPrimary = Color(0xFFFFFFFF); // White text on blue
   static const Color onBackground = Color(
-    0xFF3E2723,
-  ); // Dark brown for main text
+    0xFF212121,
+  ); // Dark gray for main text
   static const Color onSurface = Color(
-    0xFF3E2723,
-  ); // Dark brown for surface text
+    0xFF212121,
+  ); // Dark gray for surface text
   static const Color onSurfaceVariant = Color(
-    0xFF5D4037,
-  ); // Medium brown for secondary text
+    0xFF757575,
+  ); // Medium gray for secondary text
 
-  // Neutral Colors - Brown Theme
-  static const Color outline = Color(0xFF8D6E63); // Medium brown for borders
+  // Neutral Colors - Modern Theme
+  static const Color outline = Color(0xFFBDBDBD); // Medium gray for borders
   static const Color outlineVariant = Color(
-    0xFFBCAAA4,
-  ); // Light brown for subtle borders
+    0xFFE0E0E0,
+  ); // Light gray for subtle borders
 
   // State Colors
-  static const Color error = Color(0xFFBA1A1A);
-  static const Color errorContainer = Color(0xFFFFDAD6);
+  static const Color error = Color(0xFFD32F2F);
+  static const Color errorContainer = Color(0xFFFCE4EC);
   static const Color onError = Color(0xFFFFFFFF);
-  static const Color onErrorContainer = Color(0xFF410002);
+  static const Color onErrorContainer = Color(0xFF420000);
 
   static const Color warning = Color(
-    0xFFD2691E,
-  ); // Chocolate - complements brown theme
+    0xFFFF9800,
+  ); // Amber - modern warning color
   static const Color warningContainer = Color(
-    0xFFFFF8DC,
-  ); // Cornsilk - warm warning container
+    0xFFFFF8E1,
+  ); // Light amber container
 
-  static const Color success = Color(0xFF00C851);
-  static const Color successContainer = Color(0xFFCCFFDD);
+  static const Color success = Color(0xFF388E3C);
+  static const Color successContainer = Color(0xFFE8F5E9);
 
   // Camera Interface Colors
-  static const Color cameraBackground = darkBackground; // Use dark brown theme
+  static const Color cameraBackground = Color(0xFF121212); // Dark background
   static const Color cameraOverlay = Color(0x80000000);
   static const Color captureButton = Color(0xFFFFFFFF);
   static const Color captureButtonPressed = Color(0xFFE0E0E0);
@@ -67,11 +67,11 @@ class AppColors {
   static const Color friendOffline = Color(0xFF9E9E9E);
   static const Color friendBusy = Color(0xFFF44336);
 
-  // Widget Colors (for home screen widgets) - Brown Theme
+  // Widget Colors (for home screen widgets) - Modern Theme
   static const Color widgetBackground = Color(
-    0xFFF5F5DC,
-  ); // Beige - warm widget background
-  static const Color widgetBorder = Color(0xFFD2B48C); // Tan - warm border
+    0xFFFFFFFF,
+  ); // Pure white widget background
+  static const Color widgetBorder = Color(0xFFE0E0E0); // Light gray border
   static const Color widgetShadow = Color(0x1A000000);
 
   // Gradient Colors
@@ -87,29 +87,29 @@ class AppColors {
     end: Alignment.bottomCenter,
   );
 
-  // Dark Theme Colors - Brown Theme
+  // Dark Theme Colors - Modern Theme
   static const Color darkBackground = Color(
-    0xFF3E2723,
-  ); // Dark brown background
+    0xFF121212,
+  ); // Dark background
   static const Color darkSurface = Color(
-    0xFF4E342E,
-  ); // Medium dark brown surface
-  static const Color darkOnBackground = Color(0xFFF5DEB3); // Wheat text on dark
+    0xFF1E1E1E,
+  ); // Dark surface
+  static const Color darkOnBackground = Color(0xFFFFFFFF); // White text on dark
   static const Color darkOnSurface = Color(
-    0xFFF5DEB3,
-  ); // Wheat text on dark surface
+    0xFFFFFFFF,
+  ); // White text on dark surface
 
-  // Additional brown theme colors for comprehensive coverage
-  static const Color accentGold = Color(0xFFCD853F); // Peru - brown-gold accent
+  // Additional modern theme colors for comprehensive coverage
+  static const Color accentBlue = Color(0xFF03DAC6); // Teal accent
   static const Color textSecondary = Color(
-    0xFF8D6E63,
-  ); // Medium brown for secondary text
-  static const Color borderSubtle = Color(0xFFD2B48C); // Tan for subtle borders
+    0xFF757575,
+  ); // Medium gray for secondary text
+  static const Color borderSubtle = Color(0xFFE0E0E0); // Light gray for subtle borders
   static const Color surfaceTinted = Color(
-    0xFFF5F5DC,
-  ); // Beige for tinted surfaces
-  static const Color overlayDark = Color(0x803E2723); // Dark brown overlay
-  static const Color overlayLight = Color(0x40DEB887); // Light brown overlay
+    0xFFE3F2FD,
+  ); // Light blue for tinted surfaces
+  static const Color overlayDark = Color(0x80121212); // Dark overlay
+  static const Color overlayLight = Color(0x40ECEFF1); // Light overlay
 
   // Semi-transparent colors for overlays
   static const Color black50 = Color(0x80000000);

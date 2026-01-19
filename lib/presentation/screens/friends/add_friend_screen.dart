@@ -146,7 +146,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
             child: const Text(
               'OK',
               style: TextStyle(
-                color: AppColors.accentGold,
+                color: AppColors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -199,7 +199,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _searchFocusNode.hasFocus
-                            ? AppColors.accentGold
+                            ? AppColors.primary
                             : Colors.transparent,
                         width: 2,
                       ),
@@ -270,7 +270,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen>
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: AppColors.accentGold,
+          color: AppColors.primary,
           strokeWidth: 2,
         ),
       );

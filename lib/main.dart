@@ -37,6 +37,7 @@ import 'presentation/screens/settings/storage_screen.dart';
 import 'presentation/screens/settings/about_screen.dart';
 import 'presentation/screens/messages/messages_screen.dart';
 import 'presentation/screens/messages/chat_screen.dart';
+import 'presentation/widgets/common/transitions.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,7 +95,7 @@ class MemoreApp extends ConsumerWidget {
   }
 }
 
-/// GoRouter configuration with authentication-based routing
+/// GoRouter configuration with authentication-based routing and enhanced transitions
 final routerProvider = Provider<GoRouter>((ref) {
   final authGuard = ref.watch(authGuardProvider);
 
@@ -120,25 +121,37 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.splash,
         name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFromRight(
+          key: state.pageKey,
+          child: const SplashScreen(),
+        ),
       ),
 
       // Welcome/Onboarding routes
       GoRoute(
         path: AppRoutes.welcome,
         name: 'welcome',
-        builder: (context, state) => const WelcomeScreen(),
+        pageBuilder: (context, state) => AppTransitions.fadeTransition(
+          key: state.pageKey,
+          child: const WelcomeScreen(),
+        ),
       ),
 
       GoRoute(
         path: AppRoutes.onboarding,
         name: 'onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFromRight(
+          key: state.pageKey,
+          child: const OnboardingScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'widget-demo',
             name: 'widget-demo',
-            builder: (context, state) => const WidgetDemoScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromBottom(
+              key: state.pageKey,
+              child: const WidgetDemoScreen(),
+            ),
           ),
         ],
       ),
@@ -147,34 +160,49 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.auth,
         name: 'auth',
-        builder: (context, state) => const AuthScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFromRight(
+          key: state.pageKey,
+          child: const AuthScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'email-input',
             name: 'email-input',
-            builder: (context, state) => const EmailInputScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const EmailInputScreen(),
+            ),
           ),
           GoRoute(
             path: 'password-setup',
             name: 'password-setup',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final email = state.uri.queryParameters['email'] ?? '';
-              return PasswordSetupScreen(email: email);
+              return AppTransitions.slideFromRight(
+                key: state.pageKey,
+                child: PasswordSetupScreen(email: email),
+              );
             },
           ),
           GoRoute(
             path: 'name-setup',
             name: 'name-setup',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final email = state.uri.queryParameters['email'] ?? '';
               final password = state.uri.queryParameters['password'] ?? '';
-              return NameSetupScreen(email: email, password: password);
+              return AppTransitions.slideFromRight(
+                key: state.pageKey,
+                child: NameSetupScreen(email: email, password: password),
+              );
             },
           ),
           GoRoute(
             path: 'sign-in',
             name: 'sign-in',
-            builder: (context, state) => const SignInScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const SignInScreen(),
+            ),
           ),
         ],
       ),
@@ -183,28 +211,40 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.home,
         name: 'home',
-        builder: (context, state) => const MainScreen(),
+        pageBuilder: (context, state) => AppTransitions.fadeTransition(
+          key: state.pageKey,
+          child: const MainScreen(),
+        ),
       ),
 
       GoRoute(
         path: AppRoutes.camera,
         name: 'camera',
-        builder: (context, state) => const CameraScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFromBottom(
+          key: state.pageKey,
+          child: const CameraScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'photo-preview',
             name: 'photo-preview',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final photoPath = state.uri.queryParameters['photoPath'] ?? '';
-              return PhotoPreviewScreen(photoPath: photoPath);
+              return AppTransitions.slideFromBottom(
+                key: state.pageKey,
+                child: PhotoPreviewScreen(photoPath: photoPath),
+              );
             },
           ),
           GoRoute(
             path: 'friend-select',
             name: 'friend-select',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final photoPath = state.uri.queryParameters['photoPath'] ?? '';
-              return FriendSelectScreen(photoPath: photoPath);
+              return AppTransitions.slideFromRight(
+                key: state.pageKey,
+                child: FriendSelectScreen(photoPath: photoPath),
+              );
             },
           ),
         ],
@@ -213,25 +253,37 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.friends,
         name: 'friends',
-        builder: (context, state) => const FriendsListScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFadeTransition(
+          key: state.pageKey,
+          child: const FriendsListScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'add',
             name: 'add-friend',
-            builder: (context, state) => const AddFriendScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const AddFriendScreen(),
+            ),
           ),
           GoRoute(
             path: 'profile',
             name: 'friend-profile',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final friendId = state.uri.queryParameters['friendId'] ?? '';
-              return FriendProfileScreen(friendId: friendId);
+              return AppTransitions.slideFromRight(
+                key: state.pageKey,
+                child: FriendProfileScreen(friendId: friendId),
+              );
             },
           ),
           GoRoute(
             path: 'requests',
             name: 'friend-requests',
-            builder: (context, state) => const FriendRequestsScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const FriendRequestsScreen(),
+            ),
           ),
         ],
       ),
@@ -239,20 +291,29 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.photoFeed,
         name: 'photo-feed',
-        builder: (context, state) => const PhotoFeedScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFadeTransition(
+          key: state.pageKey,
+          child: const PhotoFeedScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'view',
             name: 'photo-view',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final photoId = state.uri.queryParameters['photoId'] ?? '';
-              return PhotoViewScreen(photoId: photoId);
+              return AppTransitions.slideFromBottom(
+                key: state.pageKey,
+                child: PhotoViewScreen(photoId: photoId),
+              );
             },
           ),
           GoRoute(
             path: 'time-travel',
             name: 'time-travel',
-            builder: (context, state) => const TimeTravelScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const TimeTravelScreen(),
+            ),
           ),
         ],
       ),
@@ -260,15 +321,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.messages,
         name: 'messages',
-        builder: (context, state) => const MessagesScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFadeTransition(
+          key: state.pageKey,
+          child: const MessagesScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'chat',
             name: 'chat',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final userId = state.uri.queryParameters['userId'] ?? '';
               final userName = state.uri.queryParameters['userName'] ?? 'User';
-              return ChatScreen(userId: userId, userName: userName);
+              return AppTransitions.slideFromRight(
+                key: state.pageKey,
+                child: ChatScreen(userId: userId, userName: userName),
+              );
             },
           ),
         ],
@@ -277,46 +344,70 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.settings,
         name: 'settings',
-        builder: (context, state) => const SettingsScreen(),
+        pageBuilder: (context, state) => AppTransitions.slideFromRight(
+          key: state.pageKey,
+          child: const SettingsScreen(),
+        ),
         routes: [
           GoRoute(
             path: 'profile',
             name: 'profile',
-            builder: (context, state) => const ProfileScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const ProfileScreen(),
+            ),
             routes: [
               GoRoute(
                 path: 'edit',
                 name: 'edit-profile',
-                builder: (context, state) => const EditProfileScreen(),
+                pageBuilder: (context, state) => AppTransitions.slideFromRight(
+                  key: state.pageKey,
+                  child: const EditProfileScreen(),
+                ),
               ),
             ],
           ),
           GoRoute(
             path: 'notifications',
             name: 'notifications',
-            builder: (context, state) => const NotificationsScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const NotificationsScreen(),
+            ),
           ),
           GoRoute(
             path: 'privacy',
             name: 'privacy',
-            builder: (context, state) => const PrivacyScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const PrivacyScreen(),
+            ),
             routes: [
               GoRoute(
                 path: 'blocked',
                 name: 'blocked-users',
-                builder: (context, state) => const BlockedUsersScreen(),
+                pageBuilder: (context, state) => AppTransitions.slideFromRight(
+                  key: state.pageKey,
+                  child: const BlockedUsersScreen(),
+                ),
               ),
             ],
           ),
           GoRoute(
             path: 'storage',
             name: 'storage',
-            builder: (context, state) => const StorageScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const StorageScreen(),
+            ),
           ),
           GoRoute(
             path: 'about',
             name: 'about',
-            builder: (context, state) => const AboutScreen(),
+            pageBuilder: (context, state) => AppTransitions.slideFromRight(
+              key: state.pageKey,
+              child: const AboutScreen(),
+            ),
           ),
         ],
       ),

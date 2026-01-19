@@ -339,7 +339,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
         backgroundColor: AppColors.darkBackground,
         body: Center(
           child: CircularProgressIndicator(
-            color: AppColors.accentGold,
+            color: AppColors.primary,
           ),
         ),
       );
@@ -410,7 +410,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
                 children: [
                   const Icon(
                     Icons.photo_library_outlined,
-                    color: AppColors.accentGold,
+                    color: AppColors.primary,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -543,7 +543,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
             child: ElevatedButton.icon(
               onPressed: _sendMessage,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accentGold,
+                backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.darkBackground,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -599,7 +599,7 @@ class _FriendProfileScreenState extends ConsumerState<FriendProfileScreen>
 
   Color _getAvatarColor() {
     final colors = [
-      AppColors.accentGold, // Brown-gold
+      AppColors.primary, // Modern blue
       AppColors.primary, // SaddleBrown
       AppColors.primaryVariant, // Sienna
       AppColors.primaryLight, // Peru

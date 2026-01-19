@@ -134,7 +134,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK', style: TextStyle(color: AppColors.accentGold)),
+            child: const Text('OK', style: TextStyle(color: AppColors.primary)),
           ),
         ],
       ),
@@ -210,7 +210,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _firstNameFocusNode.hasFocus
-                                ? AppColors.accentGold
+                                ? AppColors.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -247,7 +247,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _lastNameFocusNode.hasFocus
-                                ? AppColors.accentGold
+                                ? AppColors.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -291,7 +291,7 @@ class _NameSetupScreenState extends ConsumerState<NameSetupScreen>
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isValidNames
-                        ? AppColors.accentGold
+                        ? AppColors.primary
                         : AppColors.textSecondary,
                     foregroundColor: _isValidNames
                         ? AppColors.darkBackground

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 
-/// Full-screen camera interface matching memore design
+/// Full-screen camera interface with modern design
 /// Features camera preview, controls, and capture functionality
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key});
@@ -17,7 +17,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _captureAnimation;
-  late Animation<double> _pulseAnimation;
 
   bool _isFlashOn = false;
   bool _isCapturing = false;
@@ -36,10 +35,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     );
 
     _captureAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
@@ -81,8 +76,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       _isCapturing = false;
     });
 
-    // Navigate to photo preview (placeholder for now)
-    // context.push('/camera/preview');
+    // Navigate to photo preview
+    context.push('/camera/photo-preview');
   }
 
   void _switchCamera() {
@@ -94,13 +89,30 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   void _openHistory() {
     // Navigate to photo history
-    // context.push('/photos/history');
+    context.push('/photos');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cameraBackground,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.white),
+          onPressed: () => context.pop(),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isFlashOn ? Icons.flash_on : Icons.flash_off,
+              color: Colors.white,
+            ),
+            onPressed: _toggleFlash,
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -109,29 +121,58 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
               child: Container(
                 color: AppColors.cameraBackground,
                 child: const Center(
-                  child: Text(
-                    'Camera Preview',
-                    style: TextStyle(color: Color(0xFF333333), fontSize: 18),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.white30,
+                        size: 80,
+                      ),
+                      SizedBox(height: 24),
+                      Text(
+                        'Camera Preview',
+                        style: TextStyle(
+                          color: Colors.white30,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
 
             // Top controls
-            Positioned(top: 0, left: 0, right: 0, child: _buildTopControls()),
-
-            // Timer indicator (center)
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.5 - 40,
+              top: kToolbarHeight,
+              left: 0,
+              right: 0,
+              child: _buildTopControls(),
+            ),
+
+            // Center timer indicator
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.4,
               left: 0,
               right: 0,
               child: Center(
-                child: Text(
-                  _timerMode,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black38,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    _timerMode,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -159,19 +200,18 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Flash control
+          // Gallery button
           GestureDetector(
-            onTap: _toggleFlash,
+            onTap: _openHistory,
             child: Container(
-              width: 48,
-              height: 48,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
-                color: _isFlashOn ? AppColors.darkSurface : Colors.transparent,
+                color: Colors.black38,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.outline, width: 1),
               ),
-              child: Icon(
-                _isFlashOn ? Icons.flash_on : Icons.flash_off,
+              child: const Icon(
+                Icons.photo_library,
                 color: Colors.white,
                 size: 24,
               ),
@@ -179,45 +219,54 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
           ),
 
           // Friend selection button
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSizes.paddingMd,
-              vertical: AppSizes.paddingXs,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.darkSurface,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.people, color: Colors.white, size: 16),
-                const SizedBox(width: 6),
-                const Text(
-                  'n Friend',
-                  style: TextStyle(
+          GestureDetector(
+            onTap: () {
+              // Navigate to friend selection
+              context.push('/camera/friend-select');
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingMd,
+                vertical: AppSizes.paddingXs,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.black38,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.people,
                     color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    size: 16,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 6),
+                  Text(
+                    'Select Friends',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
-          // Messages/Close button
+          // Switch camera button
           GestureDetector(
-            onTap: () => context.pop(),
+            onTap: _switchCamera,
             child: Container(
-              width: 48,
-              height: 48,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
-                color: Colors.transparent,
+                color: Colors.black38,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.outline, width: 1),
               ),
               child: const Icon(
-                Icons.message_outlined,
+                Icons.cameraswitch_outlined,
                 color: Colors.white,
                 size: 24,
               ),
@@ -248,10 +297,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.transparent,
+                    color: Colors.black38,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.flash_on, color: Colors.white, size: 28),
+                  child: Icon(
+                    _isFlashOn ? Icons.flash_on : Icons.flash_off,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
               ),
 
@@ -269,14 +322,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: AppColors.accentGold,
+                            color: Colors.white,
                             width: 4,
                           ),
                         ),
                         child: Container(
                           margin: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: _isCapturing ? AppColors.primary : Colors.white,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -286,20 +339,22 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                 ),
               ),
 
-              // Camera switch
+              // Filters button
               GestureDetector(
-                onTap: _switchCamera,
+                onTap: () {
+                  // Handle filters
+                },
                 child: Container(
                   width: 50,
                   height: 50,
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
+                  decoration: BoxDecoration(
+                    color: Colors.black38,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.cameraswitch_outlined,
+                    Icons.tune,
                     color: Colors.white,
-                    size: 28,
+                    size: 24,
                   ),
                 ),
               ),
@@ -308,53 +363,40 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
           const SizedBox(height: AppSizes.spacingSm),
 
-          // History button
-          GestureDetector(
-            onTap: _openHistory,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.paddingMd,
-                vertical: AppSizes.paddingXs,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: AppColors.outline,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'History',
-                    style: TextStyle(
+          // Additional controls
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Grid view toggle
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingSm,
+                  vertical: AppSizes.paddingXs,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black38,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.grid_on,
                       color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      size: 16,
                     ),
-                  ),
-                ],
+                    SizedBox(width: 4),
+                    Text(
+                      'Grid',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-
-          const SizedBox(height: AppSizes.spacingXs),
-
-          // Swipe indicator
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.outline,
-              borderRadius: BorderRadius.circular(2),
-            ),
+            ],
           ),
         ],
       ),

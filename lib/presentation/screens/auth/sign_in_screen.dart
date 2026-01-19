@@ -218,7 +218,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       labelText: 'Email',
                       labelStyle: TextStyle(
                         color: _emailFocusNode.hasFocus
-                            ? AppColors.accentGold
+                            ? AppColors.primary
                             : AppColors.textSecondary,
                       ),
                       filled: true,
@@ -238,7 +238,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: AppColors.accentGold,
+                          color: AppColors.primary,
                           width: 2,
                         ),
                       ),
@@ -282,7 +282,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       labelText: 'Password',
                       labelStyle: TextStyle(
                         color: _passwordFocusNode.hasFocus
-                            ? AppColors.accentGold
+                            ? AppColors.primary
                             : AppColors.textSecondary,
                       ),
                       filled: true,
@@ -302,7 +302,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: AppColors.accentGold,
+                          color: AppColors.primary,
                           width: 2,
                         ),
                       ),
@@ -351,7 +351,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                       child: const Text(
                         'Forgot Password?',
                         style: TextStyle(
-                          color: AppColors.accentGold,
+                          color: AppColors.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -368,9 +368,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _signIn,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentGold,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.darkBackground,
-                        disabledBackgroundColor: AppColors.accentGold.withValues(alpha: 0.5),
+                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -418,7 +418,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                         child: const Text(
                           'Sign Up',
                           style: TextStyle(
-                            color: AppColors.accentGold,
+                            color: AppColors.primary,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
