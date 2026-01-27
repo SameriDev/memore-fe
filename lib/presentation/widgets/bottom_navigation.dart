@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class BottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -9,9 +9,10 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 120,
+    return Container(
+      height: 90,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Positioned(
             bottom: 8,
@@ -34,35 +35,38 @@ class BottomNavigation extends StatelessWidget {
                           width: 1,
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _NavItem(
-                              icon: Icons.home_outlined,
-                              isActive: currentIndex == 0,
-                              onTap: () => onTap?.call(0),
-                            ),
-                            _NavItem(
-                              icon: Icons.image_outlined,
-                              isActive: currentIndex == 1,
-                              onTap: () => onTap?.call(1),
-                            ),
-                            const SizedBox(width: 80),
-                            _NavItem(
-                              icon: Icons.grid_view_outlined,
-                              isActive: currentIndex == 3,
-                              onTap: () => onTap?.call(3),
-                            ),
-                            _NavItem(
-                              icon: Icons.person_outline,
-                              isActive: currentIndex == 4,
-                              onTap: () => onTap?.call(4),
-                            ),
-                          ],
+                    ),
+                  ),
+                ),
+                _SlidingIndicator(currentIndex: currentIndex),
+                Positioned.fill(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _NavItem(
+                          icon: Icons.home_outlined,
+                          isActive: currentIndex == 0,
+                          onTap: () => onTap?.call(0),
                         ),
-                      ),
+                        _NavItem(
+                          icon: Icons.image_outlined,
+                          isActive: currentIndex == 1,
+                          onTap: () => onTap?.call(1),
+                        ),
+                        const SizedBox(width: 80),
+                        _NavItem(
+                          icon: Icons.grid_view_outlined,
+                          isActive: currentIndex == 3,
+                          onTap: () => onTap?.call(3),
+                        ),
+                        _NavItem(
+                          icon: Icons.person_outline,
+                          isActive: currentIndex == 4,
+                          onTap: () => onTap?.call(4),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -86,6 +90,64 @@ class BottomNavigation extends StatelessWidget {
   }
 }
 
+class _SlidingIndicator extends StatelessWidget {
+  final int currentIndex;
+
+  const _SlidingIndicator({required this.currentIndex});
+
+  double _getLeftPosition(BuildContext context, int index) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final navBarWidth = screenWidth - 24.0;
+    final centerGap = 80.0;
+    final sidePadding = 4.0;
+    final availableForItems = navBarWidth - sidePadding * 2 - centerGap;
+    final itemWidth = availableForItems / 4;
+
+    switch (index) {
+      case 0:
+        return sidePadding;
+      case 1:
+        return sidePadding + itemWidth;
+      case 3:
+        return navBarWidth - sidePadding - itemWidth - 60;
+      case 4:
+        return navBarWidth - sidePadding - 60;
+      default:
+        return 0;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (currentIndex == 2) return const SizedBox.shrink();
+
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+      left: _getLeftPosition(context, currentIndex),
+      top: 2.5,
+      child: TweenAnimationBuilder<double>(
+        key: ValueKey(currentIndex),
+        duration: const Duration(milliseconds: 150),
+        tween: Tween(begin: 0.8, end: 1.0),
+        builder: (context, scale, child) {
+          return Transform.scale(
+            scale: scale,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                shape: BoxShape.circle,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final bool isActive;
@@ -99,25 +161,19 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isActive) {
-      return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 60,
-          height: 60,
-          decoration: const BoxDecoration(
-            color: Colors.black,
-            shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60,
+        height: 60,
+        child: Center(
+          child: Icon(
+            icon,
+            color: isActive ? Colors.white : Colors.black,
+            size: isActive ? 26 : 24,
           ),
-          child: Icon(icon, color: Colors.white, size: 26),
         ),
-      );
-    }
-
-    return IconButton(
-      onPressed: onTap,
-      icon: Icon(icon, color: Colors.black, size: 24),
-      iconSize: 24,
+      ),
     );
   }
 }

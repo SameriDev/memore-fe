@@ -12,6 +12,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int currentIndex = 1;
+  int previousIndex = 1;
 
   final List<Widget> screens = [
     const PlaceholderScreen(title: 'Home Feed'),
@@ -26,7 +27,23 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          IndexedStack(index: currentIndex, children: screens),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            switchInCurve: Curves.easeInOut,
+            switchOutCurve: Curves.easeInOut,
+            transitionBuilder: (child, animation) {
+              final offsetAnimation = Tween<Offset>(
+                begin: Offset(currentIndex > previousIndex ? 1.0 : -1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation);
+
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+            child: KeyedSubtree(
+              key: ValueKey(currentIndex),
+              child: screens[currentIndex],
+            ),
+          ),
           Positioned(
             bottom: 0,
             left: 0,
@@ -35,6 +52,7 @@ class _MainScreenState extends State<MainScreen> {
               currentIndex: currentIndex,
               onTap: (index) {
                 setState(() {
+                  previousIndex = currentIndex;
                   currentIndex = index;
                 });
               },
