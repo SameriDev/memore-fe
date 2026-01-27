@@ -15,8 +15,8 @@ class BottomNavigation extends StatelessWidget {
         children: [
           Positioned(
             bottom: 8,
-            left: 18,
-            right: 18,
+            left: 12,
+            right: 12,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -35,7 +35,7 @@ class BottomNavigation extends StatelessWidget {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -103,13 +103,13 @@ class _NavItem extends StatelessWidget {
       return GestureDetector(
         onTap: onTap,
         child: Container(
-          width: 50,
-          height: 50,
+          width: 60,
+          height: 60,
           decoration: const BoxDecoration(
             color: Colors.black,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: Colors.white, size: 24),
+          child: Icon(icon, color: Colors.white, size: 26),
         ),
       );
     }

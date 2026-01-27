@@ -24,14 +24,16 @@ class FilterSection extends StatelessWidget {
         children: [
           InkWell(
             onTap: onFilterTap,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(50),
             child: Container(
-              padding: const EdgeInsets.all(12),
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey[300]!, width: 1),
               ),
-              child: const Icon(Icons.tune, size: 20),
+              child: const Icon(Icons.tune, size: 24),
             ),
           ),
           const SizedBox(width: 12),
@@ -66,22 +68,28 @@ class _FilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.grey[300]!, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           GestureDetector(
             onTap: onRemove,
-            child: const Icon(Icons.close, size: 16),
+            child: Icon(Icons.close, size: 20, color: Colors.grey[700]),
           ),
         ],
       ),

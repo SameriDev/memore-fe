@@ -1,45 +1,98 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/story.dart';
 import '../../core/constants/app_dimensions.dart';
-import '../../core/theme/app_colors.dart';
 
 class StorySection extends StatelessWidget {
   final List<Story> stories;
   final VoidCallback? onAddStory;
   final Function(Story)? onStoryTap;
+  final VoidCallback? onMoreTap;
 
   const StorySection({
     super.key,
     required this.stories,
     this.onAddStory,
     this.onStoryTap,
+    this.onMoreTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: AppDimensions.storyAvatarSize + 16,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.horizontalPadding,
-        ),
-        scrollDirection: Axis.horizontal,
-        itemCount: stories.length,
-        separatorBuilder: (context, index) =>
-            const SizedBox(width: AppDimensions.storySpacing),
-        itemBuilder: (context, index) {
-          final story = stories[index];
-          return _StoryAvatar(
-            story: story,
-            onTap: () {
-              if (story.isAddButton && onAddStory != null) {
-                onAddStory!();
-              } else if (onStoryTap != null) {
-                onStoryTap!(story);
-              }
+      child: Stack(
+        children: [
+          ListView.separated(
+            padding: EdgeInsets.only(
+              left: AppDimensions.horizontalPadding,
+              right:
+                  AppDimensions.storyAvatarSize +
+                  AppDimensions.storySpacing +
+                  AppDimensions.horizontalPadding,
+            ),
+            scrollDirection: Axis.horizontal,
+            itemCount: stories.length,
+            separatorBuilder: (context, index) =>
+                const SizedBox(width: AppDimensions.storySpacing),
+            itemBuilder: (context, index) {
+              final story = stories[index];
+              return _StoryAvatar(
+                story: story,
+                onTap: () {
+                  if (story.isAddButton && onAddStory != null) {
+                    onAddStory!();
+                  } else if (onStoryTap != null) {
+                    onStoryTap!(story);
+                  }
+                },
+              );
             },
-          );
-        },
+          ),
+          Positioned(
+            right: AppDimensions.horizontalPadding,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: AppDimensions.storyAvatarSize + 20,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    const Color(0xFFF5F1EB).withOpacity(0),
+                    const Color(0xFFF5F1EB),
+                    const Color(0xFFF5F1EB),
+                  ],
+                  stops: const [0.0, 0.3, 1.0],
+                ),
+              ),
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: onMoreTap,
+                child: Container(
+                  width: AppDimensions.storyAvatarSize,
+                  height: AppDimensions.storyAvatarSize,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.grey[300]!, width: 2),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '...',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                        height: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -60,8 +113,9 @@ class _StoryAvatar extends StatelessWidget {
           width: AppDimensions.storyAvatarSize,
           height: AppDimensions.storyAvatarSize,
           decoration: BoxDecoration(
-            color: AppColors.darkBackground,
+            color: Colors.grey[700],
             shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey[700]!, width: 2.5),
           ),
           child: const Icon(Icons.add, color: Colors.white, size: 32),
         ),
@@ -82,13 +136,13 @@ class _StoryAvatar extends StatelessWidget {
           ),
           border: Border.all(width: 2, color: Colors.transparent),
         ),
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(1.5),
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
           ),
-          padding: const EdgeInsets.all(2),
+          padding: const EdgeInsets.all(1.5),
           child: CircleAvatar(backgroundImage: NetworkImage(story.userAvatar)),
         ),
       ),

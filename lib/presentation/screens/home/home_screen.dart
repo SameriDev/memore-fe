@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../data/mock/mock_albums_data.dart';
 import '../../../domain/entities/album.dart';
 import '../../../domain/entities/story.dart';
@@ -63,7 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: false,
             child: Column(
               children: [
-                const SizedBox(height: 8),
                 StorySection(
                   stories: stories,
                   onAddStory: () {
@@ -71,6 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   onStoryTap: (story) {
                     debugPrint('Story tapped: ${story.userName}');
+                  },
+                  onMoreTap: () {
+                    debugPrint('More stories tapped');
                   },
                 ),
                 const SizedBox(height: 8),
@@ -91,30 +94,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Expanded(
-                  child: GridView.builder(
+                  child: MasonryGridView.count(
                     padding: const EdgeInsets.only(
                       left: AppDimensions.horizontalPadding,
                       right: AppDimensions.horizontalPadding,
                       bottom: 140,
                     ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: AppDimensions.gridSpacing,
-                          mainAxisSpacing: AppDimensions.gridSpacing,
-                          childAspectRatio: 0.75,
-                        ),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: AppDimensions.gridSpacing,
+                    crossAxisSpacing: AppDimensions.gridSpacing,
                     itemCount: albums.length,
                     itemBuilder: (context, index) {
                       final album = albums[index];
-                      return AlbumCard(
-                        album: album,
-                        onTap: () {
-                          debugPrint('Album tapped: ${album.name}');
-                        },
-                        onFavoriteTap: () {
-                          _handleAlbumFavorite(album);
-                        },
+                      final heights = [
+                        180.0,
+                        220.0,
+                        200.0,
+                        240.0,
+                        190.0,
+                        210.0,
+                        195.0,
+                        235.0,
+                      ];
+                      final height = heights[index % heights.length];
+
+                      return SizedBox(
+                        height: height,
+                        child: AlbumCard(
+                          album: album,
+                          onTap: () {
+                            debugPrint('Album tapped: ${album.name}');
+                          },
+                          onFavoriteTap: () {
+                            _handleAlbumFavorite(album);
+                          },
+                        ),
                       );
                     },
                   ),
