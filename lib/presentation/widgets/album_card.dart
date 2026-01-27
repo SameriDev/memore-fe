@@ -6,12 +6,14 @@ class AlbumCard extends StatelessWidget {
   final Album album;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteTap;
+  final double aspectRatio;
 
   const AlbumCard({
     super.key,
     required this.album,
     this.onTap,
     this.onFavoriteTap,
+    this.aspectRatio = 1.0,
   });
 
   @override
@@ -32,8 +34,10 @@ class AlbumCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
+            AspectRatio(
+              aspectRatio: aspectRatio,
               child: Stack(
                 children: [
                   ClipRRect(
@@ -58,13 +62,12 @@ class AlbumCard extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: 12,
-                    right: 12,
+                    top: 8,
+                    right: 8,
                     child: GestureDetector(
                       onTap: onFavoriteTap,
                       child: Container(
-                        width: 32,
-                        height: 32,
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
                           shape: BoxShape.circle,
@@ -76,7 +79,7 @@ class AlbumCard extends StatelessWidget {
                           color: album.isFavorite
                               ? Colors.red
                               : Colors.grey[600],
-                          size: 18,
+                          size: 20,
                         ),
                       ),
                     ),

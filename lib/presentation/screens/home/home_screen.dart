@@ -8,7 +8,6 @@ import '../../widgets/story_section.dart';
 import '../../widgets/album_header.dart';
 import '../../widgets/filter_section.dart';
 import '../../widgets/album_card.dart';
-import '../../widgets/bottom_navigation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
   late List<Story> stories;
   late List<Album> albums;
   List<String> activeFilters = ['Shared', 'Recent'];
-  int currentNavIndex = 0;
 
   @override
   void initState() {
@@ -106,48 +104,33 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: albums.length,
                     itemBuilder: (context, index) {
                       final album = albums[index];
-                      final heights = [
-                        180.0,
-                        220.0,
-                        200.0,
-                        240.0,
-                        190.0,
-                        210.0,
-                        195.0,
-                        235.0,
+                      final aspectRatios = [
+                        0.9,
+                        1.1,
+                        1.0,
+                        1.2,
+                        0.95,
+                        1.05,
+                        0.85,
+                        1.15,
                       ];
-                      final height = heights[index % heights.length];
+                      final aspectRatio =
+                          aspectRatios[index % aspectRatios.length];
 
-                      return SizedBox(
-                        height: height,
-                        child: AlbumCard(
-                          album: album,
-                          onTap: () {
-                            debugPrint('Album tapped: ${album.name}');
-                          },
-                          onFavoriteTap: () {
-                            _handleAlbumFavorite(album);
-                          },
-                        ),
+                      return AlbumCard(
+                        album: album,
+                        aspectRatio: aspectRatio,
+                        onTap: () {
+                          debugPrint('Album tapped: ${album.name}');
+                        },
+                        onFavoriteTap: () {
+                          _handleAlbumFavorite(album);
+                        },
                       );
                     },
                   ),
                 ),
               ],
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: BottomNavigation(
-              currentIndex: currentNavIndex,
-              onTap: (index) {
-                setState(() {
-                  currentNavIndex = index;
-                });
-                debugPrint('Nav tapped: $index');
-              },
             ),
           ),
         ],

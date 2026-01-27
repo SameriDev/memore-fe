@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'presentation/screens/home/home_screen.dart';
+import 'presentation/screens/main_screen.dart';
 
 void main() {
   runApp(const MemoreApp());
@@ -17,7 +17,7 @@ class MemoreApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
-      home: const HomeScreen(),
+      home: const MainScreen(),
     );
   }
 }
