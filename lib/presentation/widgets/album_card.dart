@@ -85,7 +85,12 @@ class AlbumCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.only(
+                left: 12,
+                right: 4,
+                top: 12,
+                bottom: 12,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -132,7 +137,7 @@ class AlbumCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const Spacer(),
                       _ParticipantAvatars(
                         avatars: album.participantAvatars,
                         additionalCount: album.additionalParticipants,

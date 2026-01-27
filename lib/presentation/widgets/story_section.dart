@@ -78,13 +78,16 @@ class StorySection extends StatelessWidget {
                     border: Border.all(color: Colors.grey[300]!, width: 2),
                   ),
                   child: Center(
-                    child: Text(
-                      '...',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                        height: 0.5,
+                    child: Transform.translate(
+                      offset: const Offset(0, -6),
+                      child: Text(
+                        '...',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                          height: 1.0,
+                        ),
                       ),
                     ),
                   ),
