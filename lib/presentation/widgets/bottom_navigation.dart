@@ -46,7 +46,7 @@ class BottomNavigation extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _NavItem(
-                          icon: Icons.home_outlined,
+                          icon: Icons.people_outline,
                           isActive: currentIndex == 0,
                           onTap: () => onTap?.call(0),
                         ),
