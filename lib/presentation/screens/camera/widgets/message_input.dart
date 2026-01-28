@@ -19,7 +19,7 @@ class MessageInput extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 2.9, sigmaY: 2.9),
         child: Container(
           width: 194,
-          height: 28,
+          height: 36,
           decoration: BoxDecoration(
             color: const Color(0x59656565), // rgba(101,101,101,0.35)
             borderRadius: BorderRadius.circular(12),
@@ -30,14 +30,14 @@ class MessageInput extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 13,
+              fontSize: 15,
               fontFamily: 'Inika',
             ),
             decoration: InputDecoration(
               hintText: placeholder,
               hintStyle: const TextStyle(
                 color: Colors.white,
-                fontSize: 13,
+                fontSize: 15,
                 fontFamily: 'Inika',
               ),
               border: InputBorder.none,

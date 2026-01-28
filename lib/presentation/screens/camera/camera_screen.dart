@@ -131,13 +131,9 @@ class _CameraScreenState extends State<CameraScreen> {
                 const SizedBox(height: 60),
 
                 // Camera viewfinder
-                Expanded(
-                  child: Center(
-                    child: CameraViewfinder(
-                      controller: _cameraController,
-                      capturedImagePath: _capturedImagePath,
-                    ),
-                  ),
+                CameraViewfinder(
+                  controller: _cameraController,
+                  capturedImagePath: _capturedImagePath,
                 ),
 
                 const SizedBox(height: 16),
@@ -145,7 +141,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 // Message input
                 MessageInput(controller: _messageController),
 
-                const SizedBox(height: 24),
+                const Spacer(),
 
                 // Camera controls
                 CameraControls(
@@ -157,7 +153,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   onFlipCamera: _flipCamera,
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
               ],
             ),
 
