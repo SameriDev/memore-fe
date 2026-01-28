@@ -34,7 +34,6 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
               const Text(
                 'Friends list',
                 style: TextStyle(
-                  fontFamily: 'Inika',
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
                   color: Colors.black,

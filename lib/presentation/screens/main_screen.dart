@@ -3,6 +3,7 @@ import 'home/home_screen.dart';
 import 'friends/friends_list_screen.dart';
 import 'common/placeholder_screen.dart';
 import 'camera/camera_screen.dart';
+import 'profile/profile_screen.dart';
 import '../widgets/bottom_navigation.dart';
 import '../animations/camera_transition_controller.dart';
 import '../routes/camera_page_route.dart';
@@ -25,7 +26,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     const HomeScreen(),
     const SizedBox.shrink(), // Camera handled separately
     const PlaceholderScreen(title: 'Timeline'),
-    const PlaceholderScreen(title: 'Profile'),
+    const ProfileScreen(),
   ];
 
   @override

@@ -81,7 +81,6 @@ class FriendListItem extends StatelessWidget {
                   Text(
                     friend.name,
                     style: const TextStyle(
-                      fontFamily: 'Inika',
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: Colors.black,
@@ -91,7 +90,6 @@ class FriendListItem extends StatelessWidget {
                   Text(
                     friend.lastActiveTime,
                     style: const TextStyle(
-                      fontFamily: 'Inter',
                       fontSize: 12,
                       color: Color(0xFF797878),
                     ),
