@@ -77,12 +77,26 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> _flipCamera() async {
     if (_cameras == null || _cameras!.length < 2) return;
 
-    setState(() {
-      _isFrontCamera = !_isFrontCamera;
-    });
+    try {
+      // Dispose camera controller cũ
+      if (_cameraController != null) {
+        await _cameraController!.dispose();
+        _cameraController = null;
+      }
 
-    await _cameraController?.dispose();
-    await _setupCamera(_isFrontCamera ? 1 : 0);
+      // Đợi một chút để camera session được giải phóng hoàn toàn
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Toggle camera
+      setState(() {
+        _isFrontCamera = !_isFrontCamera;
+      });
+
+      // Setup camera mới
+      await _setupCamera(_isFrontCamera ? 1 : 0);
+    } catch (e) {
+      debugPrint('Error flipping camera: $e');
+    }
   }
 
   Future<void> _capturePhoto() async {

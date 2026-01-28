@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -30,12 +31,19 @@ class CameraViewfinder extends StatelessWidget {
   Widget _buildContent() {
     // Show captured image if available
     if (capturedImagePath != null) {
-      return Image.network(capturedImagePath!, fit: BoxFit.cover);
+      return Image.file(File(capturedImagePath!), fit: BoxFit.cover);
     }
 
     // Show camera preview if controller is initialized
     if (controller != null && controller!.value.isInitialized) {
-      return CameraPreview(controller!);
+      return FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: controller!.value.previewSize!.height,
+          height: controller!.value.previewSize!.width,
+          child: CameraPreview(controller!),
+        ),
+      );
     }
 
     // Show loading indicator

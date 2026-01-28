@@ -28,16 +28,19 @@ class CameraControls extends StatelessWidget {
           ),
 
           // Capture/Confirm button
-          GestureDetector(
-            onTap: onCapture,
-            child: Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFFFA500),
+          Hero(
+            tag: 'camera_button',
+            child: GestureDetector(
+              onTap: onCapture,
+              child: Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFFFA500),
+                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 40),
               ),
-              child: const Icon(Icons.check, color: Colors.white, size: 40),
             ),
           ),
 
