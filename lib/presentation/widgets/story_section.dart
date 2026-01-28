@@ -146,7 +146,15 @@ class _StoryAvatar extends StatelessWidget {
             color: Colors.white,
           ),
           padding: const EdgeInsets.all(1.5),
-          child: CircleAvatar(backgroundImage: NetworkImage(story.userAvatar)),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey[300],
+            child: story.userAvatar.isEmpty
+                ? Icon(Icons.person, color: Colors.grey[600])
+                : null,
+            backgroundImage: story.userAvatar.isNotEmpty
+                ? NetworkImage(story.userAvatar)
+                : null,
+          ),
         ),
       ),
     );

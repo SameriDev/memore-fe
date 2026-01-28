@@ -4,6 +4,9 @@ class Story {
   final String userAvatar;
   final String userName;
   final bool isAddButton;
+  final List<String> images;
+  final DateTime? createdAt;
+  final bool isViewed;
 
   Story({
     required this.id,
@@ -11,5 +14,8 @@ class Story {
     required this.userAvatar,
     required this.userName,
     this.isAddButton = false,
+    this.images = const [],
+    this.createdAt,
+    this.isViewed = false,
   });
 }

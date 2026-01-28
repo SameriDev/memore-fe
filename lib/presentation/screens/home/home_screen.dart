@@ -8,6 +8,7 @@ import '../../widgets/story_section.dart';
 import '../../widgets/album_header.dart';
 import '../../widgets/filter_section.dart';
 import '../../widgets/album_card.dart';
+import '../../widgets/story_overlay.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late List<Story> stories;
   late List<Album> albums;
   List<String> activeFilters = ['Shared', 'Recent'];
+  Story? selectedStory;
 
   @override
   void initState() {
@@ -68,7 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     debugPrint('Add story tapped');
                   },
                   onStoryTap: (story) {
-                    debugPrint('Story tapped: ${story.userName}');
+                    setState(() {
+                      selectedStory = story;
+                    });
                   },
                   onMoreTap: () {
                     debugPrint('More stories tapped');
@@ -133,6 +137,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          if (selectedStory != null)
+            StoryOverlay(
+              story: selectedStory!,
+              onDismiss: () {
+                setState(() {
+                  selectedStory = null;
+                });
+              },
+            ),
         ],
       ),
     );
