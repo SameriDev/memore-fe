@@ -123,73 +123,62 @@ class _CameraScreenState extends State<CameraScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F2F0),
       body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF4F2F0),
-            borderRadius: BorderRadius.circular(58),
-            border: Border.all(color: Colors.black, width: 1),
-          ),
-          child: Stack(
-            children: [
-              // Main content
-              Column(
-                children: [
-                  const SizedBox(height: 60),
+        child: Stack(
+          children: [
+            // Main content
+            Column(
+              children: [
+                const SizedBox(height: 60),
 
-                  // Camera viewfinder
-                  Expanded(
-                    child: Center(
-                      child: CameraViewfinder(
-                        controller: _cameraController,
-                        capturedImagePath: _capturedImagePath,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Message input
-                  MessageInput(controller: _messageController),
-
-                  const SizedBox(height: 24),
-
-                  // Camera controls
-                  CameraControls(
-                    isFlashOn: _isFlashOn,
-                    onFlashToggle: _toggleFlash,
-                    onCapture: _capturedImagePath == null
-                        ? _capturePhoto
-                        : _submitPhoto,
-                    onFlipCamera: _flipCamera,
-                  ),
-
-                  const SizedBox(height: 40),
-                ],
-              ),
-
-              // Close button
-              Positioned(
-                top: 20,
-                left: 20,
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.black,
-                      size: 24,
+                // Camera viewfinder
+                Expanded(
+                  child: Center(
+                    child: CameraViewfinder(
+                      controller: _cameraController,
+                      capturedImagePath: _capturedImagePath,
                     ),
                   ),
                 ),
+
+                const SizedBox(height: 16),
+
+                // Message input
+                MessageInput(controller: _messageController),
+
+                const SizedBox(height: 24),
+
+                // Camera controls
+                CameraControls(
+                  isFlashOn: _isFlashOn,
+                  onFlashToggle: _toggleFlash,
+                  onCapture: _capturedImagePath == null
+                      ? _capturePhoto
+                      : _submitPhoto,
+                  onFlipCamera: _flipCamera,
+                ),
+
+                const SizedBox(height: 40),
+              ],
+            ),
+
+            // Close button
+            Positioned(
+              top: 20,
+              left: 20,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.black, size: 24),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

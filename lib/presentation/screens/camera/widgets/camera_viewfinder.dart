@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 
 class CameraViewfinder extends StatelessWidget {
   final CameraController? controller;
@@ -10,17 +11,19 @@ class CameraViewfinder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
-      width: screenWidth * 0.85,
-      height: screenHeight * 0.6,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(40),
+    // Tính toán kích thước dựa trên tỷ lệ 351:371 từ Figma (gần vuông)
+    final viewfinderWidth = screenWidth * 0.9;
+    final viewfinderHeight = viewfinderWidth * (371 / 351);
+
+    return ClipSmoothRect(
+      radius: SmoothBorderRadius(cornerRadius: 125, cornerSmoothing: 1),
+      child: Container(
+        width: viewfinderWidth,
+        height: viewfinderHeight,
         color: Colors.grey[300],
+        child: _buildContent(),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: _buildContent(),
     );
   }
 
