@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
 import 'friends/friends_list_screen.dart';
 import 'common/placeholder_screen.dart';
+import 'camera/camera_screen.dart';
 import '../widgets/bottom_navigation.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> screens = [
     const FriendsListScreen(),
     const HomeScreen(),
-    const PlaceholderScreen(title: 'Camera'),
+    const CameraScreen(),
     const PlaceholderScreen(title: 'Timeline'),
     const PlaceholderScreen(title: 'Profile'),
   ];
