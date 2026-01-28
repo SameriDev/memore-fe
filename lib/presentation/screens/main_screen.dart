@@ -3,6 +3,7 @@ import 'home/home_screen.dart';
 import 'friends/friends_list_screen.dart';
 import 'common/placeholder_screen.dart';
 import 'camera/camera_screen.dart';
+import 'profile/profile_screen.dart';
 import '../widgets/bottom_navigation.dart';
 
 class MainScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomeScreen(),
     const CameraScreen(),
     const PlaceholderScreen(title: 'Timeline'),
-    const PlaceholderScreen(title: 'Profile'),
+    const ProfileScreen(),
   ];
 
   @override

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+      textTheme: GoogleFonts.inikaTextTheme(),
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
@@ -12,12 +14,12 @@ class AppTheme {
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.black),
-        titleTextStyle: TextStyle(
+        iconTheme: const IconThemeData(color: Colors.black),
+        titleTextStyle: GoogleFonts.inika(
           color: Colors.black,
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -59,6 +61,7 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
+      textTheme: GoogleFonts.inikaTextTheme(ThemeData.dark().textTheme),
       colorScheme: ColorScheme.dark(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
