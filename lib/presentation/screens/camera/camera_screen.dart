@@ -77,12 +77,26 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> _flipCamera() async {
     if (_cameras == null || _cameras!.length < 2) return;
 
-    setState(() {
-      _isFrontCamera = !_isFrontCamera;
-    });
+    try {
+      // Dispose camera controller cũ
+      if (_cameraController != null) {
+        await _cameraController!.dispose();
+        _cameraController = null;
+      }
 
-    await _cameraController?.dispose();
-    await _setupCamera(_isFrontCamera ? 1 : 0);
+      // Đợi một chút để camera session được giải phóng hoàn toàn
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Toggle camera
+      setState(() {
+        _isFrontCamera = !_isFrontCamera;
+      });
+
+      // Setup camera mới
+      await _setupCamera(_isFrontCamera ? 1 : 0);
+    } catch (e) {
+      debugPrint('Error flipping camera: $e');
+    }
   }
 
   Future<void> _capturePhoto() async {
@@ -123,73 +137,58 @@ class _CameraScreenState extends State<CameraScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F2F0),
       body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF4F2F0),
-            borderRadius: BorderRadius.circular(58),
-            border: Border.all(color: Colors.black, width: 1),
-          ),
-          child: Stack(
-            children: [
-              // Main content
-              Column(
-                children: [
-                  const SizedBox(height: 60),
+        child: Stack(
+          children: [
+            // Main content
+            Column(
+              children: [
+                const SizedBox(height: 60),
 
-                  // Camera viewfinder
-                  Expanded(
-                    child: Center(
-                      child: CameraViewfinder(
-                        controller: _cameraController,
-                        capturedImagePath: _capturedImagePath,
-                      ),
-                    ),
+                // Camera viewfinder
+                CameraViewfinder(
+                  controller: _cameraController,
+                  capturedImagePath: _capturedImagePath,
+                ),
+
+                const SizedBox(height: 16),
+
+                // Message input
+                MessageInput(controller: _messageController),
+
+                const Spacer(),
+
+                // Camera controls
+                CameraControls(
+                  isFlashOn: _isFlashOn,
+                  onFlashToggle: _toggleFlash,
+                  onCapture: _capturedImagePath == null
+                      ? _capturePhoto
+                      : _submitPhoto,
+                  onFlipCamera: _flipCamera,
+                ),
+
+                const SizedBox(height: 24),
+              ],
+            ),
+
+            // Close button
+            Positioned(
+              top: 20,
+              left: 20,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    shape: BoxShape.circle,
                   ),
-
-                  const SizedBox(height: 16),
-
-                  // Message input
-                  MessageInput(controller: _messageController),
-
-                  const SizedBox(height: 24),
-
-                  // Camera controls
-                  CameraControls(
-                    isFlashOn: _isFlashOn,
-                    onFlashToggle: _toggleFlash,
-                    onCapture: _capturedImagePath == null
-                        ? _capturePhoto
-                        : _submitPhoto,
-                    onFlipCamera: _flipCamera,
-                  ),
-
-                  const SizedBox(height: 40),
-                ],
-              ),
-
-              // Close button
-              Positioned(
-                top: 20,
-                left: 20,
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  ),
+                  child: const Icon(Icons.close, color: Colors.black, size: 24),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

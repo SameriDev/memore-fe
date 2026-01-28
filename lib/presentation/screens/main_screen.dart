@@ -5,6 +5,8 @@ import 'common/placeholder_screen.dart';
 import 'camera/camera_screen.dart';
 import 'profile/profile_screen.dart';
 import '../widgets/bottom_navigation.dart';
+import '../animations/camera_transition_controller.dart';
+import '../routes/camera_page_route.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,17 +15,59 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   int currentIndex = 1;
   int previousIndex = 1;
+
+  late CameraTransitionController _transitionController;
 
   final List<Widget> screens = [
     const FriendsListScreen(),
     const HomeScreen(),
-    const CameraScreen(),
+    const SizedBox.shrink(), // Camera handled separately
     const PlaceholderScreen(title: 'Timeline'),
     const ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _transitionController = CameraTransitionController();
+    _transitionController.initialize(this);
+  }
+
+  @override
+  void dispose() {
+    _transitionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleNavTap(int index) async {
+    if (index == 2) {
+      // Camera tab tapped
+      await _openCamera();
+    } else {
+      setState(() {
+        previousIndex = currentIndex;
+        currentIndex = index;
+      });
+    }
+  }
+
+  Future<void> _openCamera() async {
+    // Start nav icons fade out animation
+    await _transitionController.startCameraTransition();
+
+    // Navigate to camera with custom route
+    if (mounted) {
+      await Navigator.of(
+        context,
+      ).push(CameraPageRoute(child: const CameraScreen()));
+
+      // When returned from camera, reverse animation
+      await _transitionController.reverseCameraTransition();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +95,14 @@ class _MainScreenState extends State<MainScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: BottomNavigation(
-              currentIndex: currentIndex,
-              onTap: (index) {
-                setState(() {
-                  previousIndex = currentIndex;
-                  currentIndex = index;
-                });
+            child: AnimatedBuilder(
+              animation: _transitionController.navIconsAnimation,
+              builder: (context, child) {
+                return BottomNavigation(
+                  currentIndex: currentIndex,
+                  onTap: _handleNavTap,
+                  navItemsAnimation: _transitionController.navIconsAnimation,
+                );
               },
             ),
           ),
