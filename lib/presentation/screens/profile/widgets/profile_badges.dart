@@ -17,7 +17,6 @@ class ProfileBadges extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Enhanced GOLD Badge with effects
         GoldBadgeWithEffects(badgeLevel: badgeLevel),
         const SizedBox(width: 12),
         // Streak Badge

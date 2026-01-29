@@ -28,12 +28,12 @@ class GoldBadgeWithEffects extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: -24,
+              left: -32,
               top: -32,
               child: Transform.rotate(
                 angle: 50 * math.pi / 180,
                 child: Container(
-                  width: 30,
+                  width: 35,
                   height: 100,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -56,7 +56,7 @@ class GoldBadgeWithEffects extends StatelessWidget {
               child: Transform.rotate(
                 angle: 50 * math.pi / 180,
                 child: Container(
-                  width: 30,
+                  width: 35,
                   height: 70,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
