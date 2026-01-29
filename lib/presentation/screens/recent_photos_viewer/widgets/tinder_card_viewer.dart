@@ -19,13 +19,16 @@ class TinderCardViewer extends StatefulWidget {
 }
 
 class _TinderCardViewerState extends State<TinderCardViewer>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late int _currentIndex;
   int? _swipingIndex; // Track card đang bay đi
   Offset _cardOffset = Offset.zero;
   double _rotationAngle = 0.0;
   bool _isDragging = false;
   late AnimationController _animationController;
+  late AnimationController _scaleAnimationController;
+  double _nextCardScale = 0.9;
+  double _nextCardOpacity = 0.5;
 
   @override
   void initState() {
@@ -35,11 +38,16 @@ class _TinderCardViewerState extends State<TinderCardViewer>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    _scaleAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _scaleAnimationController.dispose();
     super.dispose();
   }
 
@@ -105,9 +113,11 @@ class _TinderCardViewerState extends State<TinderCardViewer>
       if (mounted) {
         setState(() {
           // Chuyển sang ảnh tiếp theo hoặc quay lại
-          if (direction > 0 && _currentIndex < widget.photos.length - 1) {
+          // Swipe Left (direction < 0) = Next photo
+          // Swipe Right (direction > 0) = Previous photo
+          if (direction < 0 && _currentIndex < widget.photos.length - 1) {
             _currentIndex++;
-          } else if (direction < 0 && _currentIndex > 0) {
+          } else if (direction > 0 && _currentIndex > 0) {
             _currentIndex--;
           }
 
@@ -118,6 +128,47 @@ class _TinderCardViewerState extends State<TinderCardViewer>
           _rotationAngle = 0.0;
           _swipingIndex = null;
           _animationController.reset();
+
+          // Animate preview card scale up
+          _nextCardScale = 0.9;
+          _nextCardOpacity = 0.5;
+        });
+
+        // Animate scale và opacity lên mượt mà từ từ
+        final scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _scaleAnimationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
+        final opacityAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _scaleAnimationController,
+            curve: Curves.easeOut,
+          ),
+        );
+
+        void scaleListener() {
+          if (mounted) {
+            setState(() {
+              _nextCardScale = scaleAnimation.value;
+              _nextCardOpacity = opacityAnimation.value;
+            });
+          }
+        }
+
+        scaleAnimation.addListener(scaleListener);
+        _scaleAnimationController.reset();
+        _scaleAnimationController.forward().then((_) {
+          scaleAnimation.removeListener(scaleListener);
+          if (mounted) {
+            setState(() {
+              _nextCardScale = 1.0;
+              _nextCardOpacity = 1.0;
+              _scaleAnimationController.reset();
+            });
+          }
         });
       }
     });
@@ -242,56 +293,59 @@ class _TinderCardViewerState extends State<TinderCardViewer>
       );
     }
 
+    // Tính toán preview card index dựa trên state
+    int? previewIndex;
+    if (_swipingIndex != null) {
+      // Đang swipe: preview là card tiếp theo sẽ xuất hiện
+      if (_cardOffset.dx < 0 && _currentIndex < widget.photos.length - 1) {
+        previewIndex = _currentIndex + 1;
+      } else if (_cardOffset.dx > 0 && _currentIndex > 0) {
+        previewIndex = _currentIndex - 1;
+      }
+    } else {
+      // Không swipe
+      if (_isDragging) {
+        // Đang kéo: hiện preview theo hướng kéo
+        if (_cardOffset.dx <= 0 && _currentIndex < widget.photos.length - 1) {
+          previewIndex = _currentIndex + 1;
+        } else if (_cardOffset.dx > 0 && _currentIndex > 0) {
+          previewIndex = _currentIndex - 1;
+        }
+      } else {
+        // Idle: mặc định hiện card tiếp theo
+        if (_currentIndex < widget.photos.length - 1) {
+          previewIndex = _currentIndex + 1;
+        }
+      }
+    }
+
+    // Index của top card (card đang tương tác)
+    final topCardIndex = _swipingIndex ?? _currentIndex;
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Preview card phía sau - smart preview dựa vào drag direction
-        if (_swipingIndex == null) ...[
-          // Nếu đang kéo sang phải hoặc không kéo: hiển thị card tiếp theo
-          if ((_cardOffset.dx >= 0 || !_isDragging) &&
-              _currentIndex < widget.photos.length - 1)
-            Opacity(
-              opacity: 0.5,
-              child: Transform.scale(
-                scale: 0.9,
-                child: _buildCard(
-                  widget.photos[_currentIndex + 1],
-                  isTop: false,
-                ),
-              ),
+        // Preview card phía sau - LUÔN render nếu có previewIndex
+        if (previewIndex != null)
+          Opacity(
+            opacity: _isDragging || _swipingIndex != null
+                ? 0.5
+                : _nextCardOpacity,
+            child: Transform.scale(
+              scale: _isDragging || _swipingIndex != null
+                  ? 0.9
+                  : _nextCardScale,
+              child: _buildCard(widget.photos[previewIndex], isTop: false),
             ),
-
-          // Nếu đang kéo sang trái: hiển thị card trước đó
-          if (_cardOffset.dx < 0 && _isDragging && _currentIndex > 0)
-            Opacity(
-              opacity: 0.5,
-              child: Transform.scale(
-                scale: 0.9,
-                child: _buildCard(
-                  widget.photos[_currentIndex - 1],
-                  isTop: false,
-                ),
-              ),
-            ),
-        ],
-
-        // Card hiện tại hoặc card đang swipe
-        if (_swipingIndex != null)
-          // Đang swipe: hiển thị card đang bay
-          GestureDetector(
-            onPanStart: _onPanStart,
-            onPanUpdate: _onPanUpdate,
-            onPanEnd: _onPanEnd,
-            child: _buildCard(widget.photos[_swipingIndex!]),
-          )
-        else
-          // Không swipe: hiển thị card hiện tại
-          GestureDetector(
-            onPanStart: _onPanStart,
-            onPanUpdate: _onPanUpdate,
-            onPanEnd: _onPanEnd,
-            child: _buildCard(widget.photos[_currentIndex]),
           ),
+
+        // Top card (current hoặc swiping)
+        GestureDetector(
+          onPanStart: _onPanStart,
+          onPanUpdate: _onPanUpdate,
+          onPanEnd: _onPanEnd,
+          child: _buildCard(widget.photos[topCardIndex]),
+        ),
 
         // Swipe indicators
         if (_isDragging)
