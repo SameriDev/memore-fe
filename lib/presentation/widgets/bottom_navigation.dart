@@ -1,12 +1,25 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-class BottomNavigation extends StatelessWidget {
+class BottomNavigation extends StatefulWidget {
   final int currentIndex;
   final Function(int)? onTap;
+  final bool hideNavItems;
+  final Animation<double>? navItemsAnimation;
 
-  const BottomNavigation({super.key, required this.currentIndex, this.onTap});
+  const BottomNavigation({
+    super.key,
+    required this.currentIndex,
+    this.onTap,
+    this.hideNavItems = false,
+    this.navItemsAnimation,
+  });
 
+  @override
+  State<BottomNavigation> createState() => _BottomNavigationState();
+}
+
+class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,33 +51,37 @@ class BottomNavigation extends StatelessWidget {
                     ),
                   ),
                 ),
-                _SlidingIndicator(currentIndex: currentIndex),
+                _SlidingIndicator(currentIndex: widget.currentIndex),
                 Positioned.fill(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _NavItem(
+                        _AnimatedNavItem(
                           icon: Icons.people_outline,
-                          isActive: currentIndex == 0,
-                          onTap: () => onTap?.call(0),
+                          isActive: widget.currentIndex == 0,
+                          onTap: () => widget.onTap?.call(0),
+                          hideAnimation: widget.navItemsAnimation,
                         ),
-                        _NavItem(
+                        _AnimatedNavItem(
                           icon: Icons.image_outlined,
-                          isActive: currentIndex == 1,
-                          onTap: () => onTap?.call(1),
+                          isActive: widget.currentIndex == 1,
+                          onTap: () => widget.onTap?.call(1),
+                          hideAnimation: widget.navItemsAnimation,
                         ),
                         const SizedBox(width: 80),
-                        _NavItem(
+                        _AnimatedNavItem(
                           icon: Icons.grid_view_outlined,
-                          isActive: currentIndex == 3,
-                          onTap: () => onTap?.call(3),
+                          isActive: widget.currentIndex == 3,
+                          onTap: () => widget.onTap?.call(3),
+                          hideAnimation: widget.navItemsAnimation,
                         ),
-                        _NavItem(
+                        _AnimatedNavItem(
                           icon: Icons.person_outline,
-                          isActive: currentIndex == 4,
-                          onTap: () => onTap?.call(4),
+                          isActive: widget.currentIndex == 4,
+                          onTap: () => widget.onTap?.call(4),
+                          hideAnimation: widget.navItemsAnimation,
                         ),
                       ],
                     ),
@@ -76,8 +93,8 @@ class BottomNavigation extends StatelessWidget {
                   right: 0,
                   child: Center(
                     child: _CenterButton(
-                      isActive: currentIndex == 2,
-                      onTap: () => onTap?.call(2),
+                      isActive: widget.currentIndex == 2,
+                      onTap: () => widget.onTap?.call(2),
                     ),
                   ),
                 ),
@@ -148,6 +165,41 @@ class _SlidingIndicator extends StatelessWidget {
   }
 }
 
+class _AnimatedNavItem extends StatelessWidget {
+  final IconData icon;
+  final bool isActive;
+  final VoidCallback onTap;
+  final Animation<double>? hideAnimation;
+
+  const _AnimatedNavItem({
+    required this.icon,
+    required this.isActive,
+    required this.onTap,
+    this.hideAnimation,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (hideAnimation != null) {
+      return AnimatedBuilder(
+        animation: hideAnimation!,
+        builder: (context, child) {
+          return Opacity(
+            opacity: 1.0 - hideAnimation!.value,
+            child: Transform.scale(
+              scale: 1.0 - (hideAnimation!.value * 0.5),
+              child: child,
+            ),
+          );
+        },
+        child: _NavItem(icon: icon, isActive: isActive, onTap: onTap),
+      );
+    }
+
+    return _NavItem(icon: icon, isActive: isActive, onTap: onTap);
+  }
+}
+
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final bool isActive;
@@ -163,6 +215,7 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Container(
         width: 60,
         height: 60,
@@ -188,13 +241,17 @@ class _CenterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFFFA500), width: 6),
-          color: Colors.white,
+      behavior: HitTestBehavior.opaque,
+      child: Hero(
+        tag: 'camera_button',
+        child: Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFFFFA500), width: 6),
+            color: Colors.white,
+          ),
         ),
       ),
     );
