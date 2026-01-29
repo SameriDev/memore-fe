@@ -17,8 +17,38 @@ class ProfileBadges extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Enhanced GOLD Badge with effects
-        GoldBadgeWithEffects(badgeLevel: badgeLevel),
+        // GOLD Badge
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // Background image with highlight
+            Image.asset(
+              'assets/icons/1769672028310.png',
+              height: 43,
+              width: 130,
+            ),
+            // Content overlay
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.star, color: Colors.black, size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    badgeLevel,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      height: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         const SizedBox(width: 12),
         // Streak Badge
         Container(
