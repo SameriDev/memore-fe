@@ -17,29 +17,36 @@ class ProfileBadges extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // GOLD Badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFCBA03),
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(Icons.star, color: Colors.black, size: 20),
-              const SizedBox(width: 6),
-              Text(
-                badgeLevel,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  height: 1,
-                ),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // Background image with highlight
+            Image.asset(
+              'assets/icons/1769672028310.png',
+              height: 43,
+              width: 130,
+            ),
+            // Content overlay
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.star, color: Colors.black, size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    badgeLevel,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      height: 1,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         const SizedBox(width: 12),
         // Streak Badge

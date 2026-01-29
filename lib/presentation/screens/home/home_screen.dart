@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../data/mock/mock_albums_data.dart';
+import '../../../data/mock/mock_user_profile.dart';
 import '../../../domain/entities/album.dart';
 import '../../../domain/entities/story.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -8,6 +9,7 @@ import '../../widgets/story_section.dart';
 import '../../widgets/album_header.dart';
 import '../../widgets/filter_section.dart';
 import '../../widgets/album_card.dart';
+import '../recent_photos_viewer/recent_photos_viewer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -52,6 +54,28 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _openRecentPhotos(Story story) {
+    // Lấy user ID từ story (giả sử story có userId)
+    final userId = story.userId;
+
+    // Lấy danh sách ảnh gần đây của user này
+    final photos = MockUserProfile.getRecentPhotos(userId);
+
+    // Navigate đến recent photos viewer
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecentPhotosViewerScreen(
+          userId: userId,
+          initialIndex: 0, // Bắt đầu từ ảnh đầu tiên
+          photos: photos,
+          userName: story.userName,
+          userAvatar: story.userAvatar,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     debugPrint('Add story tapped');
                   },
                   onStoryTap: (story) {
-                    debugPrint('Story tapped: ${story.userName}');
+                    _openRecentPhotos(story);
                   },
                   onMoreTap: () {
                     debugPrint('More stories tapped');
