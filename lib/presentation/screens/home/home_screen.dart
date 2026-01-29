@@ -82,6 +82,26 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFF5F1EB),
       body: Stack(
         children: [
+          // Decorative Ellipse - Bottom Left
+          Positioned(
+            bottom: -200,
+            left: -300,
+            child: Container(
+              width: 800,
+              height: 800,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFFFCBA03).withOpacity(0.20),
+                    const Color(0xFFFCBA03).withOpacity(0.02),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.6, 1.0],
+                ),
+              ),
+            ),
+          ),
           SafeArea(
             bottom: false,
             child: Column(
