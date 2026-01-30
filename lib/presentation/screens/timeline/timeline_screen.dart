@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'models/timeline_models.dart';
+import 'config/timeline_config.dart';
+import 'widgets/timeline_item.dart';
 
 class TimelineScreen extends StatefulWidget {
   const TimelineScreen({super.key});
@@ -165,672 +168,139 @@ class _TimelineScreenState extends State<TimelineScreen> {
         children: [
           Container(color: Colors.white),
           SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Timeline',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontFamily: 'Inika',
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Hãy xem lại thời gian của bạn',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                              fontFamily: 'Inika',
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2C2C2C),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.calendar_month_outlined,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24),
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _currentDay,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontFamily: 'Inika',
-                              height: 1.0,
-                            ),
-                          ),
-                          Text(
-                            _currentMonth,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black.withOpacity(0.6),
-                              fontFamily: 'Inika',
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Container(height: 1, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics(),
-                    ),
-                    padding: const EdgeInsets.only(bottom: 100, top: 40),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          left: 24,
-                          top: 0,
-                          bottom: 0,
-                          child: Container(width: 2, color: Colors.transparent),
-                        ),
-                        Positioned(
-                          right: 24,
-                          top: 0,
-                          bottom: 0,
-                          child: Container(width: 2, color: Colors.transparent),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            children: _timelineItems.map((item) {
-                              return Column(
-                                children: [
-                                  _TimelineItem(
-                                    alignment: item.alignment,
-                                    images: item.images,
-                                    title: item.title,
-                                    subtitle: item.subtitle,
-                                    time: item.time,
-                                    day: item.day,
-                                    month: item.month,
-                                  ),
-                                  const SizedBox(height: 50),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final config = ResponsiveConfig.fromWidth(constraints.maxWidth);
 
-class TimelineItemData {
-  final TimelineAlignment alignment;
-  final List<String> images;
-  final String title;
-  final String subtitle;
-  final String time;
-  final String day;
-  final String month;
-  final String displayDate;
-
-  TimelineItemData({
-    required this.alignment,
-    required this.images,
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    required this.day,
-    required this.month,
-    required this.displayDate,
-  });
-}
-
-enum TimelineAlignment { left, right }
-
-class _TimelineItem extends StatelessWidget {
-  final TimelineAlignment alignment;
-  final List<String> images;
-  final String title;
-  final String subtitle;
-  final String time;
-  final String day;
-  final String month;
-
-  const _TimelineItem({
-    required this.alignment,
-    required this.images,
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    required this.day,
-    required this.month,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isLeft = alignment == TimelineAlignment.left;
-
-    return Container(
-      margin: EdgeInsets.only(left: isLeft ? 0 : 50, right: isLeft ? 50 : 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isLeft) ...[
-            SizedBox(
-              width: 70,
-              height: 180,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  margin: const EdgeInsets.only(top: 5),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFF8C42).withOpacity(0.5),
-                        const Color(0xFFFFB380).withOpacity(0.35),
-                        const Color(0xFFFFB380).withOpacity(0.2),
-                        const Color(0xFFFFB380).withOpacity(0.1),
-                        const Color(0xFFFFB380).withOpacity(0.0),
-                      ],
-                      stops: const [0.0, 0.2, 0.4, 0.7, 1.0],
-                    ),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          day,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'Inika',
-                          ),
-                        ),
-                        Text(
-                          month,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                            fontFamily: 'Inika',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(flex: 6, child: _buildImageCluster()),
-            const SizedBox(width: 40),
-            Expanded(
-              flex: 4,
-              child: SizedBox(
-                height: 180,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        '"$subtitle"',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        time,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ] else ...[
-            Expanded(
-              flex: 4,
-              child: SizedBox(
-                height: 180,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        '"$subtitle"',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        time,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 40),
-            Expanded(flex: 6, child: _buildImageCluster()),
-            SizedBox(
-              width: 70,
-              height: 180,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  margin: const EdgeInsets.only(top: 5),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFF8C42).withOpacity(0.5),
-                        const Color(0xFFFFB380).withOpacity(0.35),
-                        const Color(0xFFFFB380).withOpacity(0.2),
-                        const Color(0xFFFFB380).withOpacity(0.1),
-                        const Color(0xFFFFB380).withOpacity(0.0),
-                      ],
-                      stops: const [0.0, 0.2, 0.4, 0.7, 1.0],
-                    ),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          day,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'Inika',
-                          ),
-                        ),
-                        Text(
-                          month,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                            fontFamily: 'Inika',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImageCluster() {
-    if (images.isEmpty) {
-      return Container(
-        height: 180,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.grey[300],
-        ),
-      );
-    }
-
-    if (images.length == 1) {
-      return Container(
-        height: 180,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            images[0],
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey[300],
-                child: const Center(
-                  child: Icon(Icons.image_not_supported, size: 50),
-                ),
-              );
-            },
-          ),
-        ),
-      );
-    }
-
-    if (images.length == 2) {
-      return Container(
-        height: 180,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Image.network(
-                  images[0],
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 30),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 2),
-              Expanded(
-                child: Image.network(
-                  images[1],
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 30),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (images.length == 3) {
-      return Container(
-        height: 180,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Image.network(
-                  images[0],
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 30),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 2),
-              Expanded(
-                child: Column(
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Image.network(
-                        images[1],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported, size: 20),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Expanded(
-                      child: Image.network(
-                        images[2],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported, size: 20),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    _buildHeader(config),
+                    const SizedBox(height: 16),
+                    _buildDateIndicator(config),
+                    Expanded(child: _buildTimelineList(config)),
                   ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(ResponsiveConfig config) {
+    return Padding(
+      padding: EdgeInsets.all(config.headerPadding),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Timeline',
+                style: TextStyle(
+                  fontSize: config.headerTitleSize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Inika',
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Hãy xem lại thời gian của bạn',
+                style: TextStyle(
+                  fontSize: config.headerSubtitleSize,
+                  color: Colors.black54,
+                  fontFamily: 'Inika',
                 ),
               ),
             ],
           ),
-        ),
-      );
-    }
-
-    return Container(
-      height: 180,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+          Container(
+            width: config.headerIconSize,
+            height: config.headerIconSize,
+            decoration: BoxDecoration(
+              color: const Color(0xFF2C2C2C),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.calendar_month_outlined,
+              color: Colors.white,
+              size: config.headerIconSize * 0.5,
+            ),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Image.network(
-                      images[0],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: Icon(Icons.image_not_supported, size: 20),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Expanded(
-                    child: Image.network(
-                      images[1],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: Icon(Icons.image_not_supported, size: 20),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+    );
+  }
+
+  Widget _buildDateIndicator(ResponsiveConfig config) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: config.headerPadding),
+      height: 50,
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _currentDay,
+                style: TextStyle(
+                  fontSize: config.dateIndicatorDaySize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Inika',
+                  height: 1.0,
+                ),
               ),
-            ),
-            const SizedBox(width: 2),
-            Expanded(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Image.network(
-                      images[2],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: Icon(Icons.image_not_supported, size: 20),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Expanded(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(
-                          images[3],
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 20,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        if (images.length > 4)
-                          Container(
-                            color: Colors.black.withOpacity(0.5),
-                            child: Center(
-                              child: Text(
-                                '+${images.length - 4}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
+              Text(
+                _currentMonth,
+                style: TextStyle(
+                  fontSize: config.dateIndicatorMonthSize,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black.withOpacity(0.6),
+                  fontFamily: 'Inika',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(child: Container(height: 1, color: Colors.black)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimelineList(ResponsiveConfig config) {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      padding: EdgeInsets.only(bottom: 100, top: config.itemTopPadding),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: config.contentPadding),
+        child: Column(
+          children: _timelineItems.map((item) {
+            return Column(
+              children: [
+                TimelineItem(
+                  alignment: item.alignment,
+                  images: item.images,
+                  title: item.title,
+                  subtitle: item.subtitle,
+                  time: item.time,
+                  day: item.day,
+                  month: item.month,
+                  config: config,
+                ),
+                SizedBox(height: config.itemSpacing),
+              ],
+            );
+          }).toList(),
         ),
       ),
     );
