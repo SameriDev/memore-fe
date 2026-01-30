@@ -11,6 +11,7 @@ class TimelineItem extends StatelessWidget {
   final String day;
   final String month;
   final ResponsiveConfig config;
+  final VoidCallback? onAlbumTap;
 
   const TimelineItem({
     super.key,
@@ -22,6 +23,7 @@ class TimelineItem extends StatelessWidget {
     required this.day,
     required this.month,
     required this.config,
+    this.onAlbumTap,
   });
 
   @override
@@ -248,6 +250,12 @@ class TimelineItem extends StatelessWidget {
     );
   }
 
+  Widget _wrapWithGestureDetector(Widget child) {
+    if (onAlbumTap == null) return child;
+
+    return GestureDetector(onTap: onAlbumTap, child: child);
+  }
+
   Widget _buildImageCluster() {
     if (images.isEmpty) {
       return Container(
@@ -260,92 +268,181 @@ class TimelineItem extends StatelessWidget {
     }
 
     if (images.length == 1) {
-      return Container(
-        height: config.itemHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+      return _wrapWithGestureDetector(
+        Container(
+          height: config.itemHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              images[0],
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: Icon(Icons.image_not_supported, size: 50),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            images[0],
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey[300],
-                child: const Center(
-                  child: Icon(Icons.image_not_supported, size: 50),
-                ),
-              );
-            },
           ),
         ),
       );
     }
 
     if (images.length == 2) {
-      return Container(
-        height: config.itemHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Image.network(
-                  images[0],
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 30),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 2),
-              Expanded(
-                child: Image.network(
-                  images[1],
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 30),
-                      ),
-                    );
-                  },
-                ),
+      return _wrapWithGestureDetector(
+        Container(
+          height: config.itemHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Image.network(
+                    images[0],
+                    fit: BoxFit.cover,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(Icons.image_not_supported, size: 30),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 2),
+                Expanded(
+                  child: Image.network(
+                    images[1],
+                    fit: BoxFit.cover,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(Icons.image_not_supported, size: 30),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
 
     if (images.length == 3) {
-      return Container(
+      return _wrapWithGestureDetector(
+        Container(
+          height: config.itemHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Image.network(
+                    images[0],
+                    fit: BoxFit.cover,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(Icons.image_not_supported, size: 30),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 2),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          images[1],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 20,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Expanded(
+                        child: Image.network(
+                          images[2],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 20,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return _wrapWithGestureDetector(
+      Container(
         height: config.itemHeight,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -362,28 +459,11 @@ class TimelineItem extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                flex: 2,
-                child: Image.network(
-                  images[0],
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 30),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 2),
-              Expanded(
                 child: Column(
                   children: [
                     Expanded(
                       child: Image.network(
-                        images[1],
+                        images[0],
                         fit: BoxFit.cover,
                         width: double.infinity,
                         errorBuilder: (context, error, stackTrace) {
@@ -399,7 +479,7 @@ class TimelineItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Expanded(
                       child: Image.network(
-                        images[2],
+                        images[1],
                         fit: BoxFit.cover,
                         width: double.infinity,
                         errorBuilder: (context, error, stackTrace) {
@@ -415,125 +495,67 @@ class TimelineItem extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      height: config.itemHeight,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Image.network(
-                      images[0],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: Icon(Icons.image_not_supported, size: 20),
-                          ),
-                        );
-                      },
+              const SizedBox(width: 2),
+              Expanded(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Image.network(
+                        images[2],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: Icon(Icons.image_not_supported, size: 20),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Expanded(
-                    child: Image.network(
-                      images[1],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: Icon(Icons.image_not_supported, size: 20),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 2),
-            Expanded(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Image.network(
-                      images[2],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: Icon(Icons.image_not_supported, size: 20),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Expanded(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(
-                          images[3],
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 20,
+                    const SizedBox(height: 2),
+                    Expanded(
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            images[3],
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    size: 20,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                        if (images.length > 4)
-                          Container(
-                            color: Colors.black.withOpacity(0.5),
-                            child: Center(
-                              child: Text(
-                                '+${images.length - 4}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                              );
+                            },
+                          ),
+                          if (images.length > 4)
+                            Container(
+                              color: Colors.black.withOpacity(0.5),
+                              child: Center(
+                                child: Text(
+                                  '+${images.length - 4}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

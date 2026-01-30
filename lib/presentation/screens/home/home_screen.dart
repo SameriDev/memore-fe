@@ -9,6 +9,7 @@ import '../../widgets/story_section.dart';
 import '../../widgets/album_header.dart';
 import '../../widgets/filter_section.dart';
 import '../../widgets/album_card.dart';
+import '../../widgets/decorated_background.dart';
 import '../recent_photos_viewer/recent_photos_viewer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -78,106 +79,82 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return DecoratedBackground(
       backgroundColor: const Color(0xFFF5F1EB),
-      body: Stack(
-        children: [
-          // Decorative Ellipse - Bottom Left
-          Positioned(
-            bottom: -200,
-            left: -300,
-            child: Container(
-              width: 800,
-              height: 800,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFCBA03).withOpacity(0.20),
-                    const Color(0xFFFCBA03).withOpacity(0.02),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.6, 1.0],
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            StorySection(
+              stories: stories,
+              onAddStory: () {
+                debugPrint('Add story tapped');
+              },
+              onStoryTap: (story) {
+                _openRecentPhotos(story);
+              },
+              onMoreTap: () {
+                debugPrint('More stories tapped');
+              },
+            ),
+            const SizedBox(height: 8),
+            AlbumHeader(
+              onSearchTap: () {
+                debugPrint('Search tapped');
+              },
+              onAddTap: () {
+                debugPrint('Add album tapped');
+              },
+            ),
+            FilterSection(
+              activeFilters: activeFilters,
+              onFilterTap: () {
+                debugPrint('Filter tapped');
+              },
+              onRemoveFilter: _handleRemoveFilter,
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: MasonryGridView.count(
+                padding: const EdgeInsets.only(
+                  left: AppDimensions.horizontalPadding,
+                  right: AppDimensions.horizontalPadding,
+                  bottom: 140,
                 ),
+                crossAxisCount: 2,
+                mainAxisSpacing: AppDimensions.gridSpacing,
+                crossAxisSpacing: AppDimensions.gridSpacing,
+                itemCount: albums.length,
+                itemBuilder: (context, index) {
+                  final album = albums[index];
+                  final aspectRatios = [
+                    0.9,
+                    1.1,
+                    1.0,
+                    1.2,
+                    0.95,
+                    1.05,
+                    0.85,
+                    1.15,
+                  ];
+                  final aspectRatio =
+                      aspectRatios[index % aspectRatios.length];
+
+                  return AlbumCard(
+                    album: album,
+                    aspectRatio: aspectRatio,
+                    onTap: () {
+                      debugPrint('Album tapped: ${album.name}');
+                    },
+                    onFavoriteTap: () {
+                      _handleAlbumFavorite(album);
+                    },
+                  );
+                },
               ),
             ),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                StorySection(
-                  stories: stories,
-                  onAddStory: () {
-                    debugPrint('Add story tapped');
-                  },
-                  onStoryTap: (story) {
-                    _openRecentPhotos(story);
-                  },
-                  onMoreTap: () {
-                    debugPrint('More stories tapped');
-                  },
-                ),
-                const SizedBox(height: 8),
-                AlbumHeader(
-                  onSearchTap: () {
-                    debugPrint('Search tapped');
-                  },
-                  onAddTap: () {
-                    debugPrint('Add album tapped');
-                  },
-                ),
-                FilterSection(
-                  activeFilters: activeFilters,
-                  onFilterTap: () {
-                    debugPrint('Filter tapped');
-                  },
-                  onRemoveFilter: _handleRemoveFilter,
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: MasonryGridView.count(
-                    padding: const EdgeInsets.only(
-                      left: AppDimensions.horizontalPadding,
-                      right: AppDimensions.horizontalPadding,
-                      bottom: 140,
-                    ),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: AppDimensions.gridSpacing,
-                    crossAxisSpacing: AppDimensions.gridSpacing,
-                    itemCount: albums.length,
-                    itemBuilder: (context, index) {
-                      final album = albums[index];
-                      final aspectRatios = [
-                        0.9,
-                        1.1,
-                        1.0,
-                        1.2,
-                        0.95,
-                        1.05,
-                        0.85,
-                        1.15,
-                      ];
-                      final aspectRatio =
-                          aspectRatios[index % aspectRatios.length];
-
-                      return AlbumCard(
-                        album: album,
-                        aspectRatio: aspectRatio,
-                        onTap: () {
-                          debugPrint('Album tapped: ${album.name}');
-                        },
-                        onFavoriteTap: () {
-                          _handleAlbumFavorite(album);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

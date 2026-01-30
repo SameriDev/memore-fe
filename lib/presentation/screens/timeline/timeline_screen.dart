@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'models/timeline_models.dart';
 import 'config/timeline_config.dart';
 import 'widgets/timeline_item.dart';
+import 'widgets/album_carousel_viewer.dart';
 
 class TimelineScreen extends StatefulWidget {
   const TimelineScreen({super.key});
@@ -161,12 +162,74 @@ class _TimelineScreenState extends State<TimelineScreen> {
     }
   }
 
+  void _showAlbumCarousel(List<String> images, int initialIndex) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: Colors.transparent,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return AlbumCarouselViewer(
+            images: images,
+            initialIndex: initialIndex,
+            onClose: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF4F2F0),
       body: Stack(
         children: [
-          Container(color: Colors.white),
+          // Decorative Ellipse - Top Right
+          Positioned(
+            top: -300,
+            right: -300,
+            child: Container(
+              width: 800,
+              height: 800,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFFFCBA03).withOpacity(0.20),
+                    const Color(0xFFFCBA03).withOpacity(0.02),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.6, 1.0],
+                ),
+              ),
+            ),
+          ),
+          // Decorative Ellipse - Bottom Left
+          Positioned(
+            bottom: -200,
+            left: -300,
+            child: Container(
+              width: 800,
+              height: 800,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFFFCBA03).withOpacity(0.20),
+                    const Color(0xFFFCBA03).withOpacity(0.02),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.6, 1.0],
+                ),
+              ),
+            ),
+          ),
+          // Main Content
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -296,6 +359,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
                   day: item.day,
                   month: item.month,
                   config: config,
+                  onAlbumTap: item.images.isNotEmpty
+                      ? () => _showAlbumCarousel(item.images, 0)
+                      : null,
                 ),
                 SizedBox(height: config.itemSpacing),
               ],
