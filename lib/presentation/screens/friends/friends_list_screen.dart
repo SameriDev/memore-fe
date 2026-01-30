@@ -8,6 +8,7 @@ import 'widgets/search_friends_bar.dart';
 import 'widgets/social_integration_section.dart';
 import 'widgets/friend_grid_item.dart';
 import 'widgets/share_link_section.dart';
+import '../../widgets/decorated_background.dart';
 
 class FriendsListScreen extends StatefulWidget {
   const FriendsListScreen({super.key});
@@ -50,9 +51,8 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F2F0),
-      body: SafeArea(
+    return DecoratedBackground(
+      child: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(

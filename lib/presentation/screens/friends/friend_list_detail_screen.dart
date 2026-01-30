@@ -3,6 +3,7 @@ import '../../../data/mock/mock_friends_data.dart';
 import '../../../domain/entities/friend.dart';
 import 'friend_timeline_screen.dart';
 import '../../widgets/friend_list_item.dart';
+import '../../widgets/decorated_background.dart';
 
 class FriendListDetailScreen extends StatefulWidget {
   const FriendListDetailScreen({super.key});
@@ -22,9 +23,8 @@ class _FriendListDetailScreenState extends State<FriendListDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F2F0),
-      body: SafeArea(
+    return DecoratedBackground(
+      child: SafeArea(
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 30),

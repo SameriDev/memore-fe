@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'gold_badge_with_effects.dart';
 
 class ProfileBadges extends StatelessWidget {
   final String badgeLevel;
@@ -16,38 +17,7 @@ class ProfileBadges extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // GOLD Badge
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            // Background image with highlight
-            Image.asset(
-              'assets/icons/1769672028310.png',
-              height: 43,
-              width: 130,
-            ),
-            // Content overlay
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.star, color: Colors.black, size: 20),
-                  const SizedBox(width: 6),
-                  Text(
-                    badgeLevel,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      height: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        GoldBadgeWithEffects(badgeLevel: badgeLevel),
         const SizedBox(width: 12),
         // Streak Badge
         Container(

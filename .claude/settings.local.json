@@ -18,7 +18,8 @@
       "Bash(flutter clean)",
       "Bash(flutter analyze --no-fatal-infos lib/presentation/screens/camera/)",
       "mcp__plugin_figma_figma__get_screenshot",
-      "Bash(tree lib -L 3)"
+      "Bash(tree lib -L 3)",
+      "mcp__plugin_figma_figma__get_design_context"
     ]
   }
 }
