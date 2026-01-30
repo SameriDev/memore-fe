@@ -106,6 +106,7 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+      extendBodyBehindAppBar: true, // Cho phép body chạy lên sau AppBar
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -126,13 +127,6 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
         children: [
           // Background decorations
           const TimelineBackgroundDecoration(),
-          // Vertical timeline line - Liền mạch chạy suốt
-          Positioned(
-            right: 10, // Gần edge màn hình
-            top: 0,
-            bottom: 0,
-            child: Container(width: 2, color: const Color(0xFF464646)),
-          ),
           // Main content
           SingleChildScrollView(
             child: Column(
@@ -155,6 +149,14 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
                 const SizedBox(height: 40),
               ],
             ),
+          ),
+          // Vertical timeline line - Liền mạch chạy suốt, tràn full màn hình
+          // Đặt sau SingleChildScrollView để render phía trên
+          Positioned(
+            right: 29, // Vị trí cố định bên phải
+            top: -500, // Tràn lên trên
+            height: 2000, // Chiều cao lớn để tràn xuống dưới
+            child: Container(width: 2, color: const Color(0xFF464646)),
           ),
         ],
       ),

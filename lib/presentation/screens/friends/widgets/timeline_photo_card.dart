@@ -154,8 +154,8 @@ class TimelinePhotoCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 8), // Ở đầu lớp ảnh
                 child: Container(
-                  width: 16, // Tăng size từ 12 lên 16
-                  height: 16,
+                  width: 21, // Tăng 30%: 16 * 1.3 = 21
+                  height: 21,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: const Color(0xFF464646),
