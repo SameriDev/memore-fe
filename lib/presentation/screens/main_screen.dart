@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
-import 'friends/friends_list_screen.dart';
+import 'friends/friends_tab.dart';
 import 'camera/camera_screen.dart';
 import 'profile/profile_screen.dart';
 import 'timeline/timeline_screen.dart';
@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late CameraTransitionController _transitionController;
 
   final List<Widget> screens = [
-    const FriendsListScreen(),
+    const FriendsTab(),
     const HomeScreen(),
     const SizedBox.shrink(), // Camera handled separately
     const TimelineScreen(),
