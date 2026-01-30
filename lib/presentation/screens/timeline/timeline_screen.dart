@@ -26,7 +26,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
         'https://picsum.photos/seed/summer3/400/300',
       ],
       title: 'Summer',
-      subtitle: 'Em đẹp yêu anh',
+      subtitle: 'Em đéo yêu anh',
       time: '03:38 3-6',
       day: '15',
       month: 'Jun',

@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'carousel_backdrop.dart';
-import 'carousel_controls.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class AlbumCarouselViewer extends StatefulWidget {
   final List<String> images;
@@ -18,37 +19,45 @@ class AlbumCarouselViewer extends StatefulWidget {
   State<AlbumCarouselViewer> createState() => _AlbumCarouselViewerState();
 }
 
-class _AlbumCarouselViewerState extends State<AlbumCarouselViewer>
-    with SingleTickerProviderStateMixin {
+class _AlbumCarouselViewerState extends State<AlbumCarouselViewer> {
   late PageController _pageController;
   late int _currentIndex;
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
+  bool _showControls = true;
+  Timer? _hideTimer;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-    _animationController.forward();
+    _startHideTimer();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _animationController.dispose();
+    _hideTimer?.cancel();
     super.dispose();
+  }
+
+  void _startHideTimer() {
+    _hideTimer?.cancel();
+    _hideTimer = Timer(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          _showControls = false;
+        });
+      }
+    });
+  }
+
+  void _onUserTap() {
+    setState(() {
+      _showControls = !_showControls;
+    });
+    if (_showControls) {
+      _startHideTimer();
+    }
   }
 
   void _onPageChanged(int index) {
@@ -57,147 +66,82 @@ class _AlbumCarouselViewerState extends State<AlbumCarouselViewer>
     });
   }
 
-  void _goToPrevious() {
-    if (_currentIndex > 0) {
-      _pageController.animateToPage(
-        _currentIndex - 1,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _goToNext() {
-    if (_currentIndex < widget.images.length - 1) {
-      _pageController.animateToPage(
-        _currentIndex + 1,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _handleClose() {
-    _animationController.reverse().then((_) {
-      widget.onClose();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Handle back button
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
-          _handleClose();
+          widget.onClose();
         }
       },
-      child: CarouselBackdrop(
-        currentImage: widget.images[_currentIndex],
-        child: Stack(
-          children: [
-            // Main carousel
-            AnimatedBuilder(
-              animation: _scaleAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: child,
-                );
-              },
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                itemCount: widget.images.length,
-                itemBuilder: (context, index) {
-                  return Center(
-                    child: InteractiveViewer(
-                      minScale: 0.5,
-                      maxScale: 4.0,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 60,
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(
-                            widget.images[index],
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[900],
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    color: Colors.white54,
-                                    size: 64,
-                                  ),
-                                ),
-                              );
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                  color: Colors.white,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          onTap: _onUserTap,
+          child: Stack(
+            children: [
+              // Photo Gallery
+              PhotoViewGallery.builder(
+                scrollPhysics: const BouncingScrollPhysics(),
+                builder: (BuildContext context, int index) {
+                  return PhotoViewGalleryPageOptions(
+                    imageProvider: NetworkImage(widget.images[index]),
+                    initialScale: PhotoViewComputedScale.contained,
+                    minScale: PhotoViewComputedScale.contained * 0.8,
+                    maxScale: PhotoViewComputedScale.covered * 2.0,
+                    heroAttributes: PhotoViewHeroAttributes(
+                      tag: widget.images[index],
                     ),
                   );
                 },
+                itemCount: widget.images.length,
+                loadingBuilder: (context, event) => Center(
+                  child: CircularProgressIndicator(
+                    value: event == null
+                        ? 0
+                        : event.cumulativeBytesLoaded /
+                              (event.expectedTotalBytes ?? 1),
+                    color: Colors.white,
+                  ),
+                ),
+                backgroundDecoration: const BoxDecoration(color: Colors.black),
+                pageController: _pageController,
+                onPageChanged: _onPageChanged,
               ),
-            ),
 
-            // Controls overlay
-            CarouselControls(
-              onPrevious: _goToPrevious,
-              onNext: _goToNext,
-              onClose: _handleClose,
-              canGoPrevious: _currentIndex > 0,
-              canGoNext: _currentIndex < widget.images.length - 1,
-            ),
-
-            // Page indicator
-            Positioned(
-              bottom: 40,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${_currentIndex + 1} / ${widget.images.length}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+              // Page indicator
+              Positioned(
+                bottom: 40,
+                left: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: _showControls ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${_currentIndex + 1} / ${widget.images.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
