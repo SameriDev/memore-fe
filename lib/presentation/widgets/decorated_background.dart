@@ -29,8 +29,12 @@ class DecoratedBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(0.20),
-                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(0.02),
+                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(
+                      0.20,
+                    ),
+                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(
+                      0.02,
+                    ),
                     Colors.transparent,
                   ],
                   stops: const [0.0, 0.6, 1.0],
@@ -49,8 +53,12 @@ class DecoratedBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(0.20),
-                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(0.02),
+                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(
+                      0.20,
+                    ),
+                    (decorationColor ?? const Color(0xFFFCBA03)).withOpacity(
+                      0.02,
+                    ),
                     Colors.transparent,
                   ],
                   stops: const [0.0, 0.6, 1.0],

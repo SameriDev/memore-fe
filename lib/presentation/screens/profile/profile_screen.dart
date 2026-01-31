@@ -138,6 +138,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         debugPrint('Get help tapped');
                       },
                     ),
+                    const SizedBox(height: 8),
+                    ProfileSettingItem(
+                      icon: Icons.logout,
+                      title: 'Logout',
+                      onTap: () {
+                        Navigator.of(
+                          context,
+                        ).pushNamedAndRemoveUntil('/welcome', (route) => false);
+                      },
+                    ),
                     const SizedBox(height: 120),
                   ],
                 ),
