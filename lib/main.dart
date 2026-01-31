@@ -4,6 +4,7 @@ import 'presentation/screens/main_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/auth/register_screen.dart';
 import 'presentation/screens/auth/welcome_screen.dart';
+import 'presentation/screens/auth/otp_verification_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 
 void main() {
@@ -26,6 +27,7 @@ class MemoreApp extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
+        '/otp': (context) => const OtpVerificationScreen(),
         '/main': (context) => const MainScreen(),
         '/home': (context) => const WelcomeScreen(),
       },

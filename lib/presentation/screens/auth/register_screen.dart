@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/decorated_background.dart';
+import 'otp_verification_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -80,8 +81,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = false);
 
     if (mounted) {
-      // Navigate to main screen
-      Navigator.of(context).pushReplacementNamed('/main');
+      // Navigate to OTP verification screen
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) =>
+              const OtpVerificationScreen(email: 'user@gmail.com'),
+        ),
+      );
     }
   }
 
