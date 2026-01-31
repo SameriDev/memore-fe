@@ -70,13 +70,55 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SizedBox(height: 60),
-                          // Logo/Title
+                          const SizedBox(height: 40),
+                          // Logo
+                          Center(
+                            child: Container(
+                              width: 150,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFF8B4513,
+                                    ).withOpacity(0.15),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.asset(
+                                  'assets/icons/memore_logo.png',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF8B4513),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.camera_alt,
+                                          size: 60,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          // Title
                           Text(
                             'Memore',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.inika(
-                              fontSize: 48,
+                              fontSize: 40,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF3E2723),
                             ),
@@ -90,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: const Color(0xFF6D4C41),
                             ),
                           ),
-                          const SizedBox(height: 48),
+                          const SizedBox(height: 40),
                           // Email Field
                           TextFormField(
                             controller: _emailController,
