@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/mock/mock_friends_data.dart';
 import '../../../domain/entities/friend.dart';
 import 'friend_list_detail_screen.dart';
+import 'friend_timeline_screen.dart';
 import 'add_friend_screen.dart';
 import 'widgets/search_friends_bar.dart';
 import 'widgets/social_integration_section.dart';
@@ -152,8 +153,13 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
                   return FriendGridItem(
                     friend: friend,
                     onTap: () {
-                      debugPrint('Friend tapped: ${friend.name}');
-                      // Navigate to friend profile (chưa implement)
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              FriendTimelineScreen(friend: friend),
+                        ),
+                      );
                     },
                   );
                 },

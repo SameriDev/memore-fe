@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../data/mock/mock_friends_data.dart';
 import '../../../domain/entities/friend.dart';
+import 'friend_timeline_screen.dart';
 import '../../widgets/friend_list_item.dart';
 import '../../widgets/decorated_background.dart';
 
@@ -73,7 +74,13 @@ class _FriendListDetailScreenState extends State<FriendListDetailScreen> {
                     return FriendListItem(
                       friend: friend,
                       onTap: () {
-                        debugPrint('Friend tapped: ${friend.name}');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                FriendTimelineScreen(friend: friend),
+                          ),
+                        );
                       },
                       onMessageTap: () {
                         debugPrint('Message tapped for: ${friend.name}');
