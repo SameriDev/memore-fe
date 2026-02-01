@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import '../models/camera_state.dart';
 
 class CameraControls extends StatelessWidget {
   final bool isFlashOn;
   final VoidCallback onFlashToggle;
   final VoidCallback onCapture;
   final VoidCallback onFlipCamera;
+  final CameraMode mode;
+  final bool isProcessing;
 
   const CameraControls({
     super.key,
@@ -12,6 +15,8 @@ class CameraControls extends StatelessWidget {
     required this.onFlashToggle,
     required this.onCapture,
     required this.onFlipCamera,
+    required this.mode,
+    this.isProcessing = false,
   });
 
   @override
@@ -31,21 +36,48 @@ class CameraControls extends StatelessWidget {
           Hero(
             tag: 'camera_button',
             child: GestureDetector(
-              onTap: onCapture,
+              onTap: isProcessing ? null : onCapture,
               child: Container(
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFFFA500),
+                  color: isProcessing
+                    ? const Color(0xFFFFA500).withValues(alpha: 0.5)
+                    : const Color(0xFFFFA500),
                 ),
-                child: const Icon(Icons.check, color: Colors.white, size: 40),
+                child: isProcessing
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: Icon(
+                        mode == CameraMode.capture
+                          ? Icons.radio_button_unchecked
+                          : Icons.check,
+                        key: ValueKey(mode),
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
               ),
             ),
           ),
 
-          // Flip camera button
-          _ControlButton(icon: Icons.flip_camera_ios, onTap: onFlipCamera),
+          // Flip camera/Cancel button
+          _ControlButton(
+            icon: mode == CameraMode.capture
+              ? Icons.flip_camera_ios
+              : Icons.close,
+            onTap: isProcessing ? () {} : onFlipCamera,
+            isDisabled: isProcessing,
+          ),
         ],
       ),
     );
@@ -55,17 +87,30 @@ class CameraControls extends StatelessWidget {
 class _ControlButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final bool isDisabled;
 
-  const _ControlButton({required this.icon, required this.onTap});
+  const _ControlButton({
+    required this.icon,
+    required this.onTap,
+    this.isDisabled = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: isDisabled ? null : onTap,
       child: Container(
         width: 48,
         height: 48,
-        child: Icon(icon, color: Colors.black, size: 28),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: Icon(
+            icon,
+            key: ValueKey(icon),
+            color: isDisabled ? Colors.black.withValues(alpha: 0.5) : Colors.black,
+            size: 28,
+          ),
+        ),
       ),
     );
   }

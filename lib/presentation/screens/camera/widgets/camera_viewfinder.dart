@@ -23,7 +23,10 @@ class CameraViewfinder extends StatelessWidget {
         width: viewfinderWidth,
         height: viewfinderHeight,
         color: Colors.grey[300],
-        child: _buildContent(),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 400),
+          child: _buildContent(),
+        ),
       ),
     );
   }
@@ -31,22 +34,56 @@ class CameraViewfinder extends StatelessWidget {
   Widget _buildContent() {
     // Show captured image if available
     if (capturedImagePath != null) {
-      return Image.file(File(capturedImagePath!), fit: BoxFit.cover);
+      return SizedBox(
+        key: ValueKey('captured_image_$capturedImagePath'),
+        width: double.infinity,
+        height: double.infinity,
+        child: Image.file(
+          File(capturedImagePath!),
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: Colors.grey[300],
+              child: const Center(
+                child: Icon(
+                  Icons.error,
+                  color: Colors.grey,
+                  size: 48,
+                ),
+              ),
+            );
+          },
+        ),
+      );
     }
 
     // Show camera preview if controller is initialized
     if (controller != null && controller!.value.isInitialized) {
-      return FittedBox(
-        fit: BoxFit.cover,
-        child: SizedBox(
-          width: controller!.value.previewSize!.height,
-          height: controller!.value.previewSize!.width,
-          child: CameraPreview(controller!),
+      return SizedBox(
+        key: const ValueKey('camera_preview'),
+        width: double.infinity,
+        height: double.infinity,
+        child: FittedBox(
+          fit: BoxFit.cover,
+          child: SizedBox(
+            width: controller!.value.previewSize!.height,
+            height: controller!.value.previewSize!.width,
+            child: CameraPreview(controller!),
+          ),
         ),
       );
     }
 
     // Show loading indicator
-    return const Center(child: CircularProgressIndicator());
+    return SizedBox(
+      key: const ValueKey('loading'),
+      width: double.infinity,
+      height: double.infinity,
+      child: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }

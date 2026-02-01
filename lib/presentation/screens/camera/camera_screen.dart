@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import '../../../data/local/user_manager.dart';
-import 'photo_preview_screen.dart';
+import '../../../data/local/photo_storage_manager.dart';
 import 'widgets/camera_viewfinder.dart';
 import 'widgets/camera_controls.dart';
-import 'widgets/message_input.dart';
-import '../../routes/custom_route_transitions.dart';
+import 'models/camera_state.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -19,7 +18,11 @@ class _CameraScreenState extends State<CameraScreen> {
   List<CameraDescription>? _cameras;
   bool _isFlashOn = false;
   bool _isFrontCamera = false;
-  final TextEditingController _messageController = TextEditingController();
+
+  // New state variables for inline preview
+  CameraMode _currentMode = CameraMode.capture;
+  String? _capturedImagePath;
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -128,18 +131,21 @@ class _CameraScreenState extends State<CameraScreen> {
     }
 
     try {
+      setState(() => _isProcessing = true);
+
       final image = await _cameraController!.takePicture();
 
-      // Navigate to photo preview screen with smooth transition
-      if (mounted) {
-        context.pushSlideBottom(PhotoPreviewScreen(
-          imagePath: image.path,
-        ));
-      }
+      setState(() {
+        _currentMode = CameraMode.preview;
+        _capturedImagePath = image.path;
+        _isProcessing = false;
+      });
     } catch (e) {
       debugPrint('Error capturing photo: $e');
 
       if (mounted) {
+        setState(() => _isProcessing = false);
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Lỗi khi chụp ảnh. Vui lòng thử lại.'),
@@ -150,48 +156,132 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
+  Future<void> _confirmPhoto() async {
+    if (_capturedImagePath == null) return;
+
+    try {
+      setState(() => _isProcessing = true);
+
+      // Save photo without caption
+      final photoId = await PhotoStorageManager.instance.savePhoto(
+        imagePath: _capturedImagePath!,
+        caption: 'Ảnh chụp từ camera',
+        metadata: {
+          'location': 'Hà Nội, Việt Nam',
+          'tags': ['camera', 'memore'],
+        },
+      );
+
+      if (photoId != null) {
+        // Update user photo count
+        await UserManager.instance.incrementPhotoCount();
+
+        if (mounted) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Ảnh đã được lưu thành công!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate back to main screen
+          Navigator.of(context).pop();
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Lỗi khi lưu ảnh. Vui lòng thử lại.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error confirming photo: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Có lỗi xảy ra khi lưu ảnh.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+      }
+    }
+  }
+
+  void _cancelPreview() {
+    setState(() {
+      _currentMode = CameraMode.capture;
+      _capturedImagePath = null;
+    });
+  }
+
 
   @override
   void dispose() {
     _cameraController?.dispose();
-    _messageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final isKeyboardVisible = keyboardHeight > 0;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F2F0),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Stack(
           children: [
             // Main content
-            Column(
-              children: [
-                const SizedBox(height: 60),
-
-                // Camera viewfinder
-                CameraViewfinder(
-                  controller: _cameraController,
+            SingleChildScrollView(
+              physics: isKeyboardVisible ? const ClampingScrollPhysics() : const NeverScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
                 ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 60),
 
-                const SizedBox(height: 16),
+                      // Camera viewfinder
+                      CameraViewfinder(
+                        controller: _cameraController,
+                        capturedImagePath: _capturedImagePath,
+                      ),
 
-                // Message input
-                MessageInput(controller: _messageController),
+                      const Spacer(),
 
-                const Spacer(),
+                      // Camera controls
+                      Padding(
+                        padding: EdgeInsets.only(bottom: isKeyboardVisible ? keyboardHeight + 16 : 0),
+                        child: CameraControls(
+                          isFlashOn: _isFlashOn,
+                          onFlashToggle: _toggleFlash,
+                          onCapture: _currentMode == CameraMode.capture
+                            ? _capturePhoto
+                            : _confirmPhoto,
+                          onFlipCamera: _currentMode == CameraMode.capture
+                            ? _flipCamera
+                            : _cancelPreview,
+                          mode: _currentMode,
+                          isProcessing: _isProcessing,
+                        ),
+                      ),
 
-                // Camera controls
-                CameraControls(
-                  isFlashOn: _isFlashOn,
-                  onFlashToggle: _toggleFlash,
-                  onCapture: _capturePhoto,
-                  onFlipCamera: _flipCamera,
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
-
-                const SizedBox(height: 24),
-              ],
+              ),
             ),
 
             // Close button
@@ -204,13 +294,26 @@ class _CameraScreenState extends State<CameraScreen> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.close, color: Colors.black, size: 24),
                 ),
               ),
             ),
+
+            // Loading overlay
+            if (_isProcessing)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
