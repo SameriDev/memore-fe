@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/timeline_models.dart';
 import '../config/timeline_config.dart';
+import 'dart:io';
 
 class TimelineItem extends StatelessWidget {
   final TimelineAlignment alignment;
@@ -256,6 +257,36 @@ class TimelineItem extends StatelessWidget {
     return GestureDetector(onTap: onAlbumTap, child: child);
   }
 
+  Widget _buildImage(String imageUrl, {BoxFit fit = BoxFit.cover, double? width, double? height}) {
+    Widget errorWidget = Container(
+      color: Colors.grey[300],
+      child: const Center(
+        child: Icon(Icons.image_not_supported, size: 30),
+      ),
+    );
+
+    if (imageUrl.startsWith('file://')) {
+      // Local file
+      final filePath = imageUrl.substring(7); // Remove 'file://' prefix
+      return Image.file(
+        File(filePath),
+        fit: fit,
+        width: width,
+        height: height,
+        errorBuilder: (context, error, stackTrace) => errorWidget,
+      );
+    } else {
+      // Network image
+      return Image.network(
+        imageUrl,
+        fit: fit,
+        width: width,
+        height: height,
+        errorBuilder: (context, error, stackTrace) => errorWidget,
+      );
+    }
+  }
+
   Widget _buildImageCluster() {
     if (images.isEmpty) {
       return Container(
@@ -283,18 +314,7 @@ class TimelineItem extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              images[0],
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(Icons.image_not_supported, size: 50),
-                  ),
-                );
-              },
-            ),
+            child: _buildImage(images[0], fit: BoxFit.cover),
           ),
         ),
       );
@@ -319,35 +339,11 @@ class TimelineItem extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Image.network(
-                    images[0],
-                    fit: BoxFit.cover,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Center(
-                          child: Icon(Icons.image_not_supported, size: 30),
-                        ),
-                      );
-                    },
-                  ),
+                  child: _buildImage(images[0], fit: BoxFit.cover, height: double.infinity),
                 ),
                 const SizedBox(width: 2),
                 Expanded(
-                  child: Image.network(
-                    images[1],
-                    fit: BoxFit.cover,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Center(
-                          child: Icon(Icons.image_not_supported, size: 30),
-                        ),
-                      );
-                    },
-                  ),
+                  child: _buildImage(images[1], fit: BoxFit.cover, height: double.infinity),
                 ),
               ],
             ),
@@ -376,60 +372,18 @@ class TimelineItem extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 2,
-                  child: Image.network(
-                    images[0],
-                    fit: BoxFit.cover,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Center(
-                          child: Icon(Icons.image_not_supported, size: 30),
-                        ),
-                      );
-                    },
-                  ),
+                  child: _buildImage(images[0], fit: BoxFit.cover, height: double.infinity),
                 ),
                 const SizedBox(width: 2),
                 Expanded(
                   child: Column(
                     children: [
                       Expanded(
-                        child: Image.network(
-                          images[1],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 20,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        child: _buildImage(images[1], fit: BoxFit.cover, width: double.infinity),
                       ),
                       const SizedBox(height: 2),
                       Expanded(
-                        child: Image.network(
-                          images[2],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 20,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        child: _buildImage(images[2], fit: BoxFit.cover, width: double.infinity),
                       ),
                     ],
                   ),
@@ -462,35 +416,11 @@ class TimelineItem extends StatelessWidget {
                 child: Column(
                   children: [
                     Expanded(
-                      child: Image.network(
-                        images[0],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported, size: 20),
-                            ),
-                          );
-                        },
-                      ),
+                      child: _buildImage(images[0], fit: BoxFit.cover, width: double.infinity),
                     ),
                     const SizedBox(height: 2),
                     Expanded(
-                      child: Image.network(
-                        images[1],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported, size: 20),
-                            ),
-                          );
-                        },
-                      ),
+                      child: _buildImage(images[1], fit: BoxFit.cover, width: double.infinity),
                     ),
                   ],
                 ),
@@ -500,40 +430,14 @@ class TimelineItem extends StatelessWidget {
                 child: Column(
                   children: [
                     Expanded(
-                      child: Image.network(
-                        images[2],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported, size: 20),
-                            ),
-                          );
-                        },
-                      ),
+                      child: _buildImage(images[2], fit: BoxFit.cover, width: double.infinity),
                     ),
                     const SizedBox(height: 2),
                     Expanded(
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-                          Image.network(
-                            images[3],
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[300],
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    size: 20,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                          _buildImage(images[3], fit: BoxFit.cover),
                           if (images.length > 4)
                             Container(
                               color: Colors.black.withOpacity(0.5),

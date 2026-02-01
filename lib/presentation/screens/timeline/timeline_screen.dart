@@ -3,6 +3,8 @@ import 'models/timeline_models.dart';
 import 'config/timeline_config.dart';
 import 'widgets/timeline_item.dart';
 import 'widgets/album_carousel_viewer.dart';
+import '../../../data/local/photo_storage_manager.dart';
+import 'dart:io';
 
 class TimelineScreen extends StatefulWidget {
   const TimelineScreen({super.key});
@@ -17,7 +19,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
   String _currentDay = '15';
   String _currentMonth = 'Jun';
 
-  final List<TimelineItemData> _timelineItems = [
+  List<TimelineItemData> _timelineItems = [];
+  bool _isLoading = true;
+
+  // Mock data với thời gian quá khứ
+  final List<TimelineItemData> _mockTimelineItems = [
     TimelineItemData(
       alignment: TimelineAlignment.left,
       images: [
@@ -30,7 +36,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '03:38 3-6',
       day: '15',
       month: 'Jun',
-      displayDate: 'Jun 2024',
+      displayDate: 'Jun 2023',
     ),
     TimelineItemData(
       alignment: TimelineAlignment.right,
@@ -43,7 +49,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '10:22 15-6',
       day: '22',
       month: 'Jun',
-      displayDate: 'Jun 2024',
+      displayDate: 'Jun 2023',
     ),
     TimelineItemData(
       alignment: TimelineAlignment.left,
@@ -58,7 +64,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '16:45 28-6',
       day: '28',
       month: 'Jun',
-      displayDate: 'Jun 2024',
+      displayDate: 'Jun 2023',
     ),
     TimelineItemData(
       alignment: TimelineAlignment.right,
@@ -72,7 +78,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '09:15 5-12',
       day: '5',
       month: 'Dec',
-      displayDate: 'Dec 2024',
+      displayDate: 'Dec 2023',
     ),
     TimelineItemData(
       alignment: TimelineAlignment.left,
@@ -85,7 +91,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '14:30 20-3',
       day: '20',
       month: 'Mar',
-      displayDate: 'Mar 2025',
+      displayDate: 'Mar 2023',
     ),
     TimelineItemData(
       alignment: TimelineAlignment.right,
@@ -101,7 +107,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '11:20 15-9',
       day: '15',
       month: 'Sep',
-      displayDate: 'Sep 2025',
+      displayDate: 'Sep 2023',
     ),
     TimelineItemData(
       alignment: TimelineAlignment.left,
@@ -115,7 +121,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '17:00 8-7',
       day: '8',
       month: 'Jul',
-      displayDate: 'Jul 2025',
+      displayDate: 'Jul 2023',
     ),
     TimelineItemData(
       alignment: TimelineAlignment.right,
@@ -128,7 +134,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       time: '06:45 12-10',
       day: '12',
       month: 'Oct',
-      displayDate: 'Oct 2025',
+      displayDate: 'Oct 2023',
     ),
   ];
 
@@ -136,6 +142,111 @@ class _TimelineScreenState extends State<TimelineScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _loadTimelineData();
+  }
+
+  Future<void> _loadTimelineData() async {
+    setState(() => _isLoading = true);
+
+    try {
+      // Lấy photos thật từ PhotoStorageManager
+      final realPhotos = PhotoStorageManager.instance.getUserPhotos();
+
+      List<TimelineItemData> realTimelineItems = [];
+
+      // Nhóm photos theo ngày
+      Map<String, List<Map<String, dynamic>>> photosByDate = {};
+
+      for (final photo in realPhotos) {
+        final timestamp = photo['timestamp'] as int;
+        final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+        final dateKey = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
+        if (!photosByDate.containsKey(dateKey)) {
+          photosByDate[dateKey] = [];
+        }
+        photosByDate[dateKey]!.add(photo);
+      }
+
+      // Tạo TimelineItem cho mỗi ngày
+      int alignmentIndex = 0;
+      for (final dateKey in photosByDate.keys) {
+        final photosOfDay = photosByDate[dateKey]!;
+        final firstPhoto = photosOfDay.first;
+        final timestamp = firstPhoto['timestamp'] as int;
+        final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+        // Tạo danh sách đường dẫn ảnh cho ngày này
+        final imagePaths = photosOfDay.map((photo) => 'file://${photo['storagePath']}').toList();
+
+        // Tạo title dựa trên số lượng ảnh
+        String title;
+        if (photosOfDay.length == 1) {
+          title = photosOfDay.first['caption']?.toString().isNotEmpty == true
+            ? photosOfDay.first['caption']
+            : 'Ảnh chụp';
+        } else {
+          title = 'Kỷ niệm ${photosOfDay.length} ảnh';
+        }
+
+        realTimelineItems.add(TimelineItemData(
+          alignment: alignmentIndex % 2 == 0 ? TimelineAlignment.left : TimelineAlignment.right,
+          images: imagePaths,
+          title: title,
+          subtitle: 'Ảnh từ camera của bạn',
+          time: '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')} ${date.day}-${date.month}',
+          day: date.day.toString(),
+          month: _getMonthName(date.month),
+          displayDate: '${_getMonthName(date.month)} ${date.year}',
+        ));
+
+        alignmentIndex++;
+      }
+
+      // Kết hợp real photos và mock data, sắp xếp theo thời gian (mới nhất trước)
+      final allItems = [...realTimelineItems, ..._mockTimelineItems];
+      allItems.sort((a, b) {
+        final aDate = _parseTimelineDate(a);
+        final bDate = _parseTimelineDate(b);
+        return bDate.compareTo(aDate); // Mới nhất trước
+      });
+
+      setState(() {
+        _timelineItems = allItems;
+        _isLoading = false;
+        if (_timelineItems.isNotEmpty) {
+          _currentDay = _timelineItems.first.day;
+          _currentMonth = _timelineItems.first.month;
+          _currentDate = _timelineItems.first.displayDate;
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _timelineItems = _mockTimelineItems;
+        _isLoading = false;
+      });
+    }
+  }
+
+  String _getMonthName(int month) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month - 1];
+  }
+
+  DateTime _parseTimelineDate(TimelineItemData item) {
+    // Parse từ displayDate format "Mon YYYY"
+    final parts = item.displayDate.split(' ');
+    final year = int.parse(parts[1]);
+    final month = _getMonthNumber(parts[0]);
+    final day = int.parse(item.day);
+    return DateTime(year, month, day);
+  }
+
+  int _getMonthNumber(String monthName) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months.indexOf(monthName) + 1;
   }
 
   @override
@@ -338,6 +449,38 @@ class _TimelineScreenState extends State<TimelineScreen> {
   }
 
   Widget _buildTimelineList(ResponsiveConfig config) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B4513)),
+        ),
+      );
+    }
+
+    if (_timelineItems.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.timeline,
+              size: 64,
+              color: Colors.grey,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Chưa có ảnh nào trong timeline',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+                fontFamily: 'Inika',
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       controller: _scrollController,
       physics: const BouncingScrollPhysics(

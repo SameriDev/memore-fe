@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../data/mock/mock_albums_data.dart';
 import '../../../data/mock/mock_user_profile.dart';
+import '../../../data/local/photo_storage_manager.dart';
+import '../../../data/local/user_manager.dart';
 import '../../../domain/entities/album.dart';
 import '../../../domain/entities/story.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -22,13 +24,60 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late List<Story> stories;
   late List<Album> albums;
+  List<Map<String, dynamic>> localPhotos = [];
   List<String> activeFilters = ['Shared', 'Recent'];
+  bool isLoadingPhotos = false;
 
   @override
   void initState() {
     super.initState();
     stories = MockAlbumsData.getMockStories();
     albums = MockAlbumsData.getMockAlbums();
+    _loadLocalPhotos();
+  }
+
+  Future<void> _loadLocalPhotos() async {
+    setState(() => isLoadingPhotos = true);
+
+    try {
+      final photos = PhotoStorageManager.instance.getUserPhotos();
+
+      // Transform photos to expected format for HomeScreen
+      final transformedPhotos = photos.map((photo) {
+        final timestamp = photo['timestamp'] as int;
+        final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+        return {
+          'id': photo['id'],
+          'filePath': photo['storagePath'],
+          'caption': photo['caption'] ?? '',
+          'timestamp': timestamp,
+          'dateString': '${date.day}/${date.month}/${date.year}',
+          'isLiked': photo['isLiked'] ?? false,
+          'source': 'camera',
+        };
+      }).toList();
+
+      setState(() {
+        localPhotos = transformedPhotos;
+      });
+
+      // Update user stats
+      final user = UserManager.instance.getCurrentUser();
+      if (user != null) {
+        await UserManager.instance.updateProfile({
+          'photosCount': photos.length,
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading local photos: $e');
+    } finally {
+      setState(() => isLoadingPhotos = false);
+    }
+  }
+
+  void _refreshPhotos() {
+    _loadLocalPhotos();
   }
 
   void _handleRemoveFilter(String filter) {
@@ -98,6 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             const SizedBox(height: 8),
+
+
             AlbumHeader(
               onSearchTap: () {
                 debugPrint('Search tapped');

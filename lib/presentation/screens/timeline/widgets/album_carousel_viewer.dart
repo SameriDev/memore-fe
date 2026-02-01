@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class AlbumCarouselViewer extends StatefulWidget {
@@ -53,6 +54,75 @@ class _AlbumCarouselViewerState extends State<AlbumCarouselViewer>
     _fadeController.dispose();
     _hideTimer?.cancel();
     super.dispose();
+  }
+
+  Widget _buildImage(String imageUrl, {BoxFit fit = BoxFit.contain}) {
+    Widget errorWidget = Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: fit == BoxFit.cover ? BorderRadius.zero : BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.broken_image,
+          color: Colors.white54,
+          size: fit == BoxFit.cover ? 32 : 64,
+        ),
+      ),
+    );
+
+    if (imageUrl.startsWith('file://')) {
+      // Local file
+      final filePath = imageUrl.substring(7); // Remove 'file://' prefix
+      return Image.file(
+        File(filePath),
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) => errorWidget,
+      );
+    } else {
+      // Network image
+      return Image.network(
+        imageUrl,
+        fit: fit,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+
+          // Don't show loading indicator for background image
+          if (fit == BoxFit.cover) {
+            return Container(color: Colors.black);
+          }
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                    strokeWidth: 3,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Đang tải...',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) => errorWidget,
+      );
+    }
   }
 
   void _startHideTimer() {
@@ -114,12 +184,9 @@ class _AlbumCarouselViewerState extends State<AlbumCarouselViewer>
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.network(
+                      _buildImage(
                         widget.images[_currentIndex],
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(color: Colors.black);
-                        },
                       ),
                       BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
@@ -156,67 +223,9 @@ class _AlbumCarouselViewerState extends State<AlbumCarouselViewer>
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(16),
                                   clipBehavior: Clip.hardEdge,
-                                  child: Image.network(
+                                  child: _buildImage(
                                     widget.images[index],
                                     fit: BoxFit.contain,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(
-                                              width: 60,
-                                              height: 60,
-                                              child: CircularProgressIndicator(
-                                                value:
-                                                    loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes!
-                                                    : null,
-                                                strokeWidth: 3,
-                                                valueColor:
-                                                    const AlwaysStoppedAnimation<
-                                                      Color
-                                                    >(Colors.white),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'Đang tải...',
-                                              style: TextStyle(
-                                                color: Colors.white.withOpacity(
-                                                  0.7,
-                                                ),
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[900],
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.broken_image,
-                                            color: Colors.white54,
-                                            size: 64,
-                                          ),
-                                        ),
-                                      );
-                                    },
                                   ),
                                 ),
                               ),
