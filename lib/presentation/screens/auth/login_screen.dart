@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/decorated_background.dart';
+import '../../../data/local/user_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,14 +28,40 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        // Attempt login with UserManager
+        final success = await UserManager.instance.login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
 
-      setState(() => _isLoading = false);
+        setState(() => _isLoading = false);
 
-      if (mounted) {
-        // Navigate to main screen
-        Navigator.of(context).pushReplacementNamed('/main');
+        if (mounted) {
+          if (success) {
+            // Navigate to main screen on successful login
+            Navigator.of(context).pushReplacementNamed('/main');
+          } else {
+            // Show error message for failed login
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Đăng nhập thất bại. Vui lòng thử lại.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        setState(() => _isLoading = false);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Có lỗi xảy ra. Vui lòng thử lại.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
@@ -42,14 +69,40 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
 
-    // TODO: Implement Google Sign In
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // Simulate Google Sign In with mock account
+      final success = await UserManager.instance.login(
+        email: 'google.user@gmail.com',
+        password: 'google123',
+        name: 'Google User',
+      );
 
-    setState(() => _isLoading = false);
+      setState(() => _isLoading = false);
 
-    if (mounted) {
-      // Navigate to main screen
-      Navigator.of(context).pushReplacementNamed('/main');
+      if (mounted) {
+        if (success) {
+          // Navigate to main screen on successful login
+          Navigator.of(context).pushReplacementNamed('/main');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Đăng nhập Google thất bại. Vui lòng thử lại.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Có lỗi xảy ra khi đăng nhập Google.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

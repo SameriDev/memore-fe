@@ -19,7 +19,11 @@
       "Bash(flutter analyze --no-fatal-infos lib/presentation/screens/camera/)",
       "mcp__plugin_figma_figma__get_screenshot",
       "Bash(tree lib -L 3)",
-      "mcp__plugin_figma_figma__get_design_context"
+      "mcp__plugin_figma_figma__get_design_context",
+      "Bash(flutter build apk --dry-run --suppress-analytics)",
+      "Bash(flutter build apk --debug --suppress-analytics)",
+      "Bash(flutter build apk --debug)",
+      "Bash(flutter build apk --debug --target-platform android-arm64)"
     ]
   }
 }

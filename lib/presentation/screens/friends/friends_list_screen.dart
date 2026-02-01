@@ -9,6 +9,7 @@ import 'widgets/social_integration_section.dart';
 import 'widgets/friend_grid_item.dart';
 import 'widgets/share_link_section.dart';
 import '../../widgets/decorated_background.dart';
+import '../../routes/custom_route_transitions.dart';
 
 class FriendsListScreen extends StatefulWidget {
   const FriendsListScreen({super.key});
@@ -20,13 +21,39 @@ class FriendsListScreen extends StatefulWidget {
 class _FriendsListScreenState extends State<FriendsListScreen> {
   late List<Friend> friends;
   late List<Friend> displayedFriends;
+  List<Friend> filteredFriends = [];
   final TextEditingController _searchController = TextEditingController();
+  bool isSearching = false;
 
   @override
   void initState() {
     super.initState();
     friends = MockFriendsData.getMockFriends();
     displayedFriends = friends.take(6).toList();
+    filteredFriends = friends;
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        isSearching = false;
+        filteredFriends = friends;
+        displayedFriends = friends.take(6).toList();
+      } else {
+        isSearching = true;
+        filteredFriends = friends.where((friend) {
+          return friend.name.toLowerCase().contains(query);
+        }).toList();
+        displayedFriends = filteredFriends.take(12).toList(); // Show more when searching
+      }
+    });
+  }
+
+  void _onSearchTap() {
+    // Focus on search field
+    FocusScope.of(context).requestFocus();
   }
 
   @override
@@ -36,17 +63,11 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
   }
 
   void _navigateToDetailList() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const FriendListDetailScreen()),
-    );
+    context.pushSlideRight(const FriendListDetailScreen());
   }
 
   void _navigateToAddFriend() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AddFriendScreen()),
-    );
+    context.pushSlideBottom(const AddFriendScreen());
   }
 
   @override
@@ -78,9 +99,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
               // 2. Search Bar
               SearchFriendsBar(
                 controller: _searchController,
-                onSearchTap: () {
-                  debugPrint('Search tapped');
-                },
+                onSearchTap: _onSearchTap,
                 onAddFriendTap: _navigateToAddFriend,
               ),
               const SizedBox(height: 20),
@@ -153,13 +172,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
                   return FriendGridItem(
                     friend: friend,
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              FriendTimelineScreen(friend: friend),
-                        ),
-                      );
+                      context.pushFade(FriendTimelineScreen(friend: friend));
                     },
                   );
                 },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/decorated_background.dart';
 import 'otp_verification_screen.dart';
+import '../../../data/local/user_manager.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -47,14 +48,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        // Attempt registration with UserManager
+        final success = await UserManager.instance.register(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          name: _nameController.text.trim(),
+        );
 
-      setState(() => _isLoading = false);
+        setState(() => _isLoading = false);
 
-      if (mounted) {
-        // Navigate to main screen or login screen
-        Navigator.of(context).pushReplacementNamed('/main');
+        if (mounted) {
+          if (success) {
+            // Show success message and navigate to main screen
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Đăng ký thành công! Chào mừng bạn đến với Memore.',
+                  style: GoogleFonts.inika(),
+                ),
+                backgroundColor: const Color(0xFF4CAF50),
+              ),
+            );
+            Navigator.of(context).pushReplacementNamed('/main');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Đăng ký thất bại. Vui lòng thử lại.',
+                  style: GoogleFonts.inika(),
+                ),
+                backgroundColor: const Color(0xFFD32F2F),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        setState(() => _isLoading = false);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Có lỗi xảy ra. Vui lòng thử lại.',
+                style: GoogleFonts.inika(),
+              ),
+              backgroundColor: const Color(0xFFD32F2F),
+            ),
+          );
+        }
       }
     }
   }
@@ -75,19 +117,62 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     setState(() => _isLoading = true);
 
-    // TODO: Implement Google Sign Up
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() => _isLoading = false);
-
-    if (mounted) {
-      // Navigate to OTP verification screen
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) =>
-              const OtpVerificationScreen(email: 'user@gmail.com'),
-        ),
+    try {
+      // Simulate Google Sign Up with mock account
+      final success = await UserManager.instance.register(
+        email: 'google.signup@gmail.com',
+        password: 'google123',
+        name: 'Google Sign Up User',
       );
+
+      setState(() => _isLoading = false);
+
+      if (mounted) {
+        if (success) {
+          // Show success message and navigate to OTP verification
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Đăng ký Google thành công!',
+                style: GoogleFonts.inika(),
+              ),
+              backgroundColor: const Color(0xFF4CAF50),
+            ),
+          );
+
+          // Navigate to OTP verification screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  const OtpVerificationScreen(email: 'google.signup@gmail.com'),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Đăng ký Google thất bại. Vui lòng thử lại.',
+                style: GoogleFonts.inika(),
+              ),
+              backgroundColor: const Color(0xFFD32F2F),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Có lỗi xảy ra khi đăng ký Google.',
+              style: GoogleFonts.inika(),
+            ),
+            backgroundColor: const Color(0xFFD32F2F),
+          ),
+        );
+      }
     }
   }
 

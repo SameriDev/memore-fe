@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../core/constants/app_routes.dart';
+import '../../../data/local/storage_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -51,8 +51,19 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _navigateToHome() async {
     await Future.delayed(const Duration(seconds: 3));
+
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+      // Check if user is logged in
+      final storage = StorageService.instance;
+      final isLoggedIn = storage.isLoggedIn;
+
+      if (isLoggedIn) {
+        // User is logged in, go to main screen
+        Navigator.of(context).pushReplacementNamed('/main');
+      } else {
+        // User not logged in, go to welcome screen
+        Navigator.of(context).pushReplacementNamed('/welcome');
+      }
     }
   }
 

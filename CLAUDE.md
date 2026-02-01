@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Memore is a Flutter photo-sharing widget app that allows users to share authentic moments within a small circle of up to 20 friends/family. The app focuses on intimate, real-time photo sharing that appears directly on home screen widgets, emphasizing authentic connections over public validation.
+Memore is a Flutter photo-sharing app that allows users to share authentic moments within a small circle of friends and family. The app focuses on intimate, real-time photo sharing with albums, timeline features, and camera integration, emphasizing authentic connections over public validation.
 
 ## Development Commands
 
@@ -48,139 +48,175 @@ timeout 30 flutter build apk --debug --target-platform android-arm64
 
 ## Architecture and Code Organization
 
-### Project Structure
+### Actual Project Structure
 ```
 lib/
-├── core/                    # Core functionality and constants
-│   ├── constants/          # App-wide constants
-│   │   ├── app_colors.dart      # Brown/tan theme color palette
-│   │   ├── app_routes.dart      # Route definitions and navigation
-│   │   ├── app_sizes.dart       # Spacing and size constants
-│   │   └── app_strings.dart     # Text constants
-│   └── theme/              # Theming configuration
-│       ├── app_theme.dart       # Material Design 3 theme setup
-│       └── text_styles.dart     # Typography definitions
-├── data/                   # Data layer
-│   └── models/            # Data models
-│       ├── user_model.dart      # User data structure
-│       ├── friend_model.dart    # Friend relationship model
-│       ├── photo_model.dart     # Photo metadata model
-│       └── notification_model.dart
-├── providers/              # Riverpod state management
-│   └── auth_provider.dart      # Authentication state management
-├── presentation/           # UI layer
-│   ├── screens/           # Screen implementations
-│   │   ├── auth/         # Authentication flow (5 screens)
-│   │   ├── camera/       # Photo capture flow (3 screens)
-│   │   ├── friends/      # Friends management (4 screens)
-│   │   ├── home/         # Main navigation screen
-│   │   ├── messages/     # Chat functionality (2 screens)
-│   │   ├── onboarding/   # App introduction (4 screens)
-│   │   ├── photos/       # Photo viewing and feed (3 screens)
-│   │   └── settings/     # User settings (8 screens)
-│   └── widgets/          # Reusable UI components
-└── main.dart              # App entry point with routing
+├── core/                           # Core functionality
+│   ├── constants/                  # App constants and configuration
+│   │   ├── app_constants.dart      # Global constants
+│   │   ├── app_dimensions.dart     # UI dimensions and spacing
+│   │   └── app_routes.dart         # Route definitions
+│   ├── errors/                     # Error handling
+│   │   ├── exceptions.dart         # Custom exceptions
+│   │   └── failures.dart           # Failure models
+│   ├── network/                    # Network utilities
+│   │   └── network_info.dart       # Network status checking
+│   ├── theme/                      # App theming
+│   │   ├── app_colors.dart         # Brown/tan color palette
+│   │   └── app_theme.dart          # Material Design 3 theme
+│   └── utils/                      # Utilities and type definitions
+│       └── typedef.dart            # Common type definitions
+├── data/                           # Data layer
+│   └── mock/                       # Mock data for development
+│       ├── mock_albums_data.dart   # Sample album data
+│       ├── mock_friends_data.dart  # Sample friend data
+│       └── mock_user_profile.dart  # Sample user data
+├── domain/                         # Business logic layer
+│   ├── entities/                   # Core business entities
+│   │   ├── album.dart              # Album entity
+│   │   ├── friend.dart             # Friend entity
+│   │   ├── story.dart              # Story entity
+│   │   ├── timeline_photo.dart     # Timeline photo entity
+│   │   └── user_profile.dart       # User profile entity
+│   └── usecases/                   # Business use cases
+│       └── usecase.dart            # Base use case interface
+├── presentation/                   # UI layer
+│   ├── animations/                 # Custom animations
+│   ├── routes/                     # Custom route handling
+│   ├── screens/                    # Screen implementations
+│   │   ├── auth/                   # Authentication flow
+│   │   ├── camera/                 # Photo capture
+│   │   ├── friends/                # Friends management
+│   │   ├── home/                   # Home screen
+│   │   ├── profile/                # User profile
+│   │   ├── recent_photos_viewer/   # Photo viewing
+│   │   ├── splash/                 # Splash screen
+│   │   └── timeline/               # Timeline features
+│   └── widgets/                    # Reusable UI components
+└── main.dart                       # App entry point
 ```
 
 ### Tech Stack
 - **Frontend**: Flutter with Material Design 3
-- **State Management**: Riverpod (flutter_riverpod)
-- **Navigation**: GoRouter with declarative routing
+- **State Management**: Currently using basic StatefulWidget (Riverpod planned)
+- **Navigation**: MaterialApp with named routes (GoRouter planned)
 - **Camera**: Camera package for photo capture
-- **Image Handling**: image_picker, cached_network_image
-- **Backend**: Firebase (Auth, Firestore, Storage, FCM)
-- **Planned Analytics**: Firebase Analytics, Crashlytics
+- **Image Handling**: image_picker, cached_network_image, photo_view
+- **UI Components**: flutter_svg, figma_squircle, google_fonts
+- **Utilities**: intl, uuid, dartz for functional programming
+- **Backend**: Firebase integration planned
 
 ### Design System
 
 **Color Palette** (Brown/Tan Theme):
-- Primary: `#8B4513` (SaddleBrown) - main brand color
-- Background: `#FDF5E6` (OldLace) - warm white
-- Surface: `#F5DEB3` (Wheat) - light tan
-- Text: `#3E2723` (Dark brown) for main text
-- Accent Gold: `#CD853F` (Peru) for highlights
+- Primary: Brown tones for main brand colors
+- Warm, earth-tone color palette throughout the app
+- Colors defined in `lib/core/theme/app_colors.dart`
 
 **Key Constants**:
-- All colors defined in `lib/core/constants/app_colors.dart`
-- Spacing/sizing in `lib/core/constants/app_sizes.dart`
+- All colors defined in `lib/core/theme/app_colors.dart`
+- Dimensions and spacing in `lib/core/constants/app_dimensions.dart`
+- App-wide constants in `lib/core/constants/app_constants.dart`
 - Routes in `lib/core/constants/app_routes.dart`
-- Text strings in `lib/core/constants/app_strings.dart`
 
-### State Management Patterns
+### Current Implementation Architecture
 
-**Riverpod Architecture**:
-- Use `ConsumerWidget` or `ConsumerStatefulWidget` for screens
-- Read state with `ref.watch()` in build methods
-- Modify state with `ref.read().notifier` in event handlers
-- Auth state managed through `AuthProvider` with `AuthState` model
+**Entity-Driven Design**:
+- Business entities in `lib/domain/entities/` (Album, Friend, Story, UserProfile, etc.)
+- Mock data providers in `lib/data/mock/` for development
+- Clean separation between domain, data, and presentation layers
 
-**Navigation Patterns**:
-- Use `context.go()` for route replacement
-- Use `context.push()` for stack-based navigation
-- Use `context.pop()` to go back
-- Route helpers in `AppRoutes` class for consistent navigation
+**Navigation**:
+- Currently using MaterialApp with named routes in `main.dart`
+- Routes: `/welcome`, `/login`, `/register`, `/otp`, `/main`, `/home`
+- Custom page route animations in `lib/presentation/routes/`
+
+**UI Components**:
+- Reusable widgets in `lib/presentation/widgets/`
+- Screen-specific widgets organized in widget folders within each screen
+- Custom animations and transitions
 
 ### Current Implementation Status
 
-**Completed Screens (11/28)**:
-- Authentication: EmailInputScreen, PasswordSetupScreen, NameSetupScreen
-- Camera: CameraScreen
-- Friends: FriendsListScreen, AddFriendScreen
-- Settings: SettingsScreen
-- Onboarding: SplashScreen, WelcomeScreen, WidgetDemoScreen
+**Completed Screens**:
+- **Auth Flow**: WelcomeScreen, LoginScreen, RegisterScreen, OtpVerificationScreen
+- **Main App**: MainScreen, SplashScreen
+- **Camera**: CameraScreen with full camera functionality
+- **Friends**: Multiple friend-related screens including timeline
+- **Profile**: ProfileScreen with user profile features
+- **Recent Photos**: Photo viewer with navigation and animations
+- **Timeline**: Timeline features with album carousel
 
-**Key Remaining Screens**:
-- Complete auth flow (AuthScreen, SignInScreen)
-- Photo flow (PhotoFeedScreen, PhotoViewScreen, TimeTravelScreen)
-- Camera flow completion (PhotoPreviewScreen, FriendSelectScreen)
-- Settings completion (7 remaining screens)
+**Core Features Implemented**:
+- Camera integration with photo capture
+- Photo viewing with custom animations
+- Friends management and timeline
+- User profile system
+- Navigation between screens
+- Mock data integration
 
-### Firebase Integration (Planned)
+### Key Dependencies and Usage
 
-**Services to Integrate**:
-- **Firebase Auth**: Email/password authentication
-- **Firestore**: User profiles, friend relationships, photo metadata
-- **Cloud Storage**: Photo file storage with compression
-- **Cloud Functions**: Image processing, push notifications
-- **FCM**: Real-time photo delivery notifications
+**Major Packages**:
+- `flutter_riverpod: ^2.4.9` - State management (planned integration)
+- `go_router: ^12.1.3` - Navigation (not yet integrated)
+- `camera: ^0.10.5+5` - Camera functionality
+- `image_picker: ^1.0.4` - Photo selection
+- `flutter_svg: ^2.0.9` - SVG icon support
+- `cached_network_image: ^3.3.0` - Image caching
+- `google_fonts: ^6.1.0` - Typography
+- `photo_view: ^0.15.0` - Photo viewing with zoom
+- `figma_squircle: ^0.6.3` - Custom rounded rectangles
 
 ### Development Guidelines
 
-**Code Patterns to Follow**:
-1. Use existing constants from `lib/core/constants/` files
-2. Follow brown/tan color scheme consistently
-3. Implement proper error handling and loading states
-4. Use Material Design 3 components and theming
-5. Keep widgets focused and reusable
-6. Follow existing folder structure and naming conventions
+**Code Organization Patterns**:
+1. Follow the domain-data-presentation architecture currently in place
+2. Use existing constants from `lib/core/constants/` and `lib/core/theme/` files
+3. Create entity models in `lib/domain/entities/` for new features
+4. Add mock data in `lib/data/mock/` for development
+5. Keep screen-specific widgets in widget subfolders within each screen directory
+6. Use the existing brown/tan color scheme from `app_colors.dart`
 
-**Navigation Rules**:
-- All routes defined in `AppRoutes` class
-- Use route helpers for parameterized routes
-- Maintain route groups for better organization
-- Check auth requirements using `AppRoutes.requiresAuth()`
+**Navigation Patterns**:
+- Currently using MaterialApp with named routes
+- Route definitions in main.dart routes map
+- Custom transitions in `lib/presentation/routes/` for complex animations
+- Use `Navigator.pushNamed()` for navigation between screens
 
-**State Management Rules**:
-- Create providers for each major feature area
-- Use immutable state models with copyWith methods
-- Handle loading and error states consistently
-- Separate business logic from UI components
+**Widget Architecture**:
+- Break complex screens into smaller widget components
+- Use StatefulWidget for screens requiring state management
+- Organize widgets in dedicated folders per screen
+- Leverage existing reusable widgets from `lib/presentation/widgets/`
 
-### Testing Strategy
+**Error Handling**:
+- Custom exceptions defined in `lib/core/errors/exceptions.dart`
+- Failure models in `lib/core/errors/failures.dart`
+- Network status checking utilities available in `lib/core/network/`
 
-**Flutter Testing**:
-- Widget tests for custom components
-- Integration tests for user flows
-- Unit tests for providers and models
-- Golden tests for UI consistency
+### Migration Plan
 
-### Deployment Pipeline
+The project is currently in transition with several modern Flutter patterns planned:
+- **State Management**: Riverpod integration planned (flutter_riverpod already added)
+- **Navigation**: GoRouter migration planned (go_router already added)
+- **Backend**: Firebase integration for authentication and data storage
 
-**Release Process**:
-1. Code analysis with `flutter analyze`
-2. Build validation with `flutter build apk --dry-run`
-3. Release build with `flutter build appbundle --release`
-4. Google Play Store deployment
-5. Firebase project configuration for backend features
+### Development Notes
 
-This architecture supports the app's goal of creating intimate photo-sharing experiences while maintaining clean, scalable code structure.
+**Working with Mock Data**:
+- Use existing mock data files in `lib/data/mock/` for development
+- Mock albums, friends, and user data available for testing features
+- Update mock data when adding new entity properties
+
+**Camera Integration**:
+- Camera functionality implemented in `lib/presentation/screens/camera/`
+- Custom camera controls and viewfinder widgets available
+- Photo capture and message input features working
+
+**Styling Consistency**:
+- Use `AppTheme.lightTheme` and `AppTheme.darkTheme` from `app_theme.dart`
+- Color constants available in `app_colors.dart`
+- Dimension constants in `app_dimensions.dart` for consistent spacing
+
+This architecture follows clean architecture principles while maintaining flexibility for the ongoing development of a photo-sharing social app.

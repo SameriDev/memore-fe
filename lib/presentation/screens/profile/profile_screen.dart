@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../data/mock/mock_user_profile.dart';
 import '../../../domain/entities/user_profile.dart';
+import '../../../data/local/user_manager.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_badges.dart';
 import 'widgets/profile_setting_item.dart';
@@ -142,10 +143,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ProfileSettingItem(
                       icon: Icons.logout,
                       title: 'Logout',
-                      onTap: () {
-                        Navigator.of(
-                          context,
-                        ).pushNamedAndRemoveUntil('/welcome', (route) => false);
+                      onTap: () async {
+                        // Show confirmation dialog
+                        final shouldLogout = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Đăng xuất'),
+                            content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(false),
+                                child: const Text('Hủy'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(true),
+                                child: const Text('Đăng xuất'),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (shouldLogout == true) {
+                          // Perform logout
+                          await UserManager.instance.logout();
+
+                          if (mounted) {
+                            Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (route) => false);
+                          }
+                        }
                       },
                     ),
                     const SizedBox(height: 120),

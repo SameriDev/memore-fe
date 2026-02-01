@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import '../../../data/local/user_manager.dart';
+import 'photo_preview_screen.dart';
 import 'widgets/camera_viewfinder.dart';
 import 'widgets/camera_controls.dart';
 import 'widgets/message_input.dart';
+import '../../routes/custom_route_transitions.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -16,13 +19,27 @@ class _CameraScreenState extends State<CameraScreen> {
   List<CameraDescription>? _cameras;
   bool _isFlashOn = false;
   bool _isFrontCamera = false;
-  String? _capturedImagePath;
   final TextEditingController _messageController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _loadCameraSettings();
     _initializeCamera();
+  }
+
+  Future<void> _loadCameraSettings() async {
+    try {
+      final flashMode = UserManager.instance.getSetting<bool>('camera.flashOn', defaultValue: false);
+      final frontCamera = UserManager.instance.getSetting<bool>('camera.frontCamera', defaultValue: false);
+
+      setState(() {
+        _isFlashOn = flashMode ?? false;
+        _isFrontCamera = frontCamera ?? false;
+      });
+    } catch (e) {
+      debugPrint('Error loading camera settings: $e');
+    }
   }
 
   Future<void> _initializeCamera() async {
@@ -69,6 +86,9 @@ class _CameraScreenState extends State<CameraScreen> {
       await _cameraController!.setFlashMode(
         _isFlashOn ? FlashMode.torch : FlashMode.off,
       );
+
+      // Save flash setting
+      await UserManager.instance.updateSettings('camera.flashOn', _isFlashOn);
     } catch (e) {
       debugPrint('Error toggling flash: $e');
     }
@@ -94,6 +114,9 @@ class _CameraScreenState extends State<CameraScreen> {
 
       // Setup camera mới
       await _setupCamera(_isFrontCamera ? 1 : 0);
+
+      // Save camera preference
+      await UserManager.instance.updateSettings('camera.frontCamera', _isFrontCamera);
     } catch (e) {
       debugPrint('Error flipping camera: $e');
     }
@@ -106,24 +129,27 @@ class _CameraScreenState extends State<CameraScreen> {
 
     try {
       final image = await _cameraController!.takePicture();
-      setState(() {
-        _capturedImagePath = image.path;
-      });
+
+      // Navigate to photo preview screen with smooth transition
+      if (mounted) {
+        context.pushSlideBottom(PhotoPreviewScreen(
+          imagePath: image.path,
+        ));
+      }
     } catch (e) {
       debugPrint('Error capturing photo: $e');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Lỗi khi chụp ảnh. Vui lòng thử lại.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
-  void _submitPhoto() {
-    // TODO: Implement photo submission logic
-    // This will upload the photo with message to backend
-    final message = _messageController.text;
-    debugPrint('Submitting photo with message: $message');
-    debugPrint('Photo path: $_capturedImagePath');
-
-    // Navigate back after submission
-    Navigator.of(context).pop();
-  }
 
   @override
   void dispose() {
@@ -147,7 +173,6 @@ class _CameraScreenState extends State<CameraScreen> {
                 // Camera viewfinder
                 CameraViewfinder(
                   controller: _cameraController,
-                  capturedImagePath: _capturedImagePath,
                 ),
 
                 const SizedBox(height: 16),
@@ -161,9 +186,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 CameraControls(
                   isFlashOn: _isFlashOn,
                   onFlashToggle: _toggleFlash,
-                  onCapture: _capturedImagePath == null
-                      ? _capturePhoto
-                      : _submitPhoto,
+                  onCapture: _capturePhoto,
                   onFlipCamera: _flipCamera,
                 ),
 
