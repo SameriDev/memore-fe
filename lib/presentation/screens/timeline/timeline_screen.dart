@@ -6,8 +6,6 @@ import 'widgets/album_carousel_viewer.dart';
 import '../../../data/local/photo_storage_manager.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
-import '../../../data/models/photo_dto.dart';
-import 'dart:io';
 
 class TimelineScreen extends StatefulWidget {
   const TimelineScreen({super.key});
@@ -25,121 +23,6 @@ class _TimelineScreenState extends State<TimelineScreen> {
   List<TimelineItemData> _timelineItems = [];
   bool _isLoading = true;
 
-  // Mock data với thời gian quá khứ
-  final List<TimelineItemData> _mockTimelineItems = [
-    TimelineItemData(
-      alignment: TimelineAlignment.left,
-      images: [
-        'https://picsum.photos/seed/summer1/400/300',
-        'https://picsum.photos/seed/summer2/400/300',
-        'https://picsum.photos/seed/summer3/400/300',
-      ],
-      title: 'Summer',
-      subtitle: 'Em đéo yêu anh',
-      time: '03:38 3-6',
-      day: '15',
-      month: 'Jun',
-      displayDate: 'Jun 2023',
-    ),
-    TimelineItemData(
-      alignment: TimelineAlignment.right,
-      images: [
-        'https://picsum.photos/seed/animal1/400/300',
-        'https://picsum.photos/seed/animal2/400/300',
-      ],
-      title: 'Animal',
-      subtitle: 'Kỷ niệm cùng bạn bè',
-      time: '10:22 15-6',
-      day: '22',
-      month: 'Jun',
-      displayDate: 'Jun 2023',
-    ),
-    TimelineItemData(
-      alignment: TimelineAlignment.left,
-      images: [
-        'https://picsum.photos/seed/beach1/400/300',
-        'https://picsum.photos/seed/beach2/400/300',
-        'https://picsum.photos/seed/beach3/400/300',
-        'https://picsum.photos/seed/beach4/400/300',
-      ],
-      title: 'Beach',
-      subtitle: 'Chuyến đi biển',
-      time: '16:45 28-6',
-      day: '28',
-      month: 'Jun',
-      displayDate: 'Jun 2023',
-    ),
-    TimelineItemData(
-      alignment: TimelineAlignment.right,
-      images: [
-        'https://picsum.photos/seed/winter1/400/300',
-        'https://picsum.photos/seed/winter2/400/300',
-        'https://picsum.photos/seed/winter3/400/300',
-      ],
-      title: 'Winter',
-      subtitle: 'Ngày đông lạnh giá',
-      time: '09:15 5-12',
-      day: '5',
-      month: 'Dec',
-      displayDate: 'Dec 2023',
-    ),
-    TimelineItemData(
-      alignment: TimelineAlignment.left,
-      images: [
-        'https://picsum.photos/seed/spring1/400/300',
-        'https://picsum.photos/seed/spring2/400/300',
-      ],
-      title: 'Spring',
-      subtitle: 'Hoa nở rộ khắp nơi',
-      time: '14:30 20-3',
-      day: '20',
-      month: 'Mar',
-      displayDate: 'Mar 2023',
-    ),
-    TimelineItemData(
-      alignment: TimelineAlignment.right,
-      images: [
-        'https://picsum.photos/seed/autumn1/400/300',
-        'https://picsum.photos/seed/autumn2/400/300',
-        'https://picsum.photos/seed/autumn3/400/300',
-        'https://picsum.photos/seed/autumn4/400/300',
-        'https://picsum.photos/seed/autumn5/400/300',
-      ],
-      title: 'Autumn',
-      subtitle: 'Lá vàng rơi đầy đường',
-      time: '11:20 15-9',
-      day: '15',
-      month: 'Sep',
-      displayDate: 'Sep 2023',
-    ),
-    TimelineItemData(
-      alignment: TimelineAlignment.left,
-      images: [
-        'https://picsum.photos/seed/party1/400/300',
-        'https://picsum.photos/seed/party2/400/300',
-        'https://picsum.photos/seed/party3/400/300',
-      ],
-      title: 'Party',
-      subtitle: 'Tiệc tùng vui vẻ',
-      time: '17:00 8-7',
-      day: '8',
-      month: 'Jul',
-      displayDate: 'Jul 2023',
-    ),
-    TimelineItemData(
-      alignment: TimelineAlignment.right,
-      images: [
-        'https://picsum.photos/seed/mountain1/400/300',
-        'https://picsum.photos/seed/mountain2/400/300',
-      ],
-      title: 'Mountain',
-      subtitle: 'Đỉnh núi hùng vĩ',
-      time: '06:45 12-10',
-      day: '12',
-      month: 'Oct',
-      displayDate: 'Oct 2023',
-    ),
-  ];
 
   @override
   void initState() {
@@ -236,8 +119,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
         alignmentIndex++;
       }
 
-      // Kết hợp real photos và mock data, sắp xếp theo thời gian (mới nhất trước)
-      final allItems = [...realTimelineItems, ..._mockTimelineItems];
+      final allItems = [...realTimelineItems];
       allItems.sort((a, b) {
         final aDate = _parseTimelineDate(a);
         final bDate = _parseTimelineDate(b);
@@ -254,8 +136,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
         }
       });
     } catch (e) {
+      debugPrint('Timeline load error: $e');
       setState(() {
-        _timelineItems = _mockTimelineItems;
+        _timelineItems = [];
         _isLoading = false;
       });
     }

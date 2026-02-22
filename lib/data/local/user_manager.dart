@@ -99,6 +99,13 @@ class UserManager {
 
       final updatedProfile = {...currentProfile, ...updates};
       await _storage.saveUserProfile(updatedProfile);
+
+      // Fire-and-forget: sync to BE
+      final userId = _storage.userId;
+      if (userId != null && userId.isNotEmpty) {
+        _userService.updateUser(userId, updates).ignore();
+      }
+
       return true;
     } catch (e) {
       return false;

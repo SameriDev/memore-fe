@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import '../../../data/mock/mock_albums_data.dart';
 import '../../../data/mock/mock_user_profile.dart';
 import '../../../data/local/photo_storage_manager.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/local/user_manager.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
+import '../../../data/data_sources/remote/album_service.dart';
+import '../../../data/data_sources/remote/story_service.dart';
 import '../../../data/models/photo_dto.dart';
 import '../../../domain/entities/album.dart';
 import '../../../domain/entities/story.dart';
@@ -25,8 +26,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List<Story> stories;
-  late List<Album> albums;
+  List<Story> stories = [];
+  List<Album> albums = [];
   List<Map<String, dynamic>> localPhotos = [];
   List<PhotoDto> remotePhotos = [];
   bool isRemoteSource = false;
@@ -36,9 +37,45 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    stories = MockAlbumsData.getMockStories();
-    albums = MockAlbumsData.getMockAlbums();
+    _loadStoriesAndAlbums();
     _loadLocalPhotos();
+  }
+
+  Future<void> _loadStoriesAndAlbums() async {
+    final userId = StorageService.instance.userId;
+    if (userId == null) return;
+
+    try {
+      final results = await Future.wait([
+        StoryService.instance.getActiveStories(),
+        AlbumService.instance.getUserAlbums(userId),
+      ]);
+
+      final storyDtos = results[0] as List;
+      final albumDtos = results[1] as List;
+
+      final addStory = Story(
+        id: 'add',
+        userId: userId,
+        userAvatar: '',
+        userName: 'Add',
+        isAddButton: true,
+      );
+
+      setState(() {
+        stories = [
+          addStory,
+          ...storyDtos.map((dto) => (dto as dynamic).toEntity() as Story),
+        ];
+        albums = albumDtos.map((dto) => (dto as dynamic).toEntity() as Album).toList();
+      });
+    } catch (e) {
+      debugPrint('Load stories/albums error: $e');
+      setState(() {
+        stories = [];
+        albums = [];
+      });
+    }
   }
 
   Future<void> _loadLocalPhotos() async {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../data/mock/mock_friends_data.dart';
+import '../../../data/local/storage_service.dart';
+import '../../../data/data_sources/remote/friendship_service.dart';
 import '../../../domain/entities/friend.dart';
 import 'friend_list_detail_screen.dart';
 import 'friend_timeline_screen.dart';
 import 'add_friend_screen.dart';
+import 'pending_requests_screen.dart';
 import 'widgets/search_friends_bar.dart';
 import 'widgets/social_integration_section.dart';
 import 'widgets/friend_grid_item.dart';
@@ -19,19 +21,47 @@ class FriendsListScreen extends StatefulWidget {
 }
 
 class _FriendsListScreenState extends State<FriendsListScreen> {
-  late List<Friend> friends;
-  late List<Friend> displayedFriends;
+  List<Friend> friends = [];
+  List<Friend> displayedFriends = [];
   List<Friend> filteredFriends = [];
   final TextEditingController _searchController = TextEditingController();
   bool isSearching = false;
+  bool isLoading = true;
+  int _pendingCount = 0;
 
   @override
   void initState() {
     super.initState();
-    friends = MockFriendsData.getMockFriends();
-    displayedFriends = friends.take(6).toList();
-    filteredFriends = friends;
     _searchController.addListener(_onSearchChanged);
+    _loadFriends();
+  }
+
+  Future<void> _loadFriends() async {
+    final userId = StorageService.instance.userId;
+    if (userId == null) {
+      setState(() => isLoading = false);
+      return;
+    }
+
+    try {
+      final dtos = await FriendshipService.instance.getUserFriends(userId);
+      final loaded = dtos.map((dto) => dto.toEntity(userId)).toList();
+      final pending = await FriendshipService.instance.getPendingRequests(userId);
+      setState(() {
+        friends = loaded;
+        filteredFriends = loaded;
+        displayedFriends = loaded.take(6).toList();
+        _pendingCount = pending.length;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        friends = [];
+        filteredFriends = [];
+        displayedFriends = [];
+        isLoading = false;
+      });
+    }
   }
 
   void _onSearchChanged() {
@@ -86,13 +116,50 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. Header "Friends"
-              const Text(
-                'Friends',
-                style: TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Friends',
+                    style: TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      await context.pushSlideBottom(const PendingRequestsScreen());
+                      _loadFriends();
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        const Icon(Icons.person_add_alt_1, size: 28, color: Colors.black),
+                        if (_pendingCount > 0)
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                '$_pendingCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
 
@@ -181,7 +248,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
 
               // 6. Share Link Section
               ShareLinkSection(
-                memoreLink: 'Memorefm000000.com',
+                memoreLink: 'memore.app/${StorageService.instance.getUserProfile()?['username'] ?? 'user'}',
                 onCopyTap: () {
                   debugPrint('Copy link tapped');
                 },
