@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import '../../../data/mock/mock_user_profile.dart';
 import '../../../data/local/photo_storage_manager.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/local/user_manager.dart';
@@ -16,10 +15,12 @@ import '../../widgets/album_header.dart';
 import '../../widgets/filter_section.dart';
 import '../../widgets/album_card.dart';
 import '../../widgets/decorated_background.dart';
-import '../recent_photos_viewer/recent_photos_viewer_screen.dart';
 import '../album/create_album_screen.dart';
 import '../album/album_detail_screen.dart';
 import '../album/album_invites_screen.dart';
+import '../story/story_viewer_screen.dart';
+import '../story/create_story_screen.dart';
+import '../../../data/models/story_dto.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,6 +31,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Story> stories = [];
+  List<StoryDto> _allStoryDtos = [];
   List<Album> albums = [];
   List<Map<String, dynamic>> localPhotos = [];
   List<PhotoDto> remotePhotos = [];
@@ -52,12 +54,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final results = await Future.wait([
-        StoryService.instance.getActiveStories(),
+        StoryService.instance.getFriendsStories(userId),
         AlbumService.instance.getUserAlbums(userId),
       ]);
 
-      final storyDtos = results[0] as List;
+      final storyDtos = results[0] as List<StoryDto>;
       final albumDtos = results[1] as List;
+
+      // Group stories by user - show one avatar per user
+      final Map<String, List<StoryDto>> grouped = {};
+      for (final dto in storyDtos) {
+        final uid = dto.userId ?? '';
+        grouped.putIfAbsent(uid, () => []);
+        grouped[uid]!.add(dto);
+      }
 
       final addStory = Story(
         id: 'add',
@@ -67,11 +77,14 @@ class _HomeScreenState extends State<HomeScreen> {
         isAddButton: true,
       );
 
+      final groupedStories = grouped.entries.map((entry) {
+        final first = entry.value.first;
+        return first.toEntity();
+      }).toList();
+
       setState(() {
-        stories = [
-          addStory,
-          ...storyDtos.map((dto) => (dto as dynamic).toEntity() as Story),
-        ];
+        _allStoryDtos = storyDtos;
+        stories = [addStory, ...groupedStories];
         albums = albumDtos.map((dto) => (dto as dynamic).toEntity() as Album).toList();
       });
     } catch (e) {
@@ -183,26 +196,32 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _openRecentPhotos(Story story) {
-    // Lấy user ID từ story (giả sử story có userId)
-    final userId = story.userId;
+  void _openStoryViewer(Story story) {
+    // Get all stories for this user
+    final userStories = _allStoryDtos
+        .where((dto) => dto.userId == story.userId)
+        .map((dto) => dto.toEntity())
+        .toList();
 
-    // Lấy danh sách ảnh gần đây của user này
-    final photos = MockUserProfile.getRecentPhotos(userId);
+    if (userStories.isEmpty) return;
 
-    // Navigate đến recent photos viewer
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RecentPhotosViewerScreen(
-          userId: userId,
-          initialIndex: 0, // Bắt đầu từ ảnh đầu tiên
-          photos: photos,
-          userName: story.userName,
-          userAvatar: story.userAvatar,
+        builder: (context) => StoryViewerScreen(
+          stories: userStories,
+          initialIndex: 0,
         ),
       ),
     );
+  }
+
+  Future<void> _openCreateStory() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CreateStoryScreen()),
+    );
+    if (result == true) _loadStoriesAndAlbums();
   }
 
   @override
@@ -215,11 +234,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             StorySection(
               stories: stories,
-              onAddStory: () {
-                debugPrint('Add story tapped');
-              },
+              onAddStory: _openCreateStory,
               onStoryTap: (story) {
-                _openRecentPhotos(story);
+                _openStoryViewer(story);
               },
               onMoreTap: () {
                 debugPrint('More stories tapped');

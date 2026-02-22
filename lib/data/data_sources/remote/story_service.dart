@@ -32,4 +32,43 @@ class StoryService {
       return [];
     }
   }
+
+  Future<List<StoryDto>> getFriendsStories(String userId) async {
+    try {
+      final response = await _dio.get('/api/stories/friends/$userId');
+      final List<dynamic> data = response.data as List<dynamic>;
+      return data.map((json) => StoryDto.fromJson(json)).toList();
+    } on DioException catch (e) {
+      debugPrint('Get friends stories error: ${e.message}');
+      return [];
+    }
+  }
+
+  Future<StoryDto?> createStory({
+    required String userId,
+    String? photoId,
+    String? content,
+  }) async {
+    try {
+      final response = await _dio.post('/api/stories', data: {
+        'userId': userId,
+        'photoId': photoId,
+        'content': content,
+      });
+      return StoryDto.fromJson(response.data);
+    } on DioException catch (e) {
+      debugPrint('Create story error: ${e.message}');
+      return null;
+    }
+  }
+
+  Future<StoryDto?> viewStory(String storyId) async {
+    try {
+      final response = await _dio.put('/api/stories/$storyId/view');
+      return StoryDto.fromJson(response.data);
+    } on DioException catch (e) {
+      debugPrint('View story error: ${e.message}');
+      return null;
+    }
+  }
 }

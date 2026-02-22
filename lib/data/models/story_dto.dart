@@ -10,6 +10,8 @@ class StoryDto {
   final String? createdAt;
   final bool isActive;
   final int viewCount;
+  final String? userAvatarUrl;
+  final String? photoUrl;
 
   StoryDto({
     required this.id,
@@ -21,6 +23,8 @@ class StoryDto {
     this.createdAt,
     this.isActive = true,
     this.viewCount = 0,
+    this.userAvatarUrl,
+    this.photoUrl,
   });
 
   factory StoryDto.fromJson(Map<String, dynamic> json) {
@@ -34,6 +38,8 @@ class StoryDto {
       createdAt: json['createdAt']?.toString(),
       isActive: json['isActive'] as bool? ?? true,
       viewCount: json['viewCount'] as int? ?? 0,
+      userAvatarUrl: json['userAvatarUrl'] as String?,
+      photoUrl: json['photoUrl'] as String?,
     );
   }
 
@@ -48,6 +54,8 @@ class StoryDto {
       'createdAt': createdAt,
       'isActive': isActive,
       'viewCount': viewCount,
+      'userAvatarUrl': userAvatarUrl,
+      'photoUrl': photoUrl,
     };
   }
 
@@ -55,8 +63,13 @@ class StoryDto {
     return Story(
       id: id,
       userId: userId ?? '',
-      userAvatar: 'https://i.pravatar.cc/150?u=$userId',
+      userAvatar: userAvatarUrl ?? 'https://i.pravatar.cc/150?u=$userId',
       userName: userName ?? 'Unknown',
+      photoUrl: photoUrl,
+      content: content,
+      createdAt: createdAt,
+      expiresAt: expiresAt,
+      viewCount: viewCount,
     );
   }
 }
