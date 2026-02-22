@@ -102,6 +102,18 @@ class PhotoService {
     }
   }
 
+  /// Get photos by album ID
+  Future<List<PhotoDto>> getAlbumPhotos(String albumId) async {
+    try {
+      final response = await _dio.get('/api/photos/album/$albumId');
+      final List<dynamic> data = response.data as List<dynamic>;
+      return data.map((json) => PhotoDto.fromJson(json)).toList();
+    } on DioException catch (e) {
+      debugPrint('Get album photos error: ${e.message}');
+      return [];
+    }
+  }
+
   /// Get presigned URL for an S3 key
   Future<String?> getPresignedUrl(String s3Key) async {
     try {

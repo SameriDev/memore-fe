@@ -17,6 +17,9 @@ import '../../widgets/filter_section.dart';
 import '../../widgets/album_card.dart';
 import '../../widgets/decorated_background.dart';
 import '../recent_photos_viewer/recent_photos_viewer_screen.dart';
+import '../album/create_album_screen.dart';
+import '../album/album_detail_screen.dart';
+import '../album/album_invites_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,12 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isRemoteSource = false;
   List<String> activeFilters = ['Shared', 'Recent'];
   bool isLoadingPhotos = false;
+  int _pendingInviteCount = 0;
 
   @override
   void initState() {
     super.initState();
     _loadStoriesAndAlbums();
     _loadLocalPhotos();
+    _loadPendingInvites();
   }
 
   Future<void> _loadStoriesAndAlbums() async {
@@ -141,6 +146,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _loadPendingInvites() async {
+    final userId = StorageService.instance.userId;
+    if (userId == null) return;
+    final invites = await AlbumService.instance.getPendingInvites(userId);
+    if (mounted) {
+      setState(() => _pendingInviteCount = invites.length);
+    }
+  }
+
   void _refreshPhotos() {
     _loadLocalPhotos();
   }
@@ -218,8 +232,25 @@ class _HomeScreenState extends State<HomeScreen> {
               onSearchTap: () {
                 debugPrint('Search tapped');
               },
-              onAddTap: () {
-                debugPrint('Add album tapped');
+              onAddTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const CreateAlbumScreen(),
+                  ),
+                );
+                if (result == true) _loadStoriesAndAlbums();
+              },
+              pendingInviteCount: _pendingInviteCount,
+              onInvitesTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AlbumInvitesScreen(),
+                  ),
+                );
+                _loadStoriesAndAlbums();
+                _loadPendingInvites();
               },
             ),
             FilterSection(
@@ -259,8 +290,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   return AlbumCard(
                     album: album,
                     aspectRatio: aspectRatio,
-                    onTap: () {
-                      debugPrint('Album tapped: ${album.name}');
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AlbumDetailScreen(albumId: album.id),
+                        ),
+                      );
+                      if (result == true) _loadStoriesAndAlbums();
                     },
                     onFavoriteTap: () {
                       _handleAlbumFavorite(album);

@@ -1,4 +1,5 @@
 import '../../domain/entities/album.dart';
+import 'album_participant_dto.dart';
 
 class AlbumDto {
   final String id;
@@ -11,6 +12,7 @@ class AlbumDto {
   final bool isFavorite;
   final String? createdAt;
   final String? updatedAt;
+  final List<AlbumParticipantDto> participants;
 
   AlbumDto({
     required this.id,
@@ -23,6 +25,7 @@ class AlbumDto {
     this.isFavorite = false,
     this.createdAt,
     this.updatedAt,
+    this.participants = const [],
   });
 
   factory AlbumDto.fromJson(Map<String, dynamic> json) {
@@ -37,6 +40,10 @@ class AlbumDto {
       isFavorite: json['isFavorite'] as bool? ?? false,
       createdAt: json['createdAt']?.toString(),
       updatedAt: json['updatedAt']?.toString(),
+      participants: (json['participants'] as List<dynamic>?)
+              ?.map((p) => AlbumParticipantDto.fromJson(p))
+              .toList() ??
+          [],
     );
   }
 
@@ -73,13 +80,24 @@ class AlbumDto {
       }
     }
 
+    final acceptedParticipants =
+        participants.where((p) => p.status == 'ACCEPTED').toList();
+    final avatars = acceptedParticipants
+        .where((p) => p.userAvatarUrl != null && p.userAvatarUrl!.isNotEmpty)
+        .map((p) => p.userAvatarUrl!)
+        .take(3)
+        .toList();
+    final additionalCount =
+        (acceptedParticipants.length - avatars.length).clamp(0, 999);
+
     return Album(
       id: id,
       name: name ?? 'Untitled',
       coverImageUrl: coverImageUrl ?? '',
       filesCount: filesCount,
       timeAgo: timeAgo,
-      participantAvatars: [],
+      participantAvatars: avatars,
+      additionalParticipants: additionalCount,
       isFavorite: isFavorite,
     );
   }
