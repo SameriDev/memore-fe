@@ -5,5 +5,5 @@ class AppConstants {
   static const int defaultTimeout = 30000;
   static const int maxImageSize = 5242880;
 
-  static const String baseUrl = 'https://api.example.com';
+  static const String baseUrl = 'https://63mnglpv.asse.devtunnels.ms:8080';
 }

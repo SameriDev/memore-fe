@@ -24,6 +24,7 @@ class StorageService {
   static const String keyUserId = 'user_id';
   static const String keyUserProfile = 'user_profile';
   static const String keyFirstLaunch = 'first_launch';
+  static const String keyAccessToken = 'access_token';
 
   /// Initialize all storage systems
   Future<void> initialize() async {
@@ -52,6 +53,16 @@ class StorageService {
 
   Future<bool> setUserId(String userId) async {
     return await _prefs?.setString(keyUserId, userId) ?? false;
+  }
+
+  String? get accessToken => _prefs?.getString(keyAccessToken);
+
+  Future<bool> setAccessToken(String token) async {
+    return await _prefs?.setString(keyAccessToken, token) ?? false;
+  }
+
+  Future<bool> clearAccessToken() async {
+    return await _prefs?.remove(keyAccessToken) ?? false;
   }
 
   bool get isFirstLaunch => _prefs?.getBool(keyFirstLaunch) ?? true;
@@ -180,6 +191,7 @@ class StorageService {
   Future<void> logout() async {
     await setLoggedIn(false);
     await setUserId('');
+    await clearAccessToken();
     await _userBox?.clear();
     // Keep photos and friends for demo purposes
     // await _photosBox?.clear();

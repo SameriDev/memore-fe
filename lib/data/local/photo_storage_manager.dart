@@ -338,6 +338,18 @@ class PhotoStorageManager {
     }
   }
 
+  /// Update remote ID for a local photo after upload
+  Future<void> updateRemoteId(String localPhotoId, String remoteId) async {
+    try {
+      final metadata = getPhotoMetadata(localPhotoId);
+      if (metadata == null) return;
+      metadata['remoteId'] = remoteId;
+      await _savePhotoMetadata(localPhotoId, metadata);
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
   /// Check if photo exists
   bool photoExists(String photoId) {
     final metadata = getPhotoMetadata(photoId);

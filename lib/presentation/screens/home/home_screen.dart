@@ -3,7 +3,10 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../data/mock/mock_albums_data.dart';
 import '../../../data/mock/mock_user_profile.dart';
 import '../../../data/local/photo_storage_manager.dart';
+import '../../../data/local/storage_service.dart';
 import '../../../data/local/user_manager.dart';
+import '../../../data/data_sources/remote/photo_service.dart';
+import '../../../data/models/photo_dto.dart';
 import '../../../domain/entities/album.dart';
 import '../../../domain/entities/story.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -25,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late List<Story> stories;
   late List<Album> albums;
   List<Map<String, dynamic>> localPhotos = [];
+  List<PhotoDto> remotePhotos = [];
+  bool isRemoteSource = false;
   List<String> activeFilters = ['Shared', 'Recent'];
   bool isLoadingPhotos = false;
 
@@ -40,9 +45,32 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => isLoadingPhotos = true);
 
     try {
+      // Remote-first: try fetching from server
+      final userId = StorageService.instance.userId;
+      if (userId != null) {
+        try {
+          final remote = await PhotoService.instance.getUserPhotos(userId);
+          if (remote.isNotEmpty) {
+            setState(() {
+              remotePhotos = remote;
+              isRemoteSource = true;
+            });
+
+            await UserManager.instance.updateProfile({
+              'photosCount': remote.length,
+            });
+
+            setState(() => isLoadingPhotos = false);
+            return;
+          }
+        } catch (e) {
+          debugPrint('Remote photos fetch failed, falling back to local: $e');
+        }
+      }
+
+      // Fallback: load from local storage
       final photos = PhotoStorageManager.instance.getUserPhotos();
 
-      // Transform photos to expected format for HomeScreen
       final transformedPhotos = photos.map((photo) {
         final timestamp = photo['timestamp'] as int;
         final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
@@ -60,9 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         localPhotos = transformedPhotos;
+        isRemoteSource = false;
       });
 
-      // Update user stats
       final user = UserManager.instance.getCurrentUser();
       if (user != null) {
         await UserManager.instance.updateProfile({
@@ -70,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } catch (e) {
-      debugPrint('Error loading local photos: $e');
+      debugPrint('Error loading photos: $e');
     } finally {
       setState(() => isLoadingPhotos = false);
     }

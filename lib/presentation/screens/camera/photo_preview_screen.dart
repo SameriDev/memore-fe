@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import '../../../data/local/photo_storage_manager.dart';
+import '../../../data/local/storage_service.dart';
 import '../../../data/local/user_manager.dart';
+import '../../../data/data_sources/remote/photo_service.dart';
 
 class PhotoPreviewScreen extends StatefulWidget {
   final String imagePath;
@@ -72,6 +74,29 @@ class _PhotoPreviewScreenState extends State<PhotoPreviewScreen> {
       await UserManager.instance.incrementPhotoCount();
 
       if (photoId != null) {
+        // Fire-and-forget upload to server
+        final userId = StorageService.instance.userId;
+        if (userId != null) {
+          final storagePath = PhotoStorageManager.instance.getPhotoPath(photoId);
+          if (storagePath != null) {
+            PhotoService.instance
+                .uploadPhoto(
+                  localFilePath: storagePath,
+                  userId: userId,
+                  caption: caption.isNotEmpty ? caption : null,
+                )
+                .then((remotePhoto) {
+              if (remotePhoto != null) {
+                PhotoStorageManager.instance
+                    .updateRemoteId(photoId, remotePhoto.id);
+                debugPrint('Photo uploaded to server: ${remotePhoto.id}');
+              }
+            }).catchError((e) {
+              debugPrint('Background upload failed: $e');
+            });
+          }
+        }
+
         // Show success message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../data/mock/mock_user_profile.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../../data/local/user_manager.dart';
 import 'widgets/profile_header.dart';
@@ -14,12 +13,27 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late UserProfile user;
+  UserProfile? user;
 
   @override
   void initState() {
     super.initState();
-    user = MockUserProfile.getCurrentUser();
+    _loadProfile();
+  }
+
+  void _loadProfile() {
+    // Load from local storage first (instant)
+    final localProfile = UserManager.instance.toUserProfile();
+    if (localProfile != null) {
+      setState(() => user = localProfile);
+    }
+
+    // Fetch fresh data from API
+    UserManager.instance.fetchAndUpdateProfile().then((freshProfile) {
+      if (freshProfile != null && mounted) {
+        setState(() => user = freshProfile);
+      }
+    });
   }
 
   @override
@@ -69,6 +83,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           // Main Content
+          if (user == null)
+            const Center(child: CircularProgressIndicator())
+          else
           SafeArea(
             bottom: false,
             child: SingleChildScrollView(
@@ -79,13 +96,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     const SizedBox(height: 32),
                     // Profile Header
-                    Center(child: ProfileHeader(user: user)),
+                    Center(child: ProfileHeader(user: user!)),
                     const SizedBox(height: 20),
                     // Badges
                     Center(
                       child: ProfileBadges(
-                        badgeLevel: user.badgeLevel,
-                        streakCount: user.streakCount,
+                        badgeLevel: user!.badgeLevel,
+                        streakCount: user!.streakCount,
                       ),
                     ),
                     const SizedBox(height: 32),

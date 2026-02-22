@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import '../../../data/local/user_manager.dart';
 import '../../../data/local/photo_storage_manager.dart';
+import '../../../data/local/storage_service.dart';
+import '../../../data/data_sources/remote/photo_service.dart';
 import 'widgets/camera_viewfinder.dart';
 import 'widgets/camera_controls.dart';
 import 'models/camera_state.dart';
@@ -175,6 +177,29 @@ class _CameraScreenState extends State<CameraScreen> {
       if (photoId != null) {
         // Update user photo count
         await UserManager.instance.incrementPhotoCount();
+
+        // Fire-and-forget upload to server
+        final userId = StorageService.instance.userId;
+        if (userId != null) {
+          final storagePath = PhotoStorageManager.instance.getPhotoPath(photoId);
+          if (storagePath != null) {
+            PhotoService.instance
+                .uploadPhoto(
+                  localFilePath: storagePath,
+                  userId: userId,
+                  caption: 'Ảnh chụp từ camera',
+                )
+                .then((remotePhoto) {
+              if (remotePhoto != null) {
+                PhotoStorageManager.instance
+                    .updateRemoteId(photoId, remotePhoto.id);
+                debugPrint('Photo uploaded to server: ${remotePhoto.id}');
+              }
+            }).catchError((e) {
+              debugPrint('Background upload failed: $e');
+            });
+          }
+        }
 
         if (mounted) {
           // Show success message

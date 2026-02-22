@@ -4,6 +4,9 @@ import 'config/timeline_config.dart';
 import 'widgets/timeline_item.dart';
 import 'widgets/album_carousel_viewer.dart';
 import '../../../data/local/photo_storage_manager.dart';
+import '../../../data/local/storage_service.dart';
+import '../../../data/data_sources/remote/photo_service.dart';
+import '../../../data/models/photo_dto.dart';
 import 'dart:io';
 
 class TimelineScreen extends StatefulWidget {
@@ -149,8 +152,34 @@ class _TimelineScreenState extends State<TimelineScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Lấy photos thật từ PhotoStorageManager
-      final realPhotos = PhotoStorageManager.instance.getUserPhotos();
+      // Remote-first: try fetching from server
+      List<Map<String, dynamic>> realPhotos = [];
+      final userId = StorageService.instance.userId;
+
+      if (userId != null) {
+        try {
+          final remote = await PhotoService.instance.getUserPhotos(userId);
+          if (remote.isNotEmpty) {
+            realPhotos = remote.map((dto) {
+              final createdAt = DateTime.tryParse(dto.createdAt ?? '') ?? DateTime.now();
+              return {
+                'id': dto.id,
+                'storagePath': dto.filePath ?? '',
+                'caption': dto.caption ?? '',
+                'timestamp': createdAt.millisecondsSinceEpoch,
+                'isRemote': true,
+              };
+            }).toList();
+          }
+        } catch (e) {
+          debugPrint('Remote timeline fetch failed: $e');
+        }
+      }
+
+      // Fallback to local if remote is empty
+      if (realPhotos.isEmpty) {
+        realPhotos = PhotoStorageManager.instance.getUserPhotos();
+      }
 
       List<TimelineItemData> realTimelineItems = [];
 
@@ -177,7 +206,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
         final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
 
         // Tạo danh sách đường dẫn ảnh cho ngày này
-        final imagePaths = photosOfDay.map((photo) => 'file://${photo['storagePath']}').toList();
+        final imagePaths = photosOfDay.map((photo) {
+          final path = photo['storagePath'] as String;
+          final isRemote = photo['isRemote'] == true;
+          return isRemote ? path : 'file://$path';
+        }).toList();
 
         // Tạo title dựa trên số lượng ảnh
         String title;

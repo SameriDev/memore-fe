@@ -1,4 +1,14 @@
 import 'storage_service.dart';
+import '../data_sources/remote/auth_service.dart';
+import '../data_sources/remote/user_service.dart';
+import '../../domain/entities/user_profile.dart';
+
+class AuthResult {
+  final bool success;
+  final String? errorMessage;
+
+  AuthResult({required this.success, this.errorMessage});
+}
 
 class UserManager {
   static UserManager? _instance;
@@ -7,89 +17,72 @@ class UserManager {
   UserManager._();
 
   final _storage = StorageService.instance;
+  final _authService = AuthService.instance;
+  final _userService = UserService.instance;
 
-  /// Login user and save profile locally
-  Future<bool> login({
+  /// Login user via BE API
+  Future<AuthResult> login({
     required String email,
     required String password,
-    String? name,
   }) async {
     try {
-      // In a real app, this would call an API
-      // For demo, we'll create/load user profile locally
+      final response = await _authService.login(
+        email: email,
+        password: password,
+      );
 
-      final userId = _generateUserId(email);
-
-      // Check if user profile exists
-      var userProfile = _storage.getUserProfile();
-
-      if (userProfile == null || userProfile['email'] != email) {
-        // Create new user profile
-        userProfile = {
-          'id': userId,
-          'email': email,
-          'name': name ?? _extractNameFromEmail(email),
-          'username': '@${_extractUsernameFromEmail(email)}',
-          'avatarUrl': _generateAvatarUrl(email),
-          'bio': 'Hello, I\'m using Memore! 📸',
-          'friendsCount': 0,
-          'photosCount': 0,
-          'joinedDate': DateTime.now().toIso8601String(),
-          'isOnline': true,
-          'lastActiveTime': DateTime.now().toIso8601String(),
-          'settings': _getDefaultSettings(),
-        };
-
-        await _storage.saveUserProfile(userProfile);
+      if (response.success && response.accessToken != null && response.user != null) {
+        await _storage.setAccessToken(response.accessToken!);
+        await _storage.saveUserProfile(response.user!.toStorageMap());
+        await _storage.setLoggedIn(true);
+        await _storage.setUserId(response.user!.id);
+        return AuthResult(success: true);
       }
 
-      await _storage.setLoggedIn(true);
-      await _storage.setUserId(userId);
-
-      return true;
+      return AuthResult(
+        success: false,
+        errorMessage: response.message ?? 'Đăng nhập thất bại',
+      );
     } catch (e) {
-      return false;
+      return AuthResult(success: false, errorMessage: 'Không thể kết nối đến server');
     }
   }
 
-  /// Register new user
-  Future<bool> register({
+  /// Register new user via BE API
+  Future<AuthResult> register({
     required String email,
     required String password,
     required String name,
   }) async {
     try {
-      final userId = _generateUserId(email);
+      final username = email.split('@')[0].replaceAll('.', '_');
 
-      final userProfile = {
-        'id': userId,
-        'email': email,
-        'name': name,
-        'username': '@${_extractUsernameFromEmail(email)}',
-        'avatarUrl': _generateAvatarUrl(email),
-        'bio': 'New to Memore! 🎉',
-        'friendsCount': 0,
-        'photosCount': 0,
-        'joinedDate': DateTime.now().toIso8601String(),
-        'isOnline': true,
-        'lastActiveTime': DateTime.now().toIso8601String(),
-        'settings': _getDefaultSettings(),
-        'isFirstTime': true,
-      };
+      final response = await _authService.register(
+        name: name,
+        username: username,
+        email: email,
+        password: password,
+      );
 
-      await _storage.saveUserProfile(userProfile);
-      await _storage.setLoggedIn(true);
-      await _storage.setUserId(userId);
+      if (response.success && response.accessToken != null && response.user != null) {
+        await _storage.setAccessToken(response.accessToken!);
+        await _storage.saveUserProfile(response.user!.toStorageMap());
+        await _storage.setLoggedIn(true);
+        await _storage.setUserId(response.user!.id);
+        return AuthResult(success: true);
+      }
 
-      return true;
+      return AuthResult(
+        success: false,
+        errorMessage: response.message ?? 'Đăng ký thất bại',
+      );
     } catch (e) {
-      return false;
+      return AuthResult(success: false, errorMessage: 'Không thể kết nối đến server');
     }
   }
 
   /// Logout user
   Future<void> logout() async {
-    await _updateUserOnlineStatus(false);
     await _storage.logout();
   }
 
@@ -146,17 +139,12 @@ class UserManager {
     return settings[key] as T? ?? defaultValue;
   }
 
-  /// Update online status
-  Future<void> _updateUserOnlineStatus(bool isOnline) async {
+  /// Set user as active
+  Future<void> updateActivity() async {
     await updateProfile({
-      'isOnline': isOnline,
+      'isOnline': true,
       'lastActiveTime': DateTime.now().toIso8601String(),
     });
-  }
-
-  /// Set user as active (call this periodically when app is in use)
-  Future<void> updateActivity() async {
-    await _updateUserOnlineStatus(true);
   }
 
   /// Increment photo count
@@ -186,63 +174,27 @@ class UserManager {
     }
   }
 
-  /// Generate user ID from email
-  String _generateUserId(String email) {
-    return 'user_${email.hashCode.abs()}';
+  /// Validate email format
+  bool isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-  /// Extract name from email
-  String _extractNameFromEmail(String email) {
-    final username = email.split('@')[0];
-    return username
-        .split('.')
-        .map((part) => part[0].toUpperCase() + part.substring(1))
-        .join(' ');
+  /// Validate password strength
+  bool isValidPassword(String password) {
+    return password.length >= 6;
   }
 
-  /// Extract username from email
-  String _extractUsernameFromEmail(String email) {
-    return email.split('@')[0].replaceAll('.', '_');
-  }
+  /// Get user stats
+  Map<String, int> getUserStats() {
+    final profile = getCurrentUser();
+    if (profile == null) {
+      return {'friends': 0, 'photos': 0, 'likes': 0};
+    }
 
-  /// Generate avatar URL from email
-  String _generateAvatarUrl(String email) {
-    // Use a deterministic avatar service
-    final hash = email.hashCode.abs();
-    return 'https://api.dicebear.com/7.x/avataaars/png?seed=$hash&size=200';
-  }
-
-  /// Get default user settings
-  Map<String, dynamic> _getDefaultSettings() {
     return {
-      'notifications': {
-        'pushEnabled': true,
-        'friendRequests': true,
-        'newPhotos': true,
-        'comments': true,
-        'likes': true,
-      },
-      'privacy': {
-        'profileVisibility': 'friends',
-        'photosVisibility': 'friends',
-        'allowFriendRequests': true,
-        'showOnlineStatus': true,
-      },
-      'camera': {
-        'defaultCamera': 'back',
-        'flashMode': 'auto',
-        'saveToGallery': true,
-        'imageQuality': 'high',
-      },
-      'theme': {
-        'darkMode': false,
-        'accentColor': 'brown',
-      },
-      'storage': {
-        'autoBackup': false,
-        'cacheSize': '100MB',
-        'clearCache': false,
-      }
+      'friends': profile['friendsCount'] as int? ?? 0,
+      'photos': profile['photosCount'] as int? ?? 0,
+      'likes': 0,
     };
   }
 
@@ -257,28 +209,39 @@ class UserManager {
     await updateProfile({'isFirstTime': false});
   }
 
-  /// Validate email format
-  bool isValidEmail(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-  }
-
-  /// Validate password strength
-  bool isValidPassword(String password) {
-    // Basic validation: at least 6 characters
-    return password.length >= 6;
-  }
-
-  /// Get user stats
-  Map<String, int> getUserStats() {
+  /// Convert stored profile map to UserProfile entity
+  UserProfile? toUserProfile() {
     final profile = getCurrentUser();
-    if (profile == null) {
-      return {'friends': 0, 'photos': 0, 'likes': 0};
-    }
+    if (profile == null) return null;
 
-    return {
-      'friends': profile['friendsCount'] as int? ?? 0,
-      'photos': profile['photosCount'] as int? ?? 0,
-      'likes': 0, // Would be calculated from liked photos
-    };
+    return UserProfile(
+      id: profile['id'] as String? ?? '',
+      name: profile['name'] as String? ?? '',
+      username: profile['username'] as String? ?? '',
+      avatarUrl: profile['avatarUrl'] as String? ?? '',
+      friendsCount: profile['friendsCount'] as int? ?? 0,
+      imagesCount: profile['photosCount'] as int? ?? 0,
+      badgeLevel: profile['badgeLevel'] as String? ?? 'BRONZE',
+      streakCount: profile['streakCount'] as int? ?? 0,
+      email: profile['email'] as String? ?? '',
+      birthday: profile['birthday'] != null
+          ? DateTime.tryParse(profile['birthday'] as String)
+          : null,
+    );
+  }
+
+  /// Fetch fresh profile from API and update local storage
+  Future<UserProfile?> fetchAndUpdateProfile() async {
+    try {
+      final userId = _storage.userId;
+      if (userId == null || userId.isEmpty) return null;
+
+      final userDto = await _userService.getUserById(userId);
+      await _storage.saveUserProfile(userDto.toStorageMap());
+
+      return toUserProfile();
+    } catch (e) {
+      return null;
+    }
   }
 }
