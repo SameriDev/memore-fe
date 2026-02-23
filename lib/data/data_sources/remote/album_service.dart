@@ -115,6 +115,33 @@ class AlbumService {
     }
   }
 
+  Future<bool> deleteAlbum(String albumId) async {
+    try {
+      await _dio.delete('/api/albums/$albumId');
+      return true;
+    } on DioException catch (e) {
+      debugPrint('Delete album error: ${e.message}');
+      return false;
+    }
+  }
+
+  Future<bool> kickMember({
+    required String albumId,
+    required String userId,
+    required String requesterId,
+  }) async {
+    try {
+      await _dio.delete(
+        '/api/albums/$albumId/participants/$userId',
+        queryParameters: {'requesterId': requesterId},
+      );
+      return true;
+    } on DioException catch (e) {
+      debugPrint('Kick member error: ${e.message}');
+      return false;
+    }
+  }
+
   Future<List<AlbumDto>> getPendingInvites(String userId) async {
     try {
       final response = await _dio.get('/api/albums/invites/$userId');

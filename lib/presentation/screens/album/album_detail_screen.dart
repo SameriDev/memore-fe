@@ -77,7 +77,13 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
     );
     if (confirm != true) return;
 
-    // TODO: call delete album API
+    final success = await AlbumService.instance.deleteAlbum(widget.albumId);
+    if (!success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Xóa album thất bại')),
+      );
+      return;
+    }
     if (mounted) Navigator.pop(context, true);
   }
 
@@ -159,9 +165,32 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
       trailing: _isCreator && !isOwner && !isPending
           ? IconButton(
               icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-              onPressed: () {
-                // TODO: kick member
-                Navigator.pop(context);
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Xóa thành viên'),
+                    content: Text('Bạn có chắc muốn xóa ${p.userName ?? 'thành viên này'} khỏi album?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Hủy'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm != true) return;
+                await AlbumService.instance.kickMember(
+                  albumId: widget.albumId,
+                  userId: p.userId,
+                  requesterId: _currentUserId!,
+                );
+                if (mounted) Navigator.pop(context);
+                _loadData();
               },
             )
           : null,
