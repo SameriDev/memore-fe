@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/local/user_manager.dart';
 import '../../../data/local/photo_storage_manager.dart';
 import '../../../data/local/storage_service.dart';
@@ -148,12 +149,7 @@ class _CameraScreenState extends State<CameraScreen> {
       if (mounted) {
         setState(() => _isProcessing = false);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Lỗi khi chụp ảnh. Vui lòng thử lại.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Lỗi khi chụp ảnh. Vui lòng thử lại.');
       }
     }
   }
@@ -203,35 +199,20 @@ class _CameraScreenState extends State<CameraScreen> {
 
         if (mounted) {
           // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Ảnh đã được lưu thành công!'),
-              backgroundColor: Colors.green,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, 'Ảnh đã được lưu thành công!');
 
           // Navigate back to main screen
           Navigator.of(context).pop();
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Lỗi khi lưu ảnh. Vui lòng thử lại.'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          SnackBarHelper.showError(context, 'Lỗi khi lưu ảnh. Vui lòng thử lại.');
         }
       }
     } catch (e) {
       debugPrint('Error confirming photo: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Có lỗi xảy ra khi lưu ảnh.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Có lỗi xảy ra khi lưu ảnh.');
       }
     } finally {
       if (mounted) {

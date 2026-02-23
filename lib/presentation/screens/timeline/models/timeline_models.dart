@@ -1,12 +1,13 @@
 class TimelineItemData {
   final TimelineAlignment alignment;
   final List<String> images;
-  final String title;
-  final String subtitle;
+  String title;
+  String subtitle;
   final String time;
   final String day;
   final String month;
   final String displayDate;
+  final List<String> photoIds;
 
   TimelineItemData({
     required this.alignment,
@@ -17,6 +18,7 @@ class TimelineItemData {
     required this.day,
     required this.month,
     required this.displayDate,
+    this.photoIds = const [],
   });
 }
 

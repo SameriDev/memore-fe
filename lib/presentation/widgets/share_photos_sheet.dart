@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../data/local/photo_sharing_manager.dart';
 import '../../data/local/friend_manager.dart';
 
@@ -56,15 +57,7 @@ class _SharePhotosSheetState extends State<SharePhotosSheet> {
 
   Future<void> _sharePhotos() async {
     if (_selectedFriends.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Please select at least one friend to share with',
-            style: GoogleFonts.inika(),
-          ),
-          backgroundColor: const Color(0xFFD32F2F),
-        ),
-      );
+      SnackBarHelper.showError(context, 'Please select at least one friend to share with');
       return;
     }
 
@@ -89,43 +82,22 @@ class _SharePhotosSheetState extends State<SharePhotosSheet> {
 
       if (allShared) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                widget.photoIds.length == 1
-                    ? 'Photo shared successfully!'
-                    : '${widget.photoIds.length} photos shared successfully!',
-                style: GoogleFonts.inika(),
-              ),
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
+          SnackBarHelper.showSuccess(
+            context,
+            widget.photoIds.length == 1
+                ? 'Photo shared successfully!'
+                : '${widget.photoIds.length} photos shared successfully!',
           );
           Navigator.of(context).pop();
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Some photos could not be shared. Please try again.',
-                style: GoogleFonts.inika(),
-              ),
-              backgroundColor: const Color(0xFFD32F2F),
-            ),
-          );
+          SnackBarHelper.showError(context, 'Some photos could not be shared. Please try again.');
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error sharing photos: $e',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFFD32F2F),
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error sharing photos: $e');
       }
     } finally {
       if (mounted) {

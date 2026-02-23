@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/local/user_manager.dart';
 
 class PrivacySettingsScreen extends StatefulWidget {
@@ -75,27 +76,11 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Đã lưu cài đặt quyền riêng tư',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFF4CAF50),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, 'Đã lưu cài đặt quyền riêng tư');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Lỗi khi lưu cài đặt: $e',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFFD32F2F),
-          ),
-        );
+        SnackBarHelper.showError(context, 'Lỗi khi lưu cài đặt: $e');
       }
     }
   }
@@ -417,15 +402,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                       color: Colors.orange,
                     ),
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Tính năng tải xuống dữ liệu đang được phát triển',
-                            style: GoogleFonts.inika(),
-                          ),
-                          backgroundColor: const Color(0xFF8B4513),
-                        ),
-                      );
+                      SnackBarHelper.showInfo(context, 'Tính năng tải xuống dữ liệu đang được phát triển');
                     },
                   ),
                   const SizedBox(height: 8),
@@ -507,15 +484,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Tính năng xóa tài khoản đang được phát triển',
-                      style: GoogleFonts.inika(),
-                    ),
-                    backgroundColor: const Color(0xFF8B4513),
-                  ),
-                );
+                SnackBarHelper.showInfo(context, 'Tính năng xóa tài khoản đang được phát triển');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,

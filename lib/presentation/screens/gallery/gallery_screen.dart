@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import 'dart:io';
 import '../../../data/local/photo_storage_manager.dart';
 import '../recent_photos_viewer/recent_photos_viewer_screen.dart' show RecentPhotosViewerScreen, PhotoItem;
@@ -48,15 +49,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Lỗi khi tải ảnh: $e',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFFD32F2F),
-          ),
-        );
+        SnackBarHelper.showError(context, 'Lỗi khi tải ảnh: $e');
       }
     }
   }

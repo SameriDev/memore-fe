@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/data_sources/remote/user_service.dart';
 import '../../../data/data_sources/remote/friendship_service.dart';
 import '../../../data/local/storage_service.dart';
@@ -45,9 +46,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     final result = await FriendshipService.instance.sendRequest(currentUserId, user.id);
     if (result != null && mounted) {
       setState(() => _sentIds.add(user.id));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã gửi lời mời kết bạn')),
-      );
+      SnackBarHelper.showSuccess(context, 'Đã gửi lời mời kết bạn');
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/data_sources/remote/album_service.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/models/album_dto.dart';
@@ -43,9 +44,7 @@ class _AlbumInvitesScreenState extends State<AlbumInvitesScreen> {
     );
     if (result != null && mounted) {
       setState(() => _invites.removeWhere((a) => a.id == album.id));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Đã tham gia album "${album.name}"')),
-      );
+      SnackBarHelper.showSuccess(context, 'Đã tham gia album "${album.name}"');
     }
   }
 

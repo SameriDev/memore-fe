@@ -13,6 +13,7 @@ class TimelineItem extends StatelessWidget {
   final String month;
   final ResponsiveConfig config;
   final VoidCallback? onAlbumTap;
+  final VoidCallback? onEditNote;
 
   const TimelineItem({
     super.key,
@@ -25,6 +26,7 @@ class TimelineItem extends StatelessWidget {
     required this.month,
     required this.config,
     this.onAlbumTap,
+    this.onEditNote,
   });
 
   @override
@@ -84,7 +86,8 @@ class TimelineItem extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          _buildEditButton(),
+          const SizedBox(height: 8),
           _buildImageCluster(),
           const SizedBox(height: 16),
           Column(
@@ -128,48 +131,72 @@ class TimelineItem extends StatelessWidget {
         right: isLeft ? config.itemMargin : 0,
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [if (isLeft) ...buildLeftLayout() else ...buildRightLayout()],
       ),
     );
   }
 
   List<Widget> buildLeftLayout() {
+    // Date on LEFT → text aligns RIGHT
     return [
-      SizedBox(
-        width: config.circleSize,
-        height: config.itemHeight,
-        child: Align(alignment: Alignment.topCenter, child: _buildCircle()),
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildCircle(),
+          _buildEditButton(),
+        ],
       ),
+      const SizedBox(width: 8),
       Expanded(flex: config.imageFlex, child: _buildImageCluster()),
-      const SizedBox(width: 20),
+      const SizedBox(width: 12),
       Expanded(
         flex: config.textFlex,
-        child: SizedBox(
-          height: config.itemHeight,
-          child: Center(child: _buildTextInfo()),
-        ),
+        child: _buildTextInfo(CrossAxisAlignment.end, TextAlign.right),
       ),
     ];
   }
 
   List<Widget> buildRightLayout() {
+    // Date on RIGHT → text aligns LEFT
     return [
       Expanded(
         flex: config.textFlex,
-        child: SizedBox(
-          height: config.itemHeight,
-          child: Center(child: _buildTextInfo()),
-        ),
+        child: _buildTextInfo(CrossAxisAlignment.start, TextAlign.left),
       ),
-      const SizedBox(width: 20),
+      const SizedBox(width: 12),
       Expanded(flex: config.imageFlex, child: _buildImageCluster()),
-      SizedBox(
-        width: config.circleSize,
-        height: config.itemHeight,
-        child: Align(alignment: Alignment.topCenter, child: _buildCircle()),
+      const SizedBox(width: 8),
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildCircle(),
+          _buildEditButton(),
+        ],
       ),
     ];
+  }
+
+  Widget _buildEditButton() {
+    return GestureDetector(
+      onTap: onEditNote,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.08),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.edit,
+            size: 20,
+            color: Colors.black.withOpacity(0.5),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildCircle() {
@@ -218,12 +245,17 @@ class TimelineItem extends StatelessWidget {
     );
   }
 
-  Widget _buildTextInfo() {
+  Widget _buildTextInfo([
+    CrossAxisAlignment crossAlign = CrossAxisAlignment.center,
+    TextAlign textAlign = TextAlign.center,
+  ]) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: crossAlign,
       children: [
         Text(
           title,
+          textAlign: textAlign,
           style: TextStyle(
             fontSize: config.titleSize,
             fontWeight: FontWeight.bold,
@@ -233,7 +265,7 @@ class TimelineItem extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           '"$subtitle"',
-          textAlign: TextAlign.center,
+          textAlign: textAlign,
           style: TextStyle(
             fontSize: config.subtitleSize,
             color: Colors.black87,
@@ -242,6 +274,7 @@ class TimelineItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           time,
+          textAlign: textAlign,
           style: TextStyle(
             fontSize: config.timeSize,
             color: Colors.black.withOpacity(0.5),
@@ -289,32 +322,36 @@ class TimelineItem extends StatelessWidget {
 
   Widget _buildImageCluster() {
     if (images.isEmpty) {
-      return Container(
-        height: config.itemHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.grey[300],
+      return AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey[300],
+          ),
         ),
       );
     }
 
     if (images.length == 1) {
       return _wrapWithGestureDetector(
-        Container(
-          height: config.itemHeight,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: _buildImage(images[0], fit: BoxFit.cover),
+        AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: _buildImage(images[0], fit: BoxFit.cover),
+            ),
           ),
         ),
       );
@@ -322,30 +359,32 @@ class TimelineItem extends StatelessWidget {
 
     if (images.length == 2) {
       return _wrapWithGestureDetector(
-        Container(
-          height: config.itemHeight,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildImage(images[0], fit: BoxFit.cover, height: double.infinity),
-                ),
-                const SizedBox(width: 2),
-                Expanded(
-                  child: _buildImage(images[1], fit: BoxFit.cover, height: double.infinity),
+        AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildImage(images[0], fit: BoxFit.cover, height: double.infinity),
+                  ),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    child: _buildImage(images[1], fit: BoxFit.cover, height: double.infinity),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -354,8 +393,53 @@ class TimelineItem extends StatelessWidget {
 
     if (images.length == 3) {
       return _wrapWithGestureDetector(
-        Container(
-          height: config.itemHeight,
+        AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: _buildImage(images[0], fit: BoxFit.cover, height: double.infinity),
+                  ),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: _buildImage(images[1], fit: BoxFit.cover, width: double.infinity),
+                        ),
+                        const SizedBox(height: 2),
+                        Expanded(
+                          child: _buildImage(images[2], fit: BoxFit.cover, width: double.infinity),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return _wrapWithGestureDetector(
+      AspectRatio(
+        aspectRatio: 1,
+        child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
@@ -371,94 +455,53 @@ class TimelineItem extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  flex: 2,
-                  child: _buildImage(images[0], fit: BoxFit.cover, height: double.infinity),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: _buildImage(images[0], fit: BoxFit.cover, width: double.infinity),
+                      ),
+                      const SizedBox(height: 2),
+                      Expanded(
+                        child: _buildImage(images[1], fit: BoxFit.cover, width: double.infinity),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 2),
                 Expanded(
                   child: Column(
                     children: [
                       Expanded(
-                        child: _buildImage(images[1], fit: BoxFit.cover, width: double.infinity),
+                        child: _buildImage(images[2], fit: BoxFit.cover, width: double.infinity),
                       ),
                       const SizedBox(height: 2),
                       Expanded(
-                        child: _buildImage(images[2], fit: BoxFit.cover, width: double.infinity),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            _buildImage(images[3], fit: BoxFit.cover),
+                            if (images.length > 4)
+                              Container(
+                                color: Colors.black.withOpacity(0.5),
+                                child: Center(
+                                  child: Text(
+                                    '+${images.length - 4}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-      );
-    }
-
-    return _wrapWithGestureDetector(
-      Container(
-        height: config.itemHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: _buildImage(images[0], fit: BoxFit.cover, width: double.infinity),
-                    ),
-                    const SizedBox(height: 2),
-                    Expanded(
-                      child: _buildImage(images[1], fit: BoxFit.cover, width: double.infinity),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 2),
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: _buildImage(images[2], fit: BoxFit.cover, width: double.infinity),
-                    ),
-                    const SizedBox(height: 2),
-                    Expanded(
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          _buildImage(images[3], fit: BoxFit.cover),
-                          if (images.length > 4)
-                            Container(
-                              color: Colors.black.withOpacity(0.5),
-                              child: Center(
-                                child: Text(
-                                  '+${images.length - 4}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
           ),
         ),
       ),

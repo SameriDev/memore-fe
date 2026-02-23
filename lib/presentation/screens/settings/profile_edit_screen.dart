@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/local/user_manager.dart';
 
 class ProfileEditScreen extends StatefulWidget {
@@ -64,28 +65,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       setState(() => _hasChanges = false);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Hồ sơ đã được cập nhật thành công!',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFF4CAF50),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, 'Hồ sơ đã được cập nhật thành công!');
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Lỗi khi cập nhật hồ sơ: $e',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFFD32F2F),
-          ),
-        );
+        SnackBarHelper.showError(context, 'Lỗi khi cập nhật hồ sơ: $e');
       }
     } finally {
       if (mounted) {
@@ -165,15 +150,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Tính năng thay đổi ảnh đại diện đang được phát triển',
-                                      style: GoogleFonts.inika(),
-                                    ),
-                                    backgroundColor: const Color(0xFF8B4513),
-                                  ),
-                                );
+                                SnackBarHelper.showInfo(context, 'Tính năng thay đổi ảnh đại diện đang được phát triển');
                               },
                               icon: const Icon(
                                 Icons.camera_alt,

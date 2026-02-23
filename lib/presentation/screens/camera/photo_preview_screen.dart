@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/local/photo_storage_manager.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/local/user_manager.dart';
@@ -99,15 +100,7 @@ class _PhotoPreviewScreenState extends State<PhotoPreviewScreen> {
 
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Ảnh đã được lưu thành công!',
-                style: GoogleFonts.inika(),
-              ),
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-          );
+          SnackBarHelper.showSuccess(context, 'Ảnh đã được lưu thành công!');
 
           // Navigate back to main screen
           Navigator.of(context).pop(); // Close preview
@@ -116,28 +109,12 @@ class _PhotoPreviewScreenState extends State<PhotoPreviewScreen> {
       } else {
         // Show error message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Lỗi khi lưu ảnh. Vui lòng thử lại.',
-                style: GoogleFonts.inika(),
-              ),
-              backgroundColor: const Color(0xFFD32F2F),
-            ),
-          );
+          SnackBarHelper.showError(context, 'Lỗi khi lưu ảnh. Vui lòng thử lại.');
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Có lỗi xảy ra khi lưu ảnh.',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFFD32F2F),
-          ),
-        );
+        SnackBarHelper.showError(context, 'Có lỗi xảy ra khi lưu ảnh.');
       }
       debugPrint('Error saving photo: $e');
     } finally {

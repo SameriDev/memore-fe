@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/local/user_manager.dart';
 
 class NotificationsSettingsScreen extends StatefulWidget {
@@ -73,27 +74,11 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Đã lưu cài đặt thông báo',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFF4CAF50),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, 'Đã lưu cài đặt thông báo');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Lỗi khi lưu cài đặt: $e',
-              style: GoogleFonts.inika(),
-            ),
-            backgroundColor: const Color(0xFFD32F2F),
-          ),
-        );
+        SnackBarHelper.showError(context, 'Lỗi khi lưu cài đặt: $e');
       }
     }
   }

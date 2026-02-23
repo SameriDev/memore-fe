@@ -9,6 +9,7 @@ class PhotoDto {
   final String? s3Key;
   final String? s3ThumbnailKey;
   final String? caption;
+  final String? note;
   final String? location;
   final List<String>? tags;
   final String? quality;
@@ -32,6 +33,7 @@ class PhotoDto {
     this.s3Key,
     this.s3ThumbnailKey,
     this.caption,
+    this.note,
     this.location,
     this.tags,
     this.quality,
@@ -57,6 +59,7 @@ class PhotoDto {
       s3Key: json['s3Key'] as String?,
       s3ThumbnailKey: json['s3ThumbnailKey'] as String?,
       caption: json['caption'] as String?,
+      note: json['note'] as String?,
       location: json['location'] as String?,
       tags: (json['tags'] as List<dynamic>?)?.cast<String>(),
       quality: json['quality'] as String?,
@@ -83,6 +86,7 @@ class PhotoDto {
       's3Key': s3Key,
       's3ThumbnailKey': s3ThumbnailKey,
       'caption': caption,
+      'note': note,
       'location': location,
       'tags': tags,
       'quality': quality,

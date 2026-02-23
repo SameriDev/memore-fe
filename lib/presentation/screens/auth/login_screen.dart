@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../widgets/decorated_background.dart';
 import '../../../data/local/user_manager.dart';
 
@@ -39,12 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (result.success) {
           Navigator.of(context).pushReplacementNamed('/main');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result.errorMessage ?? 'Đăng nhập thất bại'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          SnackBarHelper.showError(context, result.errorMessage ?? 'Đăng nhập thất bại');
         }
       }
     }
@@ -56,12 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // TODO: Implement real Google Sign In
     setState(() => _isLoading = false);
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Google Sign In chưa được hỗ trợ'),
-          backgroundColor: Colors.orange,
-        ),
-      );
+      SnackBarHelper.showWarning(context, 'Google Sign In chưa được hỗ trợ');
     }
   }
 

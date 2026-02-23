@@ -9,6 +9,8 @@ class AppColors {
   static const Color background = Color(0xFFF5F5DC); // Beige - warm background
   static const Color surface = Color(0xFFF5DEB3); // Wheat - light tan
   static const Color error = Color(0xFFD32F2F);
+  static const Color success = Color(0xFF4CAF50);
+  static const Color warning = Color(0xFFFF9800);
   static const Color text = Color(0xFF3E2723); // Dark brown for main text
   static const Color textSecondary = Color(
     0xFF6D4C41,

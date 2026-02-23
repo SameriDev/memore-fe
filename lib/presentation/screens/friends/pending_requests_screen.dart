@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/data_sources/remote/friendship_service.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/models/friendship_dto.dart';
@@ -39,9 +40,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
     final result = await FriendshipService.instance.acceptRequest(dto.id);
     if (result != null && mounted) {
       setState(() => _requests.remove(dto));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã chấp nhận lời mời kết bạn')),
-      );
+      SnackBarHelper.showSuccess(context, 'Đã chấp nhận lời mời kết bạn');
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/data_sources/remote/album_service.dart';
 import '../../../data/data_sources/remote/friendship_service.dart';
 import '../../../data/local/storage_service.dart';
@@ -51,9 +52,7 @@ class _CreateAlbumScreenState extends State<CreateAlbumScreen> {
   Future<void> _createAlbum() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập tên album')),
-      );
+      SnackBarHelper.showWarning(context, 'Vui lòng nhập tên album');
       return;
     }
 
@@ -74,14 +73,10 @@ class _CreateAlbumScreenState extends State<CreateAlbumScreen> {
     setState(() => _isCreating = false);
 
     if (result != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tạo album thành công!')),
-      );
+      SnackBarHelper.showSuccess(context, 'Tạo album thành công!');
       Navigator.pop(context, true);
     } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tạo album thất bại')),
-      );
+      SnackBarHelper.showError(context, 'Tạo album thất bại');
     }
   }
 

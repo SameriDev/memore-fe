@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
@@ -51,9 +52,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
 
       if (photo == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Lỗi khi upload ảnh'), backgroundColor: Colors.red),
-          );
+          SnackBarHelper.showError(context, 'Lỗi khi upload ảnh');
         }
         return;
       }
@@ -69,22 +68,16 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
 
       if (mounted) {
         if (story != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Đã đăng story!'), backgroundColor: Colors.green),
-          );
+          SnackBarHelper.showSuccess(context, 'Đã đăng story!');
           Navigator.of(context).pop(true);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Lỗi khi tạo story'), backgroundColor: Colors.red),
-          );
+          SnackBarHelper.showError(context, 'Lỗi khi tạo story');
         }
       }
     } catch (e) {
       debugPrint('Post story error: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Có lỗi xảy ra'), backgroundColor: Colors.red),
-        );
+        SnackBarHelper.showError(context, 'Có lỗi xảy ra');
       }
     } finally {
       if (mounted) setState(() => _isPosting = false);

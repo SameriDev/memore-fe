@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../data/local/photo_interaction_manager.dart';
 import 'photo_interaction_widget.dart';
 import 'like_animation_widget.dart';
@@ -182,39 +183,15 @@ class _InteractivePhotoCardState extends State<InteractivePhotoCard> {
   }
 
   void _shareWithFriends() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Sharing with friends feature coming soon!',
-          style: GoogleFonts.inika(),
-        ),
-        backgroundColor: const Color(0xFF8B4513),
-      ),
-    );
+    SnackBarHelper.showInfo(context, 'Sharing with friends feature coming soon!');
   }
 
   void _copyLink() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Photo link copied to clipboard!',
-          style: GoogleFonts.inika(),
-        ),
-        backgroundColor: const Color(0xFF4CAF50),
-      ),
-    );
+    SnackBarHelper.showInfo(context, 'Photo link copied to clipboard!');
   }
 
   void _saveToDevice() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Photo saved to device!',
-          style: GoogleFonts.inika(),
-        ),
-        backgroundColor: const Color(0xFF4CAF50),
-      ),
-    );
+    SnackBarHelper.showSuccess(context, 'Photo saved to device!');
   }
 
   String _getTimeAgo(DateTime timestamp) {

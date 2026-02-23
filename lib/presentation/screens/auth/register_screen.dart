@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../widgets/decorated_background.dart';
 import '../../../data/local/user_manager.dart';
 
@@ -32,15 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _handleRegister() async {
     if (!_acceptTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Vui lòng đồng ý với điều khoản sử dụng',
-            style: GoogleFonts.inika(),
-          ),
-          backgroundColor: const Color(0xFFD32F2F),
-        ),
-      );
+      SnackBarHelper.showError(context, 'Vui lòng đồng ý với điều khoản sử dụng');
       return;
     }
 
@@ -57,26 +50,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (mounted) {
         if (result.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Đăng ký thành công! Chào mừng bạn đến với Memore.',
-                style: GoogleFonts.inika(),
-              ),
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-          );
+          SnackBarHelper.showSuccess(context, 'Đăng ký thành công! Chào mừng bạn đến với Memore.');
           Navigator.of(context).pushReplacementNamed('/main');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                result.errorMessage ?? 'Đăng ký thất bại',
-                style: GoogleFonts.inika(),
-              ),
-              backgroundColor: const Color(0xFFD32F2F),
-            ),
-          );
+          SnackBarHelper.showError(context, result.errorMessage ?? 'Đăng ký thất bại');
         }
       }
     }
@@ -84,15 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _handleGoogleSignUp() async {
     if (!_acceptTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Vui lòng đồng ý với điều khoản sử dụng',
-            style: GoogleFonts.inika(),
-          ),
-          backgroundColor: const Color(0xFFD32F2F),
-        ),
-      );
+      SnackBarHelper.showError(context, 'Vui lòng đồng ý với điều khoản sử dụng');
       return;
     }
 
@@ -101,15 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // TODO: Implement real Google Sign Up
     setState(() => _isLoading = false);
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Google Sign Up chưa được hỗ trợ',
-            style: GoogleFonts.inika(),
-          ),
-          backgroundColor: Colors.orange,
-        ),
-      );
+      SnackBarHelper.showWarning(context, 'Google Sign Up chưa được hỗ trợ');
     }
   }
 

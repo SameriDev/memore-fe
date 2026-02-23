@@ -49,6 +49,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                 'id': dto.id,
                 'storagePath': dto.filePath ?? '',
                 'caption': dto.caption ?? '',
+                'note': dto.note ?? '',
                 'timestamp': createdAt.millisecondsSinceEpoch,
                 'isRemote': true,
               };
@@ -105,15 +106,23 @@ class _TimelineScreenState extends State<TimelineScreen> {
           title = 'Kỷ niệm ${photosOfDay.length} ảnh';
         }
 
+        final photoIds = photosOfDay
+            .map((p) => p['id']?.toString() ?? '')
+            .where((id) => id.isNotEmpty)
+            .toList();
+
         realTimelineItems.add(TimelineItemData(
           alignment: alignmentIndex % 2 == 0 ? TimelineAlignment.left : TimelineAlignment.right,
           images: imagePaths,
           title: title,
-          subtitle: 'Ảnh từ camera của bạn',
+          subtitle: photosOfDay.first['note']?.toString().isNotEmpty == true
+            ? photosOfDay.first['note']
+            : 'Ảnh từ camera của bạn',
           time: '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')} ${date.day}-${date.month}',
           day: date.day.toString(),
           month: _getMonthName(date.month),
           displayDate: '${_getMonthName(date.month)} ${date.year}',
+          photoIds: photoIds,
         ));
 
         alignmentIndex++;
@@ -187,6 +196,95 @@ class _TimelineScreenState extends State<TimelineScreen> {
         });
       }
     }
+  }
+
+  void _showEditNoteSheet(TimelineItemData item) {
+    final titleController = TextEditingController(text: item.title);
+    final subtitleController = TextEditingController(text: item.subtitle);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Chỉnh sửa ghi chú',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Inika',
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Tiêu đề',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: subtitleController,
+                decoration: const InputDecoration(
+                  labelText: 'Ghi chú',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8B4513),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () async {
+                  final newTitle = titleController.text.trim();
+                  final newSubtitle = subtitleController.text.trim();
+
+                  // Update on server for each photo
+                  for (final photoId in item.photoIds) {
+                    await PhotoService.instance.updatePhotoCaption(
+                      photoId,
+                      newTitle,
+                      note: newSubtitle,
+                    );
+                  }
+
+                  // Update local state
+                  setState(() {
+                    item.title = newTitle;
+                    item.subtitle = newSubtitle;
+                  });
+
+                  if (ctx.mounted) Navigator.of(ctx).pop();
+                },
+                child: const Text(
+                  'Lưu',
+                  style: TextStyle(fontSize: 16, fontFamily: 'Inika'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showAlbumCarousel(List<String> images, int initialIndex) {
@@ -421,6 +519,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                   onAlbumTap: item.images.isNotEmpty
                       ? () => _showAlbumCarousel(item.images, 0)
                       : null,
+                  onEditNote: () => _showEditNoteSheet(item),
                 ),
                 SizedBox(height: config.itemSpacing),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/data_sources/remote/album_service.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
 import '../../../data/local/storage_service.dart';
@@ -79,9 +80,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 
     final success = await AlbumService.instance.deleteAlbum(widget.albumId);
     if (!success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Xóa album thất bại')),
-      );
+      SnackBarHelper.showError(context, 'Xóa album thất bại');
       return;
     }
     if (mounted) Navigator.pop(context, true);

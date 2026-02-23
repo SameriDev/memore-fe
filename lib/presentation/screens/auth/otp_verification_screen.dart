@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../widgets/decorated_background.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -202,12 +203,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     if (!_canResend) return;
 
     // TODO: Implement resend OTP logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Mã OTP đã được gửi lại', style: GoogleFonts.inika()),
-        backgroundColor: const Color(0xFF8B4513),
-      ),
-    );
+    SnackBarHelper.showInfo(context, 'Mã OTP đã được gửi lại');
     _startResendTimer();
   }
 

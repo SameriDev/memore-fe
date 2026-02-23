@@ -127,6 +127,23 @@ class PhotoService {
     }
   }
 
+  /// Update photo caption and note
+  Future<bool> updatePhotoCaption(String photoId, String caption, {String? note}) async {
+    try {
+      final data = <String, dynamic>{
+        'caption': caption,
+      };
+      if (note != null) {
+        data['note'] = note;
+      }
+      await _dio.put('/api/photos/$photoId', data: data);
+      return true;
+    } on DioException catch (e) {
+      debugPrint('Update photo caption error: ${e.message}');
+      return false;
+    }
+  }
+
   /// Get presigned URL for an S3 key
   Future<String?> getPresignedUrl(String s3Key) async {
     try {

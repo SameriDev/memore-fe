@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:memore/core/utils/snackbar_helper.dart';
 
 class ShareLinkSection extends StatelessWidget {
   final String memoreLink;
@@ -9,12 +10,7 @@ class ShareLinkSection extends StatelessWidget {
 
   void _copyToClipboard(BuildContext context) {
     Clipboard.setData(ClipboardData(text: memoreLink));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Link copied to clipboard'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    SnackBarHelper.showInfo(context, 'Link copied to clipboard');
     onCopyTap?.call();
   }
 
