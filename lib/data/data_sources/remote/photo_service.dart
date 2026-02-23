@@ -114,6 +114,19 @@ class PhotoService {
     }
   }
 
+  /// Add a photo to an album by updating its albumId
+  Future<bool> addPhotoToAlbum(String photoId, String albumId) async {
+    try {
+      await _dio.put('/api/photos/$photoId', data: {
+        'albumId': albumId,
+      });
+      return true;
+    } on DioException catch (e) {
+      debugPrint('Add photo to album error: ${e.message}');
+      return false;
+    }
+  }
+
   /// Get presigned URL for an S3 key
   Future<String?> getPresignedUrl(String s3Key) async {
     try {

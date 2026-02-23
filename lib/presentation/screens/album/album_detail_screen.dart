@@ -6,6 +6,7 @@ import '../../../data/models/album_dto.dart';
 import '../../../data/models/album_participant_dto.dart';
 import '../../../data/models/photo_dto.dart';
 import '../../widgets/decorated_background.dart';
+import 'select_photos_screen.dart';
 
 class AlbumDetailScreen extends StatefulWidget {
   final String albumId;
@@ -78,6 +79,22 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 
     // TODO: call delete album API
     if (mounted) Navigator.pop(context, true);
+  }
+
+  Future<void> _openSelectPhotos() async {
+    final existingIds = _photos.map((p) => p.id).toSet();
+    final result = await Navigator.push<int>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SelectPhotosScreen(
+          albumId: widget.albumId,
+          existingPhotoIds: existingIds,
+        ),
+      ),
+    );
+    if (result != null && result > 0) {
+      _loadData();
+    }
   }
 
   void _showMembersSheet() {
@@ -153,7 +170,16 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBackground(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: _album != null
+          ? FloatingActionButton(
+              onPressed: _openSelectPhotos,
+              backgroundColor: Colors.brown,
+              child: const Icon(Icons.add_photo_alternate, color: Colors.white),
+            )
+          : null,
+      body: DecoratedBackground(
       child: SafeArea(
         bottom: false,
         child: _isLoading
@@ -346,6 +372,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                     ],
                   ),
       ),
+    ),
     );
   }
 }
