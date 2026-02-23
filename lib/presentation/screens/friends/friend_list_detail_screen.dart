@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../data/mock/mock_friends_data.dart';
+import '../../../data/local/storage_service.dart';
+import '../../../data/data_sources/remote/friendship_service.dart';
 import '../../../domain/entities/friend.dart';
 import 'friend_timeline_screen.dart';
 import '../../widgets/friend_list_item.dart';
@@ -13,12 +14,35 @@ class FriendListDetailScreen extends StatefulWidget {
 }
 
 class _FriendListDetailScreenState extends State<FriendListDetailScreen> {
-  late List<Friend> friends;
+  List<Friend> friends = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    friends = MockFriendsData.getMockFriends();
+    _loadFriends();
+  }
+
+  Future<void> _loadFriends() async {
+    final userId = StorageService.instance.userId;
+    if (userId == null) {
+      setState(() => isLoading = false);
+      return;
+    }
+
+    try {
+      final dtos = await FriendshipService.instance.getUserFriends(userId);
+      final loaded = dtos.map((dto) => dto.toEntity(userId)).toList();
+      setState(() {
+        friends = loaded;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        friends = [];
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -64,33 +88,47 @@ class _FriendListDetailScreenState extends State<FriendListDetailScreen> {
               const SizedBox(height: 20),
               // Friends List
               Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.only(bottom: 120),
-                  itemCount: friends.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final friend = friends[index];
-                    return FriendListItem(
-                      friend: friend,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                FriendTimelineScreen(friend: friend),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : friends.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No friends yet',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.only(bottom: 120),
+                            itemCount: friends.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final friend = friends[index];
+                              return FriendListItem(
+                                friend: friend,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FriendTimelineScreen(friend: friend),
+                                    ),
+                                  );
+                                },
+                                onMessageTap: () {
+                                  debugPrint(
+                                      'Message tapped for: ${friend.name}');
+                                },
+                                onMoreTap: () {
+                                  debugPrint(
+                                      'More tapped for: ${friend.name}');
+                                },
+                              );
+                            },
                           ),
-                        );
-                      },
-                      onMessageTap: () {
-                        debugPrint('Message tapped for: ${friend.name}');
-                      },
-                      onMoreTap: () {
-                        debugPrint('More tapped for: ${friend.name}');
-                      },
-                    );
-                  },
-                ),
               ),
             ],
           ),

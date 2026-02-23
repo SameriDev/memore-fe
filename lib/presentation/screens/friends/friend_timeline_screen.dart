@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../data/data_sources/remote/photo_service.dart';
+import '../../../data/models/photo_dto.dart';
 import '../../../domain/entities/friend.dart';
 import '../../../domain/entities/timeline_photo.dart';
 import 'widgets/timeline_header.dart';
@@ -15,68 +17,62 @@ class FriendTimelineScreen extends StatefulWidget {
 }
 
 class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
-  // Mock data cho timeline photos
-  late List<TimelinePhoto> timelinePhotos;
+  List<TimelinePhoto> timelinePhotos = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _initMockData();
+    _loadPhotos();
   }
 
-  void _initMockData() {
-    timelinePhotos = [
-      const TimelinePhoto(
-        id: '1',
-        imageUrls: [
-          'https://picsum.photos/400/600?random=1',
-          'https://picsum.photos/400/600?random=11',
-          'https://picsum.photos/400/600?random=12',
-          'https://picsum.photos/400/600?random=13',
-        ],
-        time: '03:46',
-        season: 'Summer',
-        description: 'Em đến với anh',
-      ),
-      const TimelinePhoto(
-        id: '2',
-        imageUrls: [
-          'https://picsum.photos/400/600?random=2',
-          'https://picsum.photos/400/600?random=21',
-          'https://picsum.photos/400/600?random=22',
-        ],
-        time: '05:30',
-        season: 'Spring',
-        description: 'Hoa nở rộ',
-      ),
-      const TimelinePhoto(
-        id: '3',
-        imageUrls: [
-          'https://picsum.photos/400/600?random=3',
-          'https://picsum.photos/400/600?random=31',
-          'https://picsum.photos/400/600?random=32',
-          'https://picsum.photos/400/600?random=33',
-        ],
-        time: '18:20',
-        season: 'Autumn',
-        description: 'Hoàng hôn tím',
-      ),
-      const TimelinePhoto(
-        id: '4',
-        imageUrls: [
-          'https://picsum.photos/400/600?random=4',
-          'https://picsum.photos/400/600?random=41',
-          'https://picsum.photos/400/600?random=42',
-        ],
-        time: '09:15',
-        season: 'Winter',
-        description: 'Buổi sáng se lạnh',
-      ),
-    ];
+  Future<void> _loadPhotos() async {
+    try {
+      final photoDtos =
+          await PhotoService.instance.getUserPhotos(widget.friend.id);
+      final photos = <TimelinePhoto>[];
+
+      for (final dto in photoDtos) {
+        final imageUrl = await _getImageUrl(dto);
+        if (imageUrl == null) continue;
+
+        photos.add(TimelinePhoto(
+          id: dto.id,
+          imageUrls: [imageUrl],
+          time: _formatTime(dto.createdAt),
+          season: dto.season ?? 'Unknown',
+          description: dto.caption ?? '',
+        ));
+      }
+
+      setState(() {
+        timelinePhotos = photos;
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Load timeline photos error: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<String?> _getImageUrl(PhotoDto dto) async {
+    if (dto.s3Key != null) {
+      return PhotoService.instance.getPresignedUrl(dto.s3Key!);
+    }
+    return null;
+  }
+
+  String _formatTime(String? createdAt) {
+    if (createdAt == null) return '';
+    try {
+      final dt = DateTime.parse(createdAt);
+      return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return '';
+    }
   }
 
   void _onMenuTap() {
-    // TODO: Show menu options
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -106,7 +102,7 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      extendBodyBehindAppBar: true, // Cho phép body chạy lên sau AppBar
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -125,37 +121,58 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
       ),
       body: Stack(
         children: [
-          // Background decorations
           const TimelineBackgroundDecoration(),
-          // Main content
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                // Header
-                TimelineHeader(
-                  name: widget.friend.name,
-                  avatarUrl: widget.friend.avatarUrl,
-                  isOnline: widget.friend.isOnline,
-                  onMenuTap: _onMenuTap,
-                ),
-                const SizedBox(height: 20),
-                // Timeline photos
-                ...timelinePhotos.asMap().entries.map((entry) {
-                  return TimelinePhotoCard(
-                    photo: entry.value,
-                    index: entry.key,
-                  );
-                }).toList(),
-                const SizedBox(height: 40),
-              ],
-            ),
-          ),
-          // Vertical timeline line - Liền mạch chạy suốt, tràn full màn hình
-          // Đặt sau SingleChildScrollView để render phía trên
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : timelinePhotos.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TimelineHeader(
+                            name: widget.friend.name,
+                            avatarUrl: widget.friend.avatarUrl,
+                            isOnline: widget.friend.isOnline,
+                            onMenuTap: _onMenuTap,
+                          ),
+                          const SizedBox(height: 60),
+                          const Icon(Icons.photo_library_outlined,
+                              size: 64, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'No photos yet',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          TimelineHeader(
+                            name: widget.friend.name,
+                            avatarUrl: widget.friend.avatarUrl,
+                            isOnline: widget.friend.isOnline,
+                            onMenuTap: _onMenuTap,
+                          ),
+                          const SizedBox(height: 20),
+                          ...timelinePhotos.asMap().entries.map((entry) {
+                            return TimelinePhotoCard(
+                              photo: entry.value,
+                              index: entry.key,
+                            );
+                          }),
+                          const SizedBox(height: 40),
+                        ],
+                      ),
+                    ),
           Positioned(
-            right: 29, // Vị trí cố định bên phải
-            top: -500, // Tràn lên trên
-            height: 2000, // Chiều cao lớn để tràn xuống dưới
+            right: 29,
+            top: -500,
+            height: 2000,
             child: Container(width: 2, color: const Color(0xFF464646)),
           ),
         ],
