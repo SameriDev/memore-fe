@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../../data/local/user_manager.dart';
 import '../../../data/local/photo_storage_manager.dart';
@@ -22,7 +23,6 @@ class _CameraScreenState extends State<CameraScreen> {
   bool _isFlashOn = false;
   bool _isFrontCamera = false;
 
-  // New state variables for inline preview
   CameraMode _currentMode = CameraMode.capture;
   String? _capturedImagePath;
   bool _isProcessing = false;
@@ -67,6 +67,7 @@ class _CameraScreenState extends State<CameraScreen> {
       camera,
       ResolutionPreset.high,
       enableAudio: false,
+      imageFormatGroup: ImageFormatGroup.jpeg,
     );
 
     try {
@@ -93,7 +94,6 @@ class _CameraScreenState extends State<CameraScreen> {
         _isFlashOn ? FlashMode.torch : FlashMode.off,
       );
 
-      // Save flash setting
       await UserManager.instance.updateSettings('camera.flashOn', _isFlashOn);
     } catch (e) {
       debugPrint('Error toggling flash: $e');
@@ -104,24 +104,19 @@ class _CameraScreenState extends State<CameraScreen> {
     if (_cameras == null || _cameras!.length < 2) return;
 
     try {
-      // Dispose camera controller cũ
       if (_cameraController != null) {
         await _cameraController!.dispose();
         _cameraController = null;
       }
 
-      // Đợi một chút để camera session được giải phóng hoàn toàn
       await Future.delayed(const Duration(milliseconds: 100));
 
-      // Toggle camera
       setState(() {
         _isFrontCamera = !_isFrontCamera;
       });
 
-      // Setup camera mới
       await _setupCamera(_isFrontCamera ? 1 : 0);
 
-      // Save camera preference
       await UserManager.instance.updateSettings('camera.frontCamera', _isFrontCamera);
     } catch (e) {
       debugPrint('Error flipping camera: $e');
@@ -136,7 +131,11 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       setState(() => _isProcessing = true);
 
-      final image = await _cameraController!.takePicture();
+      // Thử chụp bằng camera plugin với timeout 8s
+      final image = await _cameraController!.takePicture()
+          .timeout(const Duration(seconds: 8), onTimeout: () {
+        throw Exception('Camera capture timeout');
+      });
 
       setState(() {
         _currentMode = CameraMode.preview;
@@ -144,11 +143,33 @@ class _CameraScreenState extends State<CameraScreen> {
         _isProcessing = false;
       });
     } catch (e) {
-      debugPrint('Error capturing photo: $e');
+      debugPrint('Camera plugin capture failed: $e');
+
+      // Fallback sang image_picker (camera native)
+      try {
+        final picker = ImagePicker();
+        final photo = await picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 90,
+          preferredCameraDevice: _isFrontCamera
+              ? CameraDevice.front
+              : CameraDevice.rear,
+        );
+
+        if (photo != null && mounted) {
+          setState(() {
+            _currentMode = CameraMode.preview;
+            _capturedImagePath = photo.path;
+            _isProcessing = false;
+          });
+          return;
+        }
+      } catch (fallbackError) {
+        debugPrint('Fallback camera also failed: $fallbackError');
+      }
 
       if (mounted) {
         setState(() => _isProcessing = false);
-
         SnackBarHelper.showError(context, 'Lỗi khi chụp ảnh. Vui lòng thử lại.');
       }
     }
@@ -160,7 +181,6 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       setState(() => _isProcessing = true);
 
-      // Save photo without caption
       final photoId = await PhotoStorageManager.instance.savePhoto(
         imagePath: _capturedImagePath!,
         caption: 'Ảnh chụp từ camera',
@@ -171,7 +191,6 @@ class _CameraScreenState extends State<CameraScreen> {
       );
 
       if (photoId != null) {
-        // Update user photo count
         await UserManager.instance.incrementPhotoCount();
 
         // Fire-and-forget upload to server
@@ -198,10 +217,7 @@ class _CameraScreenState extends State<CameraScreen> {
         }
 
         if (mounted) {
-          // Show success message
           SnackBarHelper.showSuccess(context, 'Ảnh đã được lưu thành công!');
-
-          // Navigate back to main screen
           Navigator.of(context).pop();
         }
       } else {
@@ -228,7 +244,6 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-
   @override
   void dispose() {
     _cameraController?.dispose();
@@ -246,7 +261,6 @@ class _CameraScreenState extends State<CameraScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Main content
             SingleChildScrollView(
               physics: isKeyboardVisible ? const ClampingScrollPhysics() : const NeverScrollableScrollPhysics(),
               child: ConstrainedBox(
@@ -258,7 +272,6 @@ class _CameraScreenState extends State<CameraScreen> {
                     children: [
                       const SizedBox(height: 60),
 
-                      // Camera viewfinder
                       CameraViewfinder(
                         controller: _cameraController,
                         capturedImagePath: _capturedImagePath,
@@ -266,7 +279,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
                       const Spacer(),
 
-                      // Camera controls
                       Padding(
                         padding: EdgeInsets.only(bottom: isKeyboardVisible ? keyboardHeight + 16 : 0),
                         child: CameraControls(
@@ -290,7 +302,6 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
             ),
 
-            // Close button
             Positioned(
               top: 20,
               left: 20,
@@ -308,7 +319,6 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
             ),
 
-            // Loading overlay
             if (_isProcessing)
               Positioned.fill(
                 child: Container(

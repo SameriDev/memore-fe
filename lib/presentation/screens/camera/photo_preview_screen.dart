@@ -102,9 +102,8 @@ class _PhotoPreviewScreenState extends State<PhotoPreviewScreen> {
         if (mounted) {
           SnackBarHelper.showSuccess(context, 'Ảnh đã được lưu thành công!');
 
-          // Navigate back to main screen
-          Navigator.of(context).pop(); // Close preview
-          Navigator.of(context).pop(); // Close camera
+          // Navigate back, return true to indicate success
+          Navigator.of(context).pop(true);
         }
       } else {
         // Show error message

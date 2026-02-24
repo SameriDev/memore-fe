@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'storage_service.dart';
 import 'user_manager.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PhotoStorageManager {
   static PhotoStorageManager? _instance;
@@ -16,34 +16,7 @@ class PhotoStorageManager {
   final _userManager = UserManager.instance;
   final _uuid = const Uuid();
 
-  /// Request storage permission for saving photos
-  Future<bool> _requestStoragePermission() async {
-    try {
-      if (Platform.isAndroid) {
-        // For Android 13+ (API 33+), we need different permissions
-        final androidInfo = await Permission.storage.status;
-
-        if (androidInfo.isDenied) {
-          final result = await Permission.storage.request();
-          if (result.isDenied) {
-            // Try requesting manage external storage for Android 11+
-            final manageResult = await Permission.manageExternalStorage.request();
-            return manageResult.isGranted;
-          }
-          return result.isGranted;
-        }
-        return androidInfo.isGranted;
-      }
-
-      // For iOS, no special permission needed for app documents
-      return true;
-    } catch (e) {
-      // If permission handling fails, allow saving to fallback location
-      return true;
-    }
-  }
-
-  /// Save captured photo to external storage (public memore folder)
+  /// Save captured photo to app documents directory
   Future<String?> savePhoto({
     required String imagePath,
     String? caption,
@@ -51,63 +24,50 @@ class PhotoStorageManager {
   }) async {
     try {
       final userId = _storage.userId;
-      if (userId == null) return null;
-
-      // Request storage permission
-      final hasPermission = await _requestStoragePermission();
-      if (!hasPermission) return null;
+      if (userId == null) {
+        debugPrint('PhotoStorageManager: userId is null, cannot save photo');
+        return null;
+      }
 
       // Generate unique photo ID
       final photoId =
           'photo_${DateTime.now().millisecondsSinceEpoch}_${_uuid.v4().substring(0, 8)}';
 
-      // Get external storage directory for public access
-      Directory? photosDir;
+      // Luôn dùng app documents directory - không cần permission đặc biệt
+      final appDir = await getApplicationDocumentsDirectory();
+      final photosDir = Directory('${appDir.path}/memore/photos');
 
-      if (Platform.isAndroid) {
-        // Try to get external storage directory
-        final externalDir = await getExternalStorageDirectory();
-        if (externalDir != null) {
-          // Navigate to public storage: /storage/emulated/0/memore
-          final pathParts = externalDir.path.split('/');
-          final androidIndex = pathParts.indexOf('Android');
-          if (androidIndex > 0) {
-            final publicPath = pathParts.sublist(0, androidIndex).join('/');
-            photosDir = Directory('$publicPath/memore');
-          }
-        }
-      }
-
-      // Fallback to downloads directory
-      if (photosDir == null) {
-        final downloadsDir = await getDownloadsDirectory();
-        if (downloadsDir != null) {
-          photosDir = Directory('${downloadsDir.path}/memore');
-        }
-      }
-
-      // Final fallback to app documents directory
-      if (photosDir == null) {
-        final appDir = await getApplicationDocumentsDirectory();
-        photosDir = Directory('${appDir.path}/memore');
-      }
-
-      // Create photos directory if it doesn't exist
       if (!await photosDir.exists()) {
         await photosDir.create(recursive: true);
       }
 
-      // Read original image file
+      // Kiểm tra file gốc từ image_picker
       final originalFile = File(imagePath);
       if (!await originalFile.exists()) {
+        debugPrint('PhotoStorageManager: Original file not found: $imagePath');
         return null;
       }
 
-      // Copy to app storage with new filename
+      final fileSize = await originalFile.length();
+      if (fileSize == 0) {
+        debugPrint('PhotoStorageManager: Original file is empty: $imagePath');
+        return null;
+      }
+
+      debugPrint('PhotoStorageManager: Saving photo from $imagePath (${fileSize} bytes)');
+
+      // Copy to app storage
       final extension = imagePath.split('.').last;
       final newFileName = '$photoId.$extension';
       final newFilePath = '${photosDir.path}/$newFileName';
       await originalFile.copy(newFilePath);
+
+      // Verify copy
+      final copiedFile = File(newFilePath);
+      if (!await copiedFile.exists()) {
+        debugPrint('PhotoStorageManager: Failed to copy file to $newFilePath');
+        return null;
+      }
 
       // Create photo metadata
       final photoMetadata = {
@@ -123,7 +83,7 @@ class PhotoStorageManager {
             'https://api.dicebear.com/7.x/avataaars/png?seed=user',
         'timestamp': DateTime.now().millisecondsSinceEpoch,
         'createdAt': DateTime.now().toIso8601String(),
-        'size': await originalFile.length(),
+        'size': fileSize,
         'likesCount': 0,
         'commentsCount': 0,
         'sharesCount': 0,
@@ -137,8 +97,11 @@ class PhotoStorageManager {
       // Add to user's photos list
       await _addToUserPhotosList(photoId);
 
+      debugPrint('PhotoStorageManager: Photo saved successfully: $photoId');
       return photoId;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('PhotoStorageManager: Error saving photo: $e');
+      debugPrint('PhotoStorageManager: Stack trace: $stackTrace');
       return null;
     }
   }
@@ -370,48 +333,16 @@ class PhotoStorageManager {
     return file.existsSync() ? file : null;
   }
 
-  /// Initialize photos directory in external storage
+  /// Initialize photos directory
   Future<void> initializeStorage() async {
     try {
-      // Request storage permission first
-      await _requestStoragePermission();
-
-      // Get external storage directory for public access
-      Directory? photosDir;
-
-      if (Platform.isAndroid) {
-        // Try to get external storage directory
-        final externalDir = await getExternalStorageDirectory();
-        if (externalDir != null) {
-          // Navigate to public storage: /storage/emulated/0/memore
-          final pathParts = externalDir.path.split('/');
-          final androidIndex = pathParts.indexOf('Android');
-          if (androidIndex > 0) {
-            final publicPath = pathParts.sublist(0, androidIndex).join('/');
-            photosDir = Directory('$publicPath/memore');
-          }
-        }
-      }
-
-      // Fallback to downloads directory
-      if (photosDir == null) {
-        final downloadsDir = await getDownloadsDirectory();
-        if (downloadsDir != null) {
-          photosDir = Directory('${downloadsDir.path}/memore');
-        }
-      }
-
-      // Final fallback to app documents directory
-      if (photosDir == null) {
-        final appDir = await getApplicationDocumentsDirectory();
-        photosDir = Directory('${appDir.path}/memore');
-      }
-
+      final appDir = await getApplicationDocumentsDirectory();
+      final photosDir = Directory('${appDir.path}/memore/photos');
       if (!await photosDir.exists()) {
         await photosDir.create(recursive: true);
       }
     } catch (e) {
-      // Ignore initialization errors
+      debugPrint('PhotoStorageManager: Error initializing storage: $e');
     }
   }
 
