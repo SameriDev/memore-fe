@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import '../../../presentation/widgets/app_popup.dart';
 import '../../../data/local/user_manager.dart';
 
 class PrivacySettingsScreen extends StatefulWidget {
@@ -456,48 +458,36 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
   }
 
   void _showDeleteAccountDialog() {
-    showDialog(
+    showAppPopup(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Xóa tài khoản',
-            style: GoogleFonts.inika(
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF3E2723),
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.small,
+        title: 'Xóa tài khoản',
+        content: Text(
+          'Bạn có chắc muốn xóa tài khoản? Hành động này không thể hoàn tác và tất cả dữ liệu sẽ bị mất vĩnh viễn.',
+          style: GoogleFonts.inika(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Hủy',
+              style: GoogleFonts.inika(color: const Color(0xFF8B4513)),
             ),
           ),
-          content: Text(
-            'Bạn có chắc muốn xóa tài khoản? Hành động này không thể hoàn tác và tất cả dữ liệu sẽ bị mất vĩnh viễn.',
-            style: GoogleFonts.inika(),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              SnackBarHelper.showInfo(context, 'Tính năng xóa tài khoản đang được phát triển');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Xóa tài khoản', style: GoogleFonts.inika()),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Hủy',
-                style: GoogleFonts.inika(
-                  color: const Color(0xFF8B4513),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                SnackBarHelper.showInfo(context, 'Tính năng xóa tài khoản đang được phát triển');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(
-                'Xóa tài khoản',
-                style: GoogleFonts.inika(),
-              ),
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
   }
 }

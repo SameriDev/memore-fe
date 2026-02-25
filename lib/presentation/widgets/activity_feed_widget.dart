@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import 'app_popup.dart';
 import '../../data/local/activity_feed_manager.dart';
 
 class ActivityFeedWidget extends StatefulWidget {
@@ -503,41 +505,15 @@ class _ActivityFeedScreenState extends State<ActivityFeedScreen> {
     final summary = _activityManager.getTodayActivitySummary();
     final activeFriends = _activityManager.getMostActiveFriends();
 
-    showModalBottomSheet(
+    showAppPopup(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFFF5F5DC),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.medium,
+        title: 'Activity Summary',
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Row(
-              children: [
-                Text(
-                  'Activity Summary',
-                  style: GoogleFonts.inika(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF3E2723),
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // Today's activity
             Text(
               'Today\'s Activity',
               style: GoogleFonts.inika(
@@ -583,7 +559,6 @@ class _ActivityFeedScreenState extends State<ActivityFeedScreen> {
 
             const SizedBox(height: 24),
 
-            // Most active friends
             Text(
               'Most Active Friends',
               style: GoogleFonts.inika(

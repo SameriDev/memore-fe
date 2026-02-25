@@ -15,6 +15,7 @@ class PendingRequestsScreen extends StatefulWidget {
 class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   List<FriendshipDto> _requests = [];
   bool _isLoading = true;
+  bool _hasChanged = false;
 
   @override
   void initState() {
@@ -39,13 +40,19 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   Future<void> _acceptRequest(FriendshipDto dto) async {
     final result = await FriendshipService.instance.acceptRequest(dto.id);
     if (result != null && mounted) {
-      setState(() => _requests.remove(dto));
+      setState(() {
+        _requests.remove(dto);
+        _hasChanged = true;
+      });
       SnackBarHelper.showSuccess(context, 'Đã chấp nhận lời mời kết bạn');
     }
   }
 
   void _declineRequest(FriendshipDto dto) {
-    setState(() => _requests.remove(dto));
+    setState(() {
+      _requests.remove(dto);
+      _hasChanged = true;
+    });
   }
 
   String _formatTime(String? createdAt) {
@@ -77,7 +84,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () => Navigator.pop(context, _hasChanged),
                     child: Container(
                       width: 40,
                       height: 40,

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import '../../widgets/app_popup.dart';
 import '../../widgets/decorated_background.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -92,76 +94,69 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   }
 
   Future<void> _showErrorDialog() async {
-    return showDialog(
+    return showAppPopup(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD32F2F).withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.close,
-                  color: Color(0xFFD32F2F),
-                  size: 32,
-                ),
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.small,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: const Color(0xFFD32F2F).withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'OTP không đúng',
-                style: GoogleFonts.inika(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF3E2723),
-                ),
+              child: const Icon(
+                Icons.close,
+                color: Color(0xFFD32F2F),
+                size: 32,
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Mã OTP bạn nhập không đúng.\nVui lòng thử lại.',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inika(
-                  fontSize: 14,
-                  color: const Color(0xFF6D4C41),
-                ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'OTP không đúng',
+              style: GoogleFonts.inika(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF3E2723),
               ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8B4513),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Mã OTP bạn nhập không đúng.\nVui lòng thử lại.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inika(
+                fontSize: 14,
+                color: const Color(0xFF6D4C41),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8B4513),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    'Thử lại',
-                    style: GoogleFonts.inika(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                ),
+                child: Text(
+                  'Thử lại',
+                  style: GoogleFonts.inika(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 

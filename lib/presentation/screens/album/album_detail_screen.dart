@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import '../../../presentation/widgets/app_popup.dart';
 import '../../../data/data_sources/remote/album_service.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
 import '../../../data/local/storage_service.dart';
@@ -59,19 +62,23 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 
   Future<void> _deleteAlbum() async {
     // Show confirmation
-    final confirm = await showDialog<bool>(
+    final confirm = await showAppPopup<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Xóa album'),
-        content: const Text('Bạn có chắc muốn xóa album này?'),
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.small,
+        title: 'Xóa album',
+        content: Text(
+          'Bạn có chắc muốn xóa album này?',
+          style: GoogleFonts.inika(color: const Color(0xFF3E2723)),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Hủy'),
+            child: Text('Hủy', style: GoogleFonts.inika(color: const Color(0xFF8B4513))),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+            child: Text('Xóa', style: GoogleFonts.inika(color: Colors.red)),
           ),
         ],
       ),
@@ -104,23 +111,15 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 
   void _showMembersSheet() {
     final participants = _album?.participants ?? [];
-    showModalBottomSheet(
+    showAppPopup(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.medium,
+        title: 'Thành viên (${participants.where((p) => p.status == 'ACCEPTED').length})',
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Thành viên (${participants.where((p) => p.status == 'ACCEPTED').length})',
-              style: const TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
             ...participants
                 .where((p) => p.status == 'ACCEPTED')
                 .map((p) => _buildMemberTile(p)),
@@ -165,19 +164,23 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
           ? IconButton(
               icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
               onPressed: () async {
-                final confirm = await showDialog<bool>(
+                final confirm = await showAppPopup<bool>(
                   context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('Xóa thành viên'),
-                    content: Text('Bạn có chắc muốn xóa ${p.userName ?? 'thành viên này'} khỏi album?'),
+                  builder: (ctx) => AppPopup(
+                    size: AppPopupSize.small,
+                    title: 'Xóa thành viên',
+                    content: Text(
+                      'Bạn có chắc muốn xóa ${p.userName ?? 'thành viên này'} khỏi album?',
+                      style: GoogleFonts.inika(color: const Color(0xFF3E2723)),
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('Hủy'),
+                        child: Text('Hủy', style: GoogleFonts.inika(color: const Color(0xFF8B4513))),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+                        child: Text('Xóa', style: GoogleFonts.inika(color: Colors.red)),
                       ),
                     ],
                   ),

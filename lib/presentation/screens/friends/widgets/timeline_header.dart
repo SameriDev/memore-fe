@@ -5,6 +5,9 @@ class TimelineHeader extends StatelessWidget {
   final String avatarUrl;
   final bool isOnline;
   final VoidCallback? onMenuTap;
+  final String? username;
+  final int? friendsCount;
+  final int? imagesCount;
 
   const TimelineHeader({
     super.key,
@@ -12,6 +15,9 @@ class TimelineHeader extends StatelessWidget {
     required this.avatarUrl,
     required this.isOnline,
     this.onMenuTap,
+    this.username,
+    this.friendsCount,
+    this.imagesCount,
   });
 
   @override
@@ -59,15 +65,40 @@ class TimelineHeader extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
+                if (username != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '@$username',
+                    style: const TextStyle(
+                      fontFamily: 'Inika',
+                      fontSize: 13,
+                      color: Color(0xFF797878),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 4),
                 Text(
                   isOnline ? 'Đang hoạt động' : 'Không hoạt động',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Inika',
                     fontSize: 14,
-                    color: Color(0xFF797878),
+                    color: isOnline ? const Color(0xFF4CAF50) : const Color(0xFF797878),
                   ),
                 ),
+                if (friendsCount != null || imagesCount != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    [
+                      if (friendsCount != null) '$friendsCount bạn bè',
+                      if (imagesCount != null) '$imagesCount ảnh',
+                    ].join(' · '),
+                    style: const TextStyle(
+                      fontFamily: 'Inika',
+                      fontSize: 13,
+                      color: Color(0xFF797878),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

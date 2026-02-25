@@ -41,8 +41,44 @@ class FriendshipService {
       });
       return FriendshipDto.fromJson(response.data);
     } on DioException catch (e) {
-      debugPrint('Send friend request error: ${e.message}');
+      if (e.response?.statusCode == 409) {
+        debugPrint('Friend request already exists');
+      } else {
+        debugPrint('Send friend request error: ${e.message}');
+      }
       return null;
+    }
+  }
+
+  /// Get all friendships (ACCEPTED + PENDING) for a user to check status
+  Future<List<FriendshipDto>> getAllFriendships(String userId) async {
+    try {
+      final results = await Future.wait([
+        getUserFriends(userId),
+        getPendingRequests(userId),
+        _getSentRequests(userId),
+      ]);
+      return [...results[0], ...results[1], ...results[2]];
+    } catch (e) {
+      debugPrint('Get all friendships error: $e');
+      return [];
+    }
+  }
+
+  /// Get requests sent BY this user (where user is the sender)
+  Future<List<FriendshipDto>> _getSentRequests(String userId) async {
+    try {
+      // Reuse the user friends endpoint which returns all friendships,
+      // then filter for PENDING where userId is the sender
+      final response = await _dio.get('/api/friendships/user/$userId');
+      final List<dynamic> data = response.data as List<dynamic>;
+      return data
+          .map((json) => FriendshipDto.fromJson(json))
+          .where((dto) => dto.status == 'PENDING')
+          .toList();
+    } on DioException catch (e) {
+      debugPrint('Get sent requests error: ${e.message}');
+      return [];
     }
   }
 

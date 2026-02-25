@@ -237,42 +237,24 @@ class _PhotoCommentsSheetState extends State<PhotoCommentsSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.75,
-      decoration: const BoxDecoration(
-        color: Color(0xFFF5F5DC),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                // Drag indicator
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Header
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
                   children: [
                     Text(
                       'Interactions',
@@ -288,38 +270,35 @@ class _PhotoCommentsSheetState extends State<PhotoCommentsSheet> {
                       icon: const Icon(Icons.close),
                     ),
                   ],
-                ),
+          ),
+        ),
 
-                // Likes summary
-                if (_likers.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F5DC),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.favorite,
-                          color: const Color(0xFFE91E63),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Liked by ${_likers.map((e) => e['name']).join(', ')}',
-                            style: GoogleFonts.inika(
-                              fontSize: 12,
-                              color: const Color(0xFF6D4C41),
-                            ),
-                          ),
-                        ),
-                      ],
+        // Likes summary
+        if (_likers.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F5DC),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.favorite,
+                  color: const Color(0xFFE91E63),
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Liked by ${_likers.map((e) => e['name']).join(', ')}',
+                    style: GoogleFonts.inika(
+                      fontSize: 12,
+                      color: const Color(0xFF6D4C41),
                     ),
                   ),
-                ],
+                ),
               ],
             ),
           ),
@@ -368,11 +347,11 @@ class _PhotoCommentsSheetState extends State<PhotoCommentsSheet> {
 
           // Comment Input
           Container(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 16,
               right: 16,
               top: 12,
-              bottom: 12 + MediaQuery.of(context).viewInsets.bottom,
+              bottom: 12,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -441,8 +420,7 @@ class _PhotoCommentsSheetState extends State<PhotoCommentsSheet> {
               ],
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 

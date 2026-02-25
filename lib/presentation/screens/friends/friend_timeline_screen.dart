@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import '../../widgets/app_popup.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
+import '../../../data/data_sources/remote/user_service.dart';
 import '../../../data/models/photo_dto.dart';
+import '../../../data/models/user_dto.dart';
 import '../../../domain/entities/friend.dart';
 import '../../../domain/entities/timeline_photo.dart';
 import 'widgets/timeline_header.dart';
@@ -19,11 +24,22 @@ class FriendTimelineScreen extends StatefulWidget {
 class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
   List<TimelinePhoto> timelinePhotos = [];
   bool isLoading = true;
+  UserDto? _userProfile;
 
   @override
   void initState() {
     super.initState();
     _loadPhotos();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final user = await UserService.instance.getUserById(widget.friend.id);
+      setState(() => _userProfile = user);
+    } catch (e) {
+      debugPrint('Load user profile error: $e');
+    }
   }
 
   Future<void> _loadPhotos() async {
@@ -73,28 +89,26 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
   }
 
   void _onMenuTap() {
-    showModalBottomSheet(
+    showAppPopup(
       context: context,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.block),
-                title: const Text('Chặn người dùng'),
-                onTap: () => Navigator.pop(context),
-              ),
-              ListTile(
-                leading: const Icon(Icons.report),
-                title: const Text('Báo cáo'),
-                onTap: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.small,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.block),
+              title: Text('Chặn người dùng', style: GoogleFonts.inika()),
+              onTap: () => Navigator.pop(ctx),
+            ),
+            ListTile(
+              leading: const Icon(Icons.report),
+              title: Text('Báo cáo', style: GoogleFonts.inika()),
+              onTap: () => Navigator.pop(ctx),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -130,10 +144,13 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TimelineHeader(
-                            name: widget.friend.name,
-                            avatarUrl: widget.friend.avatarUrl,
-                            isOnline: widget.friend.isOnline,
+                            name: _userProfile?.name ?? widget.friend.name,
+                            avatarUrl: _userProfile?.avatarUrl ?? widget.friend.avatarUrl,
+                            isOnline: _userProfile?.isOnline ?? widget.friend.isOnline,
                             onMenuTap: _onMenuTap,
+                            username: _userProfile?.username,
+                            friendsCount: _userProfile?.friendsCount,
+                            imagesCount: _userProfile?.imagesCount,
                           ),
                           const SizedBox(height: 60),
                           const Icon(Icons.photo_library_outlined,
@@ -153,10 +170,13 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
                       child: Column(
                         children: [
                           TimelineHeader(
-                            name: widget.friend.name,
-                            avatarUrl: widget.friend.avatarUrl,
-                            isOnline: widget.friend.isOnline,
+                            name: _userProfile?.name ?? widget.friend.name,
+                            avatarUrl: _userProfile?.avatarUrl ?? widget.friend.avatarUrl,
+                            isOnline: _userProfile?.isOnline ?? widget.friend.isOnline,
                             onMenuTap: _onMenuTap,
+                            username: _userProfile?.username,
+                            friendsCount: _userProfile?.friendsCount,
+                            imagesCount: _userProfile?.imagesCount,
                           ),
                           const SizedBox(height: 20),
                           ...timelinePhotos.asMap().entries.map((entry) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import '../../../presentation/widgets/app_popup.dart';
 import 'profile_edit_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'privacy_settings_screen.dart';
@@ -91,54 +93,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _handleLogout() async {
-    showDialog(
+    showAppPopup(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Đăng xuất',
-            style: GoogleFonts.inika(
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF3E2723),
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.small,
+        title: 'Đăng xuất',
+        content: Text(
+          'Bạn có chắc muốn đăng xuất khỏi Memore?',
+          style: GoogleFonts.inika(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Hủy',
+              style: GoogleFonts.inika(color: const Color(0xFF8B4513)),
             ),
           ),
-          content: Text(
-            'Bạn có chắc muốn đăng xuất khỏi Memore?',
-            style: GoogleFonts.inika(),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              await UserManager.instance.logout();
+              if (mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/welcome',
+                  (route) => false,
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8B4513),
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Đăng xuất', style: GoogleFonts.inika()),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Hủy',
-                style: GoogleFonts.inika(
-                  color: const Color(0xFF8B4513),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await UserManager.instance.logout();
-                if (mounted) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/welcome',
-                    (route) => false,
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8B4513),
-                foregroundColor: Colors.white,
-              ),
-              child: Text(
-                'Đăng xuất',
-                style: GoogleFonts.inika(),
-              ),
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -286,21 +276,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: 'Về Memore',
               subtitle: 'Phiên bản 1.0.0',
               onTap: () {
-                showAboutDialog(
+                showAppPopup(
                   context: context,
-                  applicationName: 'Memore',
-                  applicationVersion: '1.0.0',
-                  applicationIcon: const Icon(
-                    Icons.camera_alt,
-                    color: Color(0xFF8B4513),
-                    size: 48,
-                  ),
-                  children: [
-                    Text(
-                      'Ứng dụng chia sẻ ảnh trong nhóm bạn bè thân thiết',
-                      style: GoogleFonts.inika(),
+                  builder: (ctx) => AppPopup(
+                    size: AppPopupSize.small,
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.camera_alt,
+                          color: Color(0xFF8B4513),
+                          size: 48,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Memore',
+                          style: GoogleFonts.inika(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF3E2723),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Phiên bản 1.0.0',
+                          style: GoogleFonts.inika(
+                            fontSize: 14,
+                            color: const Color(0xFF6D4C41),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Ứng dụng chia sẻ ảnh trong nhóm bạn bè thân thiết',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inika(),
+                        ),
+                      ],
                     ),
-                  ],
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(),
+                        child: Text('Đóng', style: GoogleFonts.inika(color: const Color(0xFF8B4513))),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

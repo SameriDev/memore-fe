@@ -15,9 +15,11 @@ class UserService {
     return UserDto.fromJson(response.data as Map<String, dynamic>);
   }
 
-  Future<List<UserDto>> searchByUsername(String username) async {
+  Future<List<UserDto>> searchByUsername(String username, {String? currentUserId}) async {
     try {
-      final response = await _dio.get('/api/users/search', queryParameters: {'username': username});
+      final params = <String, dynamic>{'username': username};
+      if (currentUserId != null) params['currentUserId'] = currentUserId;
+      final response = await _dio.get('/api/users/search', queryParameters: params);
       final List<dynamic> data = response.data as List<dynamic>;
       return data.map((json) => UserDto.fromJson(json as Map<String, dynamic>)).toList();
     } catch (e) {

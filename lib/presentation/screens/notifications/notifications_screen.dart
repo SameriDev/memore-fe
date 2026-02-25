@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/data_sources/remote/notification_service.dart';
@@ -15,11 +16,26 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   List<NovuNotification> _notifications = [];
   bool _isLoading = true;
+  StreamSubscription<NovuNotification>? _notifSubscription;
 
   @override
   void initState() {
     super.initState();
     _loadNotifications();
+    // Mark all as seen when user opens this screen (clears badge on home)
+    NotificationService.instance.markAllAsSeen();
+    _notifSubscription =
+        NotificationService.instance.onNewNotification.listen((notif) {
+      if (mounted) {
+        setState(() => _notifications.insert(0, notif));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _notifSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadNotifications() async {

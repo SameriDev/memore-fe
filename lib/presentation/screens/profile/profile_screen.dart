@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import '../../widgets/app_popup.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../../data/local/user_manager.dart';
 import 'widgets/profile_header.dart';
@@ -162,19 +165,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Logout',
                       onTap: () async {
                         // Show confirmation dialog
-                        final shouldLogout = await showDialog<bool>(
+                        final shouldLogout = await showAppPopup<bool>(
                           context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Đăng xuất'),
-                            content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+                          builder: (ctx) => AppPopup(
+                            size: AppPopupSize.small,
+                            title: 'Đăng xuất',
+                            content: Text(
+                              'Bạn có chắc chắn muốn đăng xuất?',
+                              style: GoogleFonts.inika(color: const Color(0xFF3E2723)),
+                            ),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
-                                child: const Text('Hủy'),
+                                onPressed: () => Navigator.of(ctx).pop(false),
+                                child: Text('Hủy', style: GoogleFonts.inika(color: const Color(0xFF8B4513))),
                               ),
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(true),
-                                child: const Text('Đăng xuất'),
+                                onPressed: () => Navigator.of(ctx).pop(true),
+                                child: Text('Đăng xuất', style: GoogleFonts.inika(color: const Color(0xFF8B4513))),
                               ),
                             ],
                           ),

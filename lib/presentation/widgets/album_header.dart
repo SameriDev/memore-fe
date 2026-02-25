@@ -7,8 +7,6 @@ class AlbumHeader extends StatelessWidget {
   final VoidCallback? onAddTap;
   final int pendingInviteCount;
   final VoidCallback? onInvitesTap;
-  final int unreadNotificationCount;
-  final VoidCallback? onNotificationTap;
 
   const AlbumHeader({
     super.key,
@@ -16,8 +14,6 @@ class AlbumHeader extends StatelessWidget {
     this.onAddTap,
     this.pendingInviteCount = 0,
     this.onInvitesTap,
-    this.unreadNotificationCount = 0,
-    this.onNotificationTap,
   });
 
   @override
@@ -70,40 +66,6 @@ class AlbumHeader extends StatelessWidget {
                   ),
                 ),
               if (pendingInviteCount > 0) const SizedBox(width: 8),
-              // Notification bell
-              Stack(
-                children: [
-                  IconButton(
-                    onPressed: onNotificationTap,
-                    icon: const Icon(Icons.notifications_outlined, size: 26),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                  if (unreadNotificationCount > 0)
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          unreadNotificationCount > 9
-                              ? '9+'
-                              : '$unreadNotificationCount',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(width: 8),
               IconButton(
                 onPressed: onSearchTap,
                 icon: const Icon(Icons.search, size: 28),

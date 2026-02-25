@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'novu_socket_service.dart';
 
 class NovuNotification {
   final String id;
@@ -51,7 +53,17 @@ class NotificationService {
     _apiKey = apiKey;
     _subscriberId = subscriberId;
     _dio.options.headers['Authorization'] = 'ApiKey $apiKey';
+    NovuSocketService.instance.connect(
+      subscriberId: subscriberId,
+      apiKey: apiKey,
+    );
   }
+
+  Stream<NovuNotification> get onNewNotification =>
+      NovuSocketService.instance.onNotification;
+
+  Stream<int> get onUnseenCountChanged =>
+      NovuSocketService.instance.onUnseenCountChanged;
 
   bool get isConfigured => _apiKey != null && _subscriberId != null;
 
@@ -91,7 +103,7 @@ class NotificationService {
         '/subscribers/$_subscriberId/messages/markAs',
         data: {
           'messageId': notificationId,
-          'mark': {'read': true},
+          'mark': {'read': true, 'seen': true},
         },
       );
     } on DioException catch (e) {
@@ -105,11 +117,26 @@ class NotificationService {
       await _dio.post(
         '/subscribers/$_subscriberId/messages/markAs',
         data: {
-          'mark': {'read': true},
+          'mark': {'read': true, 'seen': true},
         },
       );
     } on DioException catch (e) {
       debugPrint('Mark all as read error: ${e.message}');
+    }
+  }
+
+  /// Mark all notifications as seen (clears the unseen badge count).
+  Future<void> markAllAsSeen() async {
+    if (!isConfigured) return;
+    try {
+      await _dio.post(
+        '/subscribers/$_subscriberId/messages/markAs',
+        data: {
+          'mark': {'seen': true},
+        },
+      );
+    } on DioException catch (e) {
+      debugPrint('Mark all as seen error: ${e.message}');
     }
   }
 }

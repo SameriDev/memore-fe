@@ -96,8 +96,14 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
     context.pushSlideRight(const FriendListDetailScreen());
   }
 
-  void _navigateToAddFriend() {
-    context.pushSlideBottom(const AddFriendScreen());
+  void _navigateToAddFriend() async {
+    final changed = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const AddFriendScreen()),
+    );
+    if (changed == true) {
+      _loadFriends();
+    }
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
 import 'friends/friends_tab.dart';
@@ -7,6 +8,8 @@ import 'timeline/timeline_screen.dart';
 import '../widgets/bottom_navigation.dart';
 import '../animations/camera_transition_controller.dart';
 import '../routes/camera_page_route.dart';
+import '../../data/local/storage_service.dart';
+import '../../data/data_sources/remote/notification_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -18,6 +21,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   int currentIndex = 1;
   int previousIndex = 1;
+  int _unreadNotificationCount = 0;
+  StreamSubscription<int>? _unseenCountSubscription;
 
   late CameraTransitionController _transitionController;
 
@@ -34,12 +39,35 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     super.initState();
     _transitionController = CameraTransitionController();
     _transitionController.initialize(this);
+    _configureNotifications();
   }
 
   @override
   void dispose() {
+    _unseenCountSubscription?.cancel();
     _transitionController.dispose();
     super.dispose();
+  }
+
+  void _configureNotifications() {
+    final userId = StorageService.instance.userId;
+    if (userId == null) return;
+    if (!NotificationService.instance.isConfigured) {
+      NotificationService.instance.configure(
+        apiKey: 'cb846fd2d85f202e97ad87e096cbe570',
+        subscriberId: userId,
+      );
+    }
+    _loadUnreadCount();
+    _unseenCountSubscription =
+        NotificationService.instance.onUnseenCountChanged.listen((count) {
+      if (mounted) setState(() => _unreadNotificationCount = count);
+    });
+  }
+
+  Future<void> _loadUnreadCount() async {
+    final count = await NotificationService.instance.getUnreadCount();
+    if (mounted) setState(() => _unreadNotificationCount = count);
   }
 
   Future<void> _handleNavTap(int index) async {
@@ -102,6 +130,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   currentIndex: currentIndex,
                   onTap: _handleNavTap,
                   navItemsAnimation: _transitionController.navIconsAnimation,
+                  friendBadgeCount: _unreadNotificationCount,
                 );
               },
             ),

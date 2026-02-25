@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
 import '../../data/local/photo_interaction_manager.dart';
+import 'app_popup.dart';
 import 'photo_interaction_widget.dart';
 import 'like_animation_widget.dart';
 
@@ -63,82 +65,55 @@ class _InteractivePhotoCardState extends State<InteractivePhotoCard> {
   }
 
   void _showCommentsSheet() {
-    showModalBottomSheet(
+    showAppPopup(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => PhotoCommentsSheet(photoId: widget.photoId),
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.large,
+        content: PhotoCommentsSheet(photoId: widget.photoId),
+      ),
     ).then((_) {
-      // Refresh interaction data when comments sheet is closed
       _loadInteractionData();
     });
   }
 
   void _showShareSheet() {
-    showModalBottomSheet(
+    showAppPopup(
       context: context,
-      backgroundColor: const Color(0xFFF5F5DC),
-      builder: (context) => _buildShareSheet(),
-    );
-  }
-
-  Widget _buildShareSheet() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Color(0xFFF5F5DC),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.small,
+        title: 'Share Photo',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildShareOption(
+              icon: Icons.person_add,
+              title: 'Share with Friends',
+              subtitle: 'Send to your Memore friends',
+              onTap: () {
+                Navigator.pop(ctx);
+                _shareWithFriends();
+              },
             ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Share Photo',
-            style: GoogleFonts.inika(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF3E2723),
+            _buildShareOption(
+              icon: Icons.copy,
+              title: 'Copy Link',
+              subtitle: 'Copy photo link to clipboard',
+              onTap: () {
+                Navigator.pop(ctx);
+                _copyLink();
+              },
             ),
-          ),
-          const SizedBox(height: 24),
-          _buildShareOption(
-            icon: Icons.person_add,
-            title: 'Share with Friends',
-            subtitle: 'Send to your Memore friends',
-            onTap: () {
-              Navigator.pop(context);
-              _shareWithFriends();
-            },
-          ),
-          _buildShareOption(
-            icon: Icons.copy,
-            title: 'Copy Link',
-            subtitle: 'Copy photo link to clipboard',
-            onTap: () {
-              Navigator.pop(context);
-              _copyLink();
-            },
-          ),
-          _buildShareOption(
-            icon: Icons.download,
-            title: 'Save to Device',
-            subtitle: 'Download photo to your device',
-            onTap: () {
-              Navigator.pop(context);
-              _saveToDevice();
-            },
-          ),
-          const SizedBox(height: 24),
-        ],
+            _buildShareOption(
+              icon: Icons.download,
+              title: 'Save to Device',
+              subtitle: 'Download photo to your device',
+              onTap: () {
+                Navigator.pop(ctx);
+                _saveToDevice();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

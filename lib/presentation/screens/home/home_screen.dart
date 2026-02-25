@@ -21,8 +21,6 @@ import '../album/album_invites_screen.dart';
 import '../story/story_viewer_screen.dart';
 import '../story/create_story_screen.dart';
 import '../../../data/models/story_dto.dart';
-import '../../../data/data_sources/remote/notification_service.dart';
-import '../notifications/notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,32 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> activeFilters = ['Shared', 'Recent'];
   bool isLoadingPhotos = false;
   int _pendingInviteCount = 0;
-  int _unreadNotificationCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _configureNotifications();
     _loadStoriesAndAlbums();
     _loadLocalPhotos();
     _loadPendingInvites();
-  }
-
-  void _configureNotifications() {
-    final userId = StorageService.instance.userId;
-    if (userId == null) return;
-    if (!NotificationService.instance.isConfigured) {
-      NotificationService.instance.configure(
-        apiKey: 'cb846fd2d85f202e97ad87e096cbe570',
-        subscriberId: userId,
-      );
-    }
-    _loadUnreadCount();
-  }
-
-  Future<void> _loadUnreadCount() async {
-    final count = await NotificationService.instance.getUnreadCount();
-    if (mounted) setState(() => _unreadNotificationCount = count);
   }
 
   Future<void> _loadStoriesAndAlbums() async {
@@ -267,16 +246,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
             AlbumHeader(
-              unreadNotificationCount: _unreadNotificationCount,
-              onNotificationTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const NotificationsScreen(),
-                  ),
-                );
-                _loadUnreadCount();
-              },
               onSearchTap: () {
                 debugPrint('Search tapped');
               },

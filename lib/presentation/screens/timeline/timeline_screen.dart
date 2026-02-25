@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:memore/core/utils/show_app_popup.dart';
+import '../../widgets/app_popup.dart';
 import 'models/timeline_models.dart';
 import 'config/timeline_config.dart';
 import 'widgets/timeline_item.dart';
@@ -202,88 +205,67 @@ class _TimelineScreenState extends State<TimelineScreen> {
     final titleController = TextEditingController(text: item.title);
     final subtitleController = TextEditingController(text: item.subtitle);
 
-    showModalBottomSheet(
+    showAppPopup(
       context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      builder: (ctx) => AppPopup(
+        size: AppPopupSize.medium,
+        title: 'Chỉnh sửa ghi chú',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: 'Tiêu đề',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: subtitleController,
+              decoration: const InputDecoration(
+                labelText: 'Ghi chú',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF8B4513),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () async {
+                final newTitle = titleController.text.trim();
+                final newSubtitle = subtitleController.text.trim();
+
+                for (final photoId in item.photoIds) {
+                  await PhotoService.instance.updatePhotoCaption(
+                    photoId,
+                    newTitle,
+                    note: newSubtitle,
+                  );
+                }
+
+                setState(() {
+                  item.title = newTitle;
+                  item.subtitle = newSubtitle;
+                });
+
+                if (ctx.mounted) Navigator.of(ctx).pop();
+              },
+              child: Text(
+                'Lưu',
+                style: GoogleFonts.inika(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
       ),
-      builder: (ctx) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 24,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Chỉnh sửa ghi chú',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Inika',
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Tiêu đề',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: subtitleController,
-                decoration: const InputDecoration(
-                  labelText: 'Ghi chú',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8B4513),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () async {
-                  final newTitle = titleController.text.trim();
-                  final newSubtitle = subtitleController.text.trim();
-
-                  // Update on server for each photo
-                  for (final photoId in item.photoIds) {
-                    await PhotoService.instance.updatePhotoCaption(
-                      photoId,
-                      newTitle,
-                      note: newSubtitle,
-                    );
-                  }
-
-                  // Update local state
-                  setState(() {
-                    item.title = newTitle;
-                    item.subtitle = newSubtitle;
-                  });
-
-                  if (ctx.mounted) Navigator.of(ctx).pop();
-                },
-                child: const Text(
-                  'Lưu',
-                  style: TextStyle(fontSize: 16, fontFamily: 'Inika'),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 
