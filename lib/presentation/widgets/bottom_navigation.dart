@@ -6,15 +6,12 @@ class BottomNavigation extends StatefulWidget {
   final Function(int)? onTap;
   final bool hideNavItems;
   final Animation<double>? navItemsAnimation;
-  final int friendBadgeCount;
-
   const BottomNavigation({
     super.key,
     required this.currentIndex,
     this.onTap,
     this.hideNavItems = false,
     this.navItemsAnimation,
-    this.friendBadgeCount = 0,
   });
 
   @override
@@ -65,7 +62,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
                           isActive: widget.currentIndex == 0,
                           onTap: () => widget.onTap?.call(0),
                           hideAnimation: widget.navItemsAnimation,
-                          badgeCount: widget.friendBadgeCount,
                         ),
                         _AnimatedNavItem(
                           icon: Icons.image_outlined,
@@ -173,14 +169,12 @@ class _AnimatedNavItem extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
   final Animation<double>? hideAnimation;
-  final int badgeCount;
 
   const _AnimatedNavItem({
     required this.icon,
     required this.isActive,
     required this.onTap,
     this.hideAnimation,
-    this.badgeCount = 0,
   });
 
   @override
@@ -197,11 +191,11 @@ class _AnimatedNavItem extends StatelessWidget {
             ),
           );
         },
-        child: _NavItem(icon: icon, isActive: isActive, onTap: onTap, badgeCount: badgeCount),
+        child: _NavItem(icon: icon, isActive: isActive, onTap: onTap),
       );
     }
 
-    return _NavItem(icon: icon, isActive: isActive, onTap: onTap, badgeCount: badgeCount);
+    return _NavItem(icon: icon, isActive: isActive, onTap: onTap);
   }
 }
 
@@ -209,13 +203,11 @@ class _NavItem extends StatelessWidget {
   final IconData icon;
   final bool isActive;
   final VoidCallback onTap;
-  final int badgeCount;
 
   const _NavItem({
     required this.icon,
     required this.isActive,
     required this.onTap,
-    this.badgeCount = 0,
   });
 
   @override
@@ -235,20 +227,6 @@ class _NavItem extends StatelessWidget {
                 color: isActive ? Colors.white : Colors.black,
                 size: isActive ? 26 : 24,
               ),
-              if (badgeCount > 0)
-                Positioned(
-                  right: -6,
-                  top: -4,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
-                    ),
-                  ),
-                ),
             ],
           ),
         ),

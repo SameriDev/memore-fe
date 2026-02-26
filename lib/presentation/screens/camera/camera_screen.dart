@@ -8,6 +8,8 @@ import '../../../data/local/storage_service.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
 import 'widgets/camera_viewfinder.dart';
 import 'widgets/camera_controls.dart';
+import 'widgets/camera_mode_selector.dart';
+import 'panorama_capture_screen.dart';
 import 'models/camera_state.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -131,7 +133,6 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       setState(() => _isProcessing = true);
 
-      // Thử chụp bằng camera plugin với timeout 8s
       final image = await _cameraController!.takePicture()
           .timeout(const Duration(seconds: 8), onTimeout: () {
         throw Exception('Camera capture timeout');
@@ -145,7 +146,6 @@ class _CameraScreenState extends State<CameraScreen> {
     } catch (e) {
       debugPrint('Camera plugin capture failed: $e');
 
-      // Fallback sang image_picker (camera native)
       try {
         final picker = ImagePicker();
         final photo = await picker.pickImage(
@@ -193,7 +193,6 @@ class _CameraScreenState extends State<CameraScreen> {
       if (photoId != null) {
         await UserManager.instance.incrementPhotoCount();
 
-        // Fire-and-forget upload to server
         final userId = StorageService.instance.userId;
         if (userId != null) {
           final storagePath = PhotoStorageManager.instance.getPhotoPath(photoId);
@@ -244,6 +243,14 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
+  void _onModeChanged(bool isPanorama) {
+    if (isPanorama) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const PanoramaCaptureScreen()),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _cameraController?.dispose();
@@ -277,6 +284,15 @@ class _CameraScreenState extends State<CameraScreen> {
                         capturedImagePath: _capturedImagePath,
                       ),
 
+                      const SizedBox(height: 16),
+
+                      // Mode selector
+                      if (_currentMode == CameraMode.capture)
+                        CameraModeSelector(
+                          isPanoramaMode: false,
+                          onModeChanged: _onModeChanged,
+                        ),
+
                       const Spacer(),
 
                       Padding(
@@ -285,8 +301,8 @@ class _CameraScreenState extends State<CameraScreen> {
                           isFlashOn: _isFlashOn,
                           onFlashToggle: _toggleFlash,
                           onCapture: _currentMode == CameraMode.capture
-                            ? _capturePhoto
-                            : _confirmPhoto,
+                              ? _capturePhoto
+                              : _confirmPhoto,
                           onFlipCamera: _currentMode == CameraMode.capture
                             ? _flipCamera
                             : _cancelPreview,

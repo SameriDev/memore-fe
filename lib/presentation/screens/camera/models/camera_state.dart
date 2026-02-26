@@ -1,6 +1,7 @@
 enum CameraMode {
   capture,  // Ready to capture photo
   preview,  // Photo captured, showing preview
+  panorama, // Panorama capture mode
 }
 
 class CameraState {

@@ -7,7 +7,11 @@ class CameraViewfinder extends StatelessWidget {
   final CameraController? controller;
   final String? capturedImagePath;
 
-  const CameraViewfinder({super.key, this.controller, this.capturedImagePath});
+  const CameraViewfinder({
+    super.key,
+    this.controller,
+    this.capturedImagePath,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +85,8 @@ class CameraViewfinder extends StatelessWidget {
       key: const ValueKey('loading'),
       width: double.infinity,
       height: double.infinity,
-      child: const Center(
-        child: CircularProgressIndicator(),
+      child: Center(
+        child: const CircularProgressIndicator(),
       ),
     );
   }

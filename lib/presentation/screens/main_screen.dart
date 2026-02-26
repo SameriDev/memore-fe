@@ -130,7 +130,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   currentIndex: currentIndex,
                   onTap: _handleNavTap,
                   navItemsAnimation: _transitionController.navIconsAnimation,
-                  friendBadgeCount: _unreadNotificationCount,
                 );
               },
             ),

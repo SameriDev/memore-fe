@@ -5,7 +5,7 @@ class CameraControls extends StatelessWidget {
   final bool isFlashOn;
   final VoidCallback onFlashToggle;
   final VoidCallback onCapture;
-  final VoidCallback onFlipCamera;
+  final VoidCallback? onFlipCamera;
   final CameraMode mode;
   final bool isProcessing;
 
@@ -26,13 +26,13 @@ class CameraControls extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Flash toggle button
+          // Left button: flash
           _ControlButton(
             icon: isFlashOn ? Icons.flash_on : Icons.flash_off,
             onTap: onFlashToggle,
           ),
 
-          // Capture/Confirm button
+          // Capture button
           Hero(
             tag: 'camera_button',
             child: GestureDetector(
@@ -59,9 +59,9 @@ class CameraControls extends StatelessWidget {
                       duration: const Duration(milliseconds: 300),
                       child: Icon(
                         mode == CameraMode.capture
-                          ? Icons.radio_button_unchecked
-                          : Icons.check,
-                        key: ValueKey(mode),
+                            ? Icons.radio_button_unchecked
+                            : Icons.check,
+                        key: ValueKey('$mode'),
                         color: Colors.white,
                         size: 40,
                       ),
@@ -70,13 +70,13 @@ class CameraControls extends StatelessWidget {
             ),
           ),
 
-          // Flip camera/Cancel button
+          // Right button: flip camera or cancel
           _ControlButton(
             icon: mode == CameraMode.capture
               ? Icons.flip_camera_ios
               : Icons.close,
-            onTap: isProcessing ? () {} : onFlipCamera,
-            isDisabled: isProcessing,
+            onTap: isProcessing ? () {} : (onFlipCamera ?? () {}),
+            isDisabled: isProcessing || onFlipCamera == null,
           ),
         ],
       ),
@@ -99,7 +99,7 @@ class _ControlButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: isDisabled ? null : onTap,
-      child: Container(
+      child: SizedBox(
         width: 48,
         height: 48,
         child: AnimatedSwitcher(
