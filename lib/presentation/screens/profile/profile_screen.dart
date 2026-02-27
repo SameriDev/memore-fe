@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/show_app_popup.dart';
 import '../../widgets/app_popup.dart';
+import '../../widgets/profile_edit_popup.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../../data/local/user_manager.dart';
 import 'widgets/profile_header.dart';
@@ -121,34 +122,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 12),
                     // Settings List
                     ProfileSettingItem(
-                      svgAsset: 'assets/icons/ix_user-profile-filled.svg',
-                      title: 'Edit profile picture',
-                      onTap: () {
-                        debugPrint('Edit profile picture tapped');
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    ProfileSettingItem(
-                      svgAsset: 'assets/icons/tdesign_rename-filled.svg',
-                      title: 'Edit profile name',
-                      onTap: () {
-                        debugPrint('Edit profile name tapped');
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    ProfileSettingItem(
-                      icon: Icons.cake,
-                      title: 'Edit birthday',
-                      onTap: () {
-                        debugPrint('Edit birthday tapped');
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    ProfileSettingItem(
-                      icon: Icons.mail,
-                      title: 'Change mail address',
-                      onTap: () {
-                        debugPrint('Change mail address tapped');
+                      icon: Icons.edit,
+                      title: 'Edit Profile',
+                      onTap: () async {
+                        if (user != null) {
+                          await showAppPopup<void>(
+                            context: context,
+                            builder: (ctx) => ProfileEditPopup(
+                              user: user!,
+                              onProfileUpdated: _loadProfile,
+                            ),
+                          );
+                        }
                       },
                     ),
                     const SizedBox(height: 8),
