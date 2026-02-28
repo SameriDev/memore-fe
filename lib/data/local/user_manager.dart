@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'storage_service.dart';
 import '../data_sources/remote/auth_service.dart';
 import '../data_sources/remote/user_service.dart';
+import '../data_sources/remote/photo_service.dart';
 import '../../domain/entities/user_profile.dart';
 
 class AuthResult {
@@ -31,7 +33,9 @@ class UserManager {
         password: password,
       );
 
-      if (response.success && response.accessToken != null && response.user != null) {
+      if (response.success &&
+          response.accessToken != null &&
+          response.user != null) {
         await _storage.setAccessToken(response.accessToken!);
         await _storage.saveUserProfile(response.user!.toStorageMap());
         await _storage.setLoggedIn(true);
@@ -44,7 +48,10 @@ class UserManager {
         errorMessage: response.message ?? 'Đăng nhập thất bại',
       );
     } catch (e) {
-      return AuthResult(success: false, errorMessage: 'Không thể kết nối đến server');
+      return AuthResult(
+        success: false,
+        errorMessage: 'Không thể kết nối đến server',
+      );
     }
   }
 
@@ -64,7 +71,9 @@ class UserManager {
         password: password,
       );
 
-      if (response.success && response.accessToken != null && response.user != null) {
+      if (response.success &&
+          response.accessToken != null &&
+          response.user != null) {
         await _storage.setAccessToken(response.accessToken!);
         await _storage.saveUserProfile(response.user!.toStorageMap());
         await _storage.setLoggedIn(true);
@@ -77,7 +86,10 @@ class UserManager {
         errorMessage: response.message ?? 'Đăng ký thất bại',
       );
     } catch (e) {
-      return AuthResult(success: false, errorMessage: 'Không thể kết nối đến server');
+      return AuthResult(
+        success: false,
+        errorMessage: 'Không thể kết nối đến server',
+      );
     }
   }
 
@@ -112,9 +124,60 @@ class UserManager {
     }
   }
 
-  /// Update user avatar
+  /// Update user avatar - Upload to server first, then update profile
   Future<bool> updateAvatar(String avatarPath) async {
-    return await updateProfile({'avatarUrl': avatarPath});
+    try {
+      debugPrint('updateAvatar: Starting upload for path: $avatarPath');
+
+      // 1. Get current user ID
+      final userId = _storage.userId;
+      if (userId == null || userId.isEmpty) {
+        debugPrint('updateAvatar: User ID is null or empty');
+        return false;
+      }
+
+      // 2. Upload ảnh lên server sử dụng PhotoService
+      final photoDto = await PhotoService.instance.uploadPhoto(
+        localFilePath: avatarPath,
+        userId: userId,
+        caption: 'Avatar',
+      );
+
+      if (photoDto == null) {
+        debugPrint('updateAvatar: Failed to upload photo to server');
+        return false;
+      }
+
+      debugPrint(
+        'updateAvatar: Photo uploaded successfully. S3Key: ${photoDto.s3Key}',
+      );
+
+      // 3. Lấy presigned URL từ S3 key
+      if (photoDto.s3Key == null) {
+        debugPrint('updateAvatar: S3 key is null');
+        return false;
+      }
+      final presignedUrl = await PhotoService.instance.getPresignedUrl(
+        photoDto.s3Key!,
+      );
+      if (presignedUrl == null) {
+        debugPrint(
+          'updateAvatar: Failed to get presigned URL for S3 key: ${photoDto.s3Key}',
+        );
+        return false;
+      }
+
+      debugPrint('updateAvatar: Got presigned URL: $presignedUrl');
+
+      // 4. Cập nhật avatarUrl với URL từ server
+      final updateSuccess = await updateProfile({'avatarUrl': presignedUrl});
+      debugPrint('updateAvatar: Profile update result: $updateSuccess');
+
+      return updateSuccess;
+    } catch (e) {
+      debugPrint('updateAvatar error: $e');
+      return false;
+    }
   }
 
   /// Update user bio
@@ -128,7 +191,9 @@ class UserManager {
       final currentProfile = getCurrentUser();
       if (currentProfile == null) return false;
 
-      final settings = Map<String, dynamic>.from(currentProfile['settings'] ?? {});
+      final settings = Map<String, dynamic>.from(
+        currentProfile['settings'] ?? {},
+      );
       settings[key] = value;
 
       return await updateProfile({'settings': settings});
@@ -177,7 +242,9 @@ class UserManager {
     final profile = getCurrentUser();
     if (profile != null) {
       final currentCount = profile['friendsCount'] as int? ?? 0;
-      await updateProfile({'friendsCount': (currentCount - 1).clamp(0, double.infinity).toInt()});
+      await updateProfile({
+        'friendsCount': (currentCount - 1).clamp(0, double.infinity).toInt(),
+      });
     }
   }
 
