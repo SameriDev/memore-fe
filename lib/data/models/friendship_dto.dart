@@ -4,8 +4,10 @@ class FriendshipDto {
   final String id;
   final String? userId;
   final String? userName;
+  final String? userAvatarUrl;
   final String? friendId;
   final String? friendName;
+  final String? friendAvatarUrl;
   final String? status;
   final String? createdAt;
 
@@ -13,8 +15,10 @@ class FriendshipDto {
     required this.id,
     this.userId,
     this.userName,
+    this.userAvatarUrl,
     this.friendId,
     this.friendName,
+    this.friendAvatarUrl,
     this.status,
     this.createdAt,
   });
@@ -24,8 +28,10 @@ class FriendshipDto {
       id: json['id'].toString(),
       userId: json['userId']?.toString(),
       userName: json['userName'] as String?,
+      userAvatarUrl: json['userAvatarUrl'] as String?,
       friendId: json['friendId']?.toString(),
       friendName: json['friendName'] as String?,
+      friendAvatarUrl: json['friendAvatarUrl'] as String?,
       status: json['status'] as String?,
       createdAt: json['createdAt']?.toString(),
     );
@@ -36,8 +42,10 @@ class FriendshipDto {
       'id': id,
       'userId': userId,
       'userName': userName,
+      'userAvatarUrl': userAvatarUrl,
       'friendId': friendId,
       'friendName': friendName,
+      'friendAvatarUrl': friendAvatarUrl,
       'status': status,
       'createdAt': createdAt,
     };
@@ -47,11 +55,12 @@ class FriendshipDto {
     final isCurrentUser = userId == currentUserId;
     final otherId = isCurrentUser ? friendId : userId;
     final otherName = isCurrentUser ? friendName : userName;
+    final otherAvatarUrl = isCurrentUser ? friendAvatarUrl : userAvatarUrl;
 
     return Friend(
       id: otherId ?? id,
       name: otherName ?? 'Unknown',
-      avatarUrl: 'https://i.pravatar.cc/150?u=$otherId',
+      avatarUrl: otherAvatarUrl ?? '',
       isOnline: false,
       lastActiveTime: createdAt ?? '',
     );

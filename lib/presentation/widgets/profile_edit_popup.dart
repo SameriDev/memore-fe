@@ -7,6 +7,7 @@ import '../../domain/entities/user_profile.dart';
 import '../../data/local/user_manager.dart';
 import '../widgets/app_popup.dart';
 import 'image_picker_bottom_sheet.dart';
+import 'simple_date_picker.dart';
 
 class ProfileEditPopup extends StatefulWidget {
   final UserProfile user;
@@ -57,7 +58,8 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
     final hasBirthdayChange = _selectedBirthday != widget.user.birthday;
     final hasImageChange = _selectedImagePath != null;
 
-    final newHasChanges = hasNameChange || hasEmailChange || hasBirthdayChange || hasImageChange;
+    final newHasChanges =
+        hasNameChange || hasEmailChange || hasBirthdayChange || hasImageChange;
 
     if (newHasChanges != _hasChanges) {
       setState(() => _hasChanges = newHasChanges);
@@ -75,22 +77,20 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
   }
 
   Future<void> _selectBirthday() async {
-    final selectedDate = await showDatePicker(
+    DateTime? selectedDate;
+
+    await showDialog<void>(
       context: context,
-      initialDate: _selectedBirthday ?? DateTime.now().subtract(const Duration(days: 365 * 18)),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      helpText: 'Chọn ngày sinh',
-      cancelText: 'Hủy',
-      confirmText: 'Chọn',
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppColors.primary,
-            ),
-          ),
-          child: child!,
+      builder: (context) {
+        return SimpleDatePicker(
+          initialDate:
+              _selectedBirthday ??
+              DateTime.now().subtract(const Duration(days: 365 * 18)),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+          onDateSelected: (date) {
+            selectedDate = date;
+          },
         );
       },
     );
@@ -127,7 +127,9 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
       // Update profile image if selected
       bool imageUpdateSuccess = true;
       if (_selectedImagePath != null) {
-        imageUpdateSuccess = await UserManager.instance.updateAvatar(_selectedImagePath!);
+        imageUpdateSuccess = await UserManager.instance.updateAvatar(
+          _selectedImagePath!,
+        );
         if (!imageUpdateSuccess) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -140,11 +142,15 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
       // Update other profile fields
       bool profileUpdateSuccess = true;
       if (updates.isNotEmpty) {
-        profileUpdateSuccess = await UserManager.instance.updateProfile(updates);
+        profileUpdateSuccess = await UserManager.instance.updateProfile(
+          updates,
+        );
         if (!profileUpdateSuccess) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Lỗi khi cập nhật thông tin cá nhân')),
+              const SnackBar(
+                content: Text('Lỗi khi cập nhật thông tin cá nhân'),
+              ),
             );
           }
         }
@@ -202,133 +208,162 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
       title: 'Chỉnh sửa thông tin',
       content: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Profile Image Section
-            GestureDetector(
-              onTap: _pickProfileImage,
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey[300],
-                    backgroundImage: _selectedImagePath != null
-                        ? FileImage(File(_selectedImagePath!))
-                        : (widget.user.avatarUrl.isNotEmpty
-                            ? NetworkImage(widget.user.avatarUrl)
-                            : null),
-                    child: widget.user.avatarUrl.isEmpty && _selectedImagePath == null
-                        ? const Icon(Icons.person, size: 50, color: Colors.grey)
-                        : null,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Profile Image Section
+              GestureDetector(
+                onTap: _pickProfileImage,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final avatarRadius = (constraints.maxWidth * 0.12).clamp(
+                      30.0,
+                      50.0,
+                    );
+                    return Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: avatarRadius,
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage: _selectedImagePath != null
+                              ? FileImage(File(_selectedImagePath!))
+                              : (widget.user.avatarUrl.isNotEmpty
+                                    ? NetworkImage(widget.user.avatarUrl)
+                                    : null),
+                          child:
+                              widget.user.avatarUrl.isEmpty &&
+                                  _selectedImagePath == null
+                              ? Icon(
+                                  Icons.person,
+                                  size: avatarRadius,
+                                  color: Colors.grey,
+                                )
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF2D2D2D),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Name Field
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Tên',
+                  labelStyle: GoogleFonts.inika(color: AppColors.textSecondary),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF2D2D2D),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.camera_alt,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                    ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
                   ),
-                ],
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.red),
+                  ),
+                ),
+                validator: _validateName,
+                textInputAction: TextInputAction.next,
               ),
-            ),
-            const SizedBox(height: 24),
-            // Name Field
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Tên',
-                labelStyle: GoogleFonts.inika(color: AppColors.textSecondary),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
+              const SizedBox(height: 12),
+              // Email Field
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: GoogleFonts.inika(color: AppColors.textSecondary),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.red),
+                  ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.primary),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.red),
-                ),
+                validator: _validateEmail,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.done,
               ),
-              validator: _validateName,
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: 16),
-            // Email Field
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                labelStyle: GoogleFonts.inika(color: AppColors.textSecondary),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.primary),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.red),
-                ),
-              ),
-              validator: _validateEmail,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.done,
-            ),
-            const SizedBox(height: 16),
-            // Birthday Field
-            GestureDetector(
-              onTap: _selectBirthday,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.cake,
-                      color: AppColors.textSecondary,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _selectedBirthday != null
-                            ? DateFormat('dd/MM/yyyy').format(_selectedBirthday!)
-                            : 'Chọn ngày sinh',
-                        style: GoogleFonts.inika(
-                          color: _selectedBirthday != null
-                              ? AppColors.text
-                              : AppColors.textSecondary,
-                          fontSize: 16,
+              const SizedBox(height: 12),
+              // Birthday Field
+              GestureDetector(
+                onTap: _selectBirthday,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[300]!),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.cake,
+                        color: AppColors.textSecondary,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _selectedBirthday != null
+                              ? DateFormat(
+                                  'dd/MM/yyyy',
+                                ).format(_selectedBirthday!)
+                              : 'Chọn ngày sinh',
+                          style: GoogleFonts.inika(
+                            color: _selectedBirthday != null
+                                ? AppColors.text
+                                : AppColors.textSecondary,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
-                    ),
-                    Icon(
-                      Icons.calendar_month,
-                      color: AppColors.textSecondary,
-                      size: 20,
-                    ),
-                  ],
+                      Icon(
+                        Icons.calendar_month,
+                        color: AppColors.textSecondary,
+                        size: 20,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [
@@ -358,10 +393,7 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 )
-              : Text(
-                  'Lưu',
-                  style: GoogleFonts.inika(),
-                ),
+              : Text('Lưu', style: GoogleFonts.inika()),
         ),
       ],
     );
