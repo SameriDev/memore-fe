@@ -95,6 +95,8 @@ class UserManager {
         return AuthResult(success: false, errorMessage: 'Đăng nhập Google bị hủy');
       }
 
+      // Force refresh để tránh cached idToken hết hạn
+      await account.clearAuthCache();
       final auth = await account.authentication;
       final idToken = auth.idToken;
       if (idToken == null) {
