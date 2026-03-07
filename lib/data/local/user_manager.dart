@@ -96,7 +96,11 @@ class UserManager {
       }
 
       // Force refresh để tránh cached idToken hết hạn
-      await account.clearAuthCache();
+      try {
+        await account.clearAuthCache();
+      } catch (_) {
+        // Bỏ qua nếu clearAuthCache không hỗ trợ trên thiết bị này
+      }
       final auth = await account.authentication;
       final idToken = auth.idToken;
       if (idToken == null) {
