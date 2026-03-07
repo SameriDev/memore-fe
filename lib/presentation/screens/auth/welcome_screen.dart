@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/utils/snackbar_helper.dart';
+import '../../../data/local/user_manager.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  bool _isGoogleLoading = false;
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isGoogleLoading = true);
+
+    final result = await UserManager.instance.loginWithGoogle();
+
+    if (!mounted) return;
+    setState(() => _isGoogleLoading = false);
+
+    if (result.success) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
+    } else {
+      SnackBarHelper.showError(context, result.errorMessage ?? 'Đăng nhập Google thất bại');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,9 +180,7 @@ class WelcomeScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: Implement Google Sign In
-                  },
+                  onPressed: _isGoogleLoading ? null : _handleGoogleSignIn,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF3E2723),
                     side: const BorderSide(
@@ -170,14 +192,20 @@ class WelcomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  icon: Image.asset(
-                    'assets/icons/google_logo.png',
-                    height: 28,
-                    width: 28,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.g_mobiledata, size: 32);
-                    },
-                  ),
+                  icon: _isGoogleLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Image.asset(
+                          'assets/icons/google_logo.png',
+                          height: 28,
+                          width: 28,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.g_mobiledata, size: 32);
+                          },
+                        ),
                   label: Text(
                     'Tiếp tục với Google',
                     style: GoogleFonts.inika(

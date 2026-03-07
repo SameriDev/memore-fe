@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
 import '../../widgets/decorated_background.dart';
 import '../../../data/local/user_manager.dart';
+import '../../../data/data_sources/remote/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -50,8 +51,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (mounted) {
         if (result.success) {
-          SnackBarHelper.showSuccess(context, 'Đăng ký thành công! Chào mừng bạn đến với Memore.');
-          Navigator.of(context).pushReplacementNamed('/main');
+          final email = _emailController.text.trim();
+          AuthService.instance.sendOtp(email: email);
+          Navigator.of(context).pushNamed('/otp', arguments: email);
         } else {
           SnackBarHelper.showError(context, result.errorMessage ?? 'Đăng ký thất bại');
         }
@@ -67,10 +69,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     setState(() => _isLoading = true);
 
-    // TODO: Implement real Google Sign Up
+    final result = await UserManager.instance.loginWithGoogle();
+
+    if (!mounted) return;
     setState(() => _isLoading = false);
-    if (mounted) {
-      SnackBarHelper.showWarning(context, 'Google Sign Up chưa được hỗ trợ');
+
+    if (result.success) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
+    } else {
+      SnackBarHelper.showError(context, result.errorMessage ?? 'Đăng ký Google thất bại');
     }
   }
 
@@ -167,7 +174,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (value == null || value.isEmpty) {
                                 return 'Vui lòng nhập email';
                               }
-                              if (!value.contains('@')) {
+                              final emailRegex = RegExp(r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,}$');
+                              if (!emailRegex.hasMatch(value.trim())) {
                                 return 'Email không hợp lệ';
                               }
                               return null;

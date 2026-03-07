@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'storage_service.dart';
 import '../data_sources/remote/auth_service.dart';
 import '../data_sources/remote/user_service.dart';
@@ -78,6 +80,45 @@ class UserManager {
       );
     } catch (e) {
       return AuthResult(success: false, errorMessage: 'Không thể kết nối đến server');
+    }
+  }
+
+  /// Login with Google
+  Future<AuthResult> loginWithGoogle() async {
+    try {
+      final googleSignIn = GoogleSignIn(
+        serverClientId: '98078357098-pknisf1ub7kg5nop658jpeo31clhid2f.apps.googleusercontent.com',
+      );
+
+      final account = await googleSignIn.signIn();
+      if (account == null) {
+        return AuthResult(success: false, errorMessage: 'Đăng nhập Google bị hủy');
+      }
+
+      final auth = await account.authentication;
+      final idToken = auth.idToken;
+      if (idToken == null) {
+        return AuthResult(success: false, errorMessage: 'Không lấy được token từ Google');
+      }
+
+      debugPrint('[AUTH] Google idToken obtained, calling BE...');
+      final response = await _authService.loginWithGoogle(idToken: idToken);
+
+      if (response.success && response.accessToken != null && response.user != null) {
+        await _storage.setAccessToken(response.accessToken!);
+        await _storage.saveUserProfile(response.user!.toStorageMap());
+        await _storage.setLoggedIn(true);
+        await _storage.setUserId(response.user!.id);
+        return AuthResult(success: true);
+      }
+
+      return AuthResult(
+        success: false,
+        errorMessage: response.message ?? 'Đăng nhập Google thất bại',
+      );
+    } catch (e) {
+      debugPrint('[AUTH] loginWithGoogle error: $e');
+      return AuthResult(success: false, errorMessage: 'Lỗi đăng nhập Google: $e');
     }
   }
 

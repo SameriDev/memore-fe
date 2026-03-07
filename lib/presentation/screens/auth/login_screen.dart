@@ -49,10 +49,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
 
-    // TODO: Implement real Google Sign In
+    final result = await UserManager.instance.loginWithGoogle();
+
+    if (!mounted) return;
     setState(() => _isLoading = false);
-    if (mounted) {
-      SnackBarHelper.showWarning(context, 'Google Sign In chưa được hỗ trợ');
+
+    if (result.success) {
+      Navigator.of(context).pushReplacementNamed('/main');
+    } else {
+      SnackBarHelper.showError(context, result.errorMessage ?? 'Đăng nhập Google thất bại');
     }
   }
 
