@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'storage_service.dart';
 import '../data_sources/remote/auth_service.dart';
@@ -122,8 +123,15 @@ class UserManager {
         success: false,
         errorMessage: response.message ?? 'Đăng nhập Google thất bại',
       );
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('[AUTH] loginWithGoogle error type: ${e.runtimeType}');
       debugPrint('[AUTH] loginWithGoogle error: $e');
+      debugPrint('[AUTH] loginWithGoogle stack: $stack');
+      if (e is PlatformException) {
+        debugPrint('[AUTH] PlatformException code: ${e.code}');
+        debugPrint('[AUTH] PlatformException message: ${e.message}');
+        debugPrint('[AUTH] PlatformException details: ${e.details}');
+      }
       return AuthResult(success: false, errorMessage: 'Lỗi đăng nhập Google: $e');
     }
   }
