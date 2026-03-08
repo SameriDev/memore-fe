@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
 import 'package:memore/core/utils/show_app_popup.dart';
+import 'package:memore/data/data_sources/remote/auth_service.dart';
 import '../../widgets/app_popup.dart';
 import '../../widgets/decorated_background.dart';
 
@@ -19,10 +20,10 @@ class OtpVerificationScreen extends StatefulWidget {
 class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     with SingleTickerProviderStateMixin {
   final List<TextEditingController> _otpControllers = List.generate(
-    4,
+    6,
     (index) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
 
   bool _isLoading = false;
   bool _canResend = false;
@@ -90,7 +91,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   }
 
   bool _isOtpComplete() {
-    return _getOtp().length == 4;
+    return _getOtp().length == 6;
   }
 
   Future<void> _showErrorDialog() async {
@@ -171,22 +172,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     final otp = _getOtp();
     setState(() => _isLoading = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
+    final success = await AuthService.instance.verifyOtp(
+      email: widget.email,
+      otp: otp,
+    );
 
     setState(() => _isLoading = false);
 
     if (!mounted) return;
 
-    if (otp == "1234") {
-      // Success - navigate to main/my albums
+    if (success) {
       Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
     } else {
-      // Error - shake animation and show dialog
       await _playShakeAnimation();
       await _showErrorDialog();
 
-      // Clear OTP fields
       for (var controller in _otpControllers) {
         controller.clear();
       }
@@ -194,11 +194,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     }
   }
 
-  void _handleResend() {
+  Future<void> _handleResend() async {
     if (!_canResend) return;
 
-    // TODO: Implement resend OTP logic
-    SnackBarHelper.showInfo(context, 'Mã OTP đã được gửi lại');
+    final sent = await AuthService.instance.sendOtp(email: widget.email);
+    if (!mounted) return;
+
+    if (sent) {
+      SnackBarHelper.showInfo(context, 'Mã OTP đã được gửi lại');
+    } else {
+      SnackBarHelper.showInfo(context, 'Không thể gửi lại OTP, vui lòng thử lại');
+    }
     _startResendTimer();
   }
 
@@ -319,10 +325,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(4, (index) {
+                      children: List.generate(6, (index) {
                         return Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: index == 0 || index == 3 ? 0 : 8,
+                            horizontal: index == 0 || index == 5 ? 0 : 6,
                           ),
                           child: _OtpInputField(
                             controller: _otpControllers[index],
@@ -330,11 +336,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                             previousFocusNode: index > 0
                                 ? _focusNodes[index - 1]
                                 : null,
-                            nextFocusNode: index < 3
+                            nextFocusNode: index < 5
                                 ? _focusNodes[index + 1]
                                 : null,
                             onChanged: (value) {
-                              if (value.isNotEmpty && index < 3) {
+                              if (value.isNotEmpty && index < 5) {
                                 _focusNodes[index + 1].requestFocus();
                               }
                               setState(() {});
@@ -446,8 +452,8 @@ class _OtpInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 60,
-      height: 60,
+      width: 48,
+      height: 56,
       child: TextField(
         controller: controller,
         focusNode: focusNode,

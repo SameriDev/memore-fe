@@ -57,10 +57,11 @@ class AuthService {
     }
   }
 
-  Future<AuthResponse> loginWithGoogle({required String idToken}) async {
+  Future<AuthResponse> loginWithGoogle({String? idToken, String? serverAuthCode}) async {
     try {
       final response = await _dio.post('/api/auth/google', data: {
-        'idToken': idToken,
+        if (idToken != null) 'idToken': idToken,
+        if (serverAuthCode != null) 'serverAuthCode': serverAuthCode,
       });
       return AuthResponse.fromJson(response.data);
     } on DioException catch (e) {

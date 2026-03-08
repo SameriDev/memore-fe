@@ -91,25 +91,35 @@ class UserManager {
         serverClientId: '98078357098-pknisf1ub7kg5nop658jpeo31clhid2f.apps.googleusercontent.com',
       );
 
+      // Sign out trước để đảm bảo token hoàn toàn mới, không bị cache cũ
+      await googleSignIn.signOut();
+
       final account = await googleSignIn.signIn();
       if (account == null) {
         return AuthResult(success: false, errorMessage: 'Đăng nhập Google bị hủy');
       }
 
-      // Force refresh để tránh cached idToken hết hạn
+      // Lấy serverAuthCode (fresh, không cache) để backend exchange
+      final serverAuthCode = account.serverAuthCode;
+      String? idToken;
       try {
-        await account.clearAuthCache();
+        final auth = await account.authentication;
+        idToken = auth.idToken;
       } catch (_) {
-        // Bỏ qua nếu clearAuthCache không hỗ trợ trên thiết bị này
+        // Bỏ qua nếu authentication fail, backend sẽ dùng serverAuthCode
       }
-      final auth = await account.authentication;
-      final idToken = auth.idToken;
-      if (idToken == null) {
+
+      if (serverAuthCode == null && idToken == null) {
         return AuthResult(success: false, errorMessage: 'Không lấy được token từ Google');
       }
 
-      debugPrint('[AUTH] Google idToken obtained, calling BE...');
-      final response = await _authService.loginWithGoogle(idToken: idToken);
+      debugPrint('[AUTH] serverAuthCode: $serverAuthCode');
+      debugPrint('[AUTH] idToken null: ${idToken == null}');
+      debugPrint('[AUTH] Google token obtained, calling BE...');
+      final response = await _authService.loginWithGoogle(
+        idToken: idToken,
+        serverAuthCode: serverAuthCode,
+      );
 
       if (response.success && response.accessToken != null && response.user != null) {
         await _storage.setAccessToken(response.accessToken!);

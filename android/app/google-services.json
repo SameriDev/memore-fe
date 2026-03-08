@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "98078357098",
+    "project_id": "sameri",
+    "storage_bucket": "sameri.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98078357098:android:2daa2f53df66a0dff87c13",
+        "android_client_info": {
+          "package_name": "com.example.memore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98078357098-a44edtjvcq436ieit78ffk60titk6h7v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.memore",
+            "certificate_hash": "035c55d9d00883ab3ffa775ac78be5ecc1651ee4"
+          }
+        },
+        {
+          "client_id": "98078357098-erobrthavnfbg8p1s07p6u2qoppn5a93.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.memore",
+            "certificate_hash": "6f5b3a6006c681e53b5cd2594754424b30c94899"
+          }
+        },
+        {
+          "client_id": "98078357098-pknisf1ub7kg5nop658jpeo31clhid2f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASGC2CFDfP0AYMrQQZv6F7LyxiFXStxkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98078357098-pknisf1ub7kg5nop658jpeo31clhid2f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
