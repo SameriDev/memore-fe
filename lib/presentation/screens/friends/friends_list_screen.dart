@@ -39,6 +39,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
   Future<void> _loadFriends() async {
     final userId = StorageService.instance.userId;
     if (userId == null) {
+      if (!mounted) return;
       setState(() => isLoading = false);
       return;
     }
@@ -46,7 +47,10 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
     try {
       final dtos = await FriendshipService.instance.getUserFriends(userId);
       final loaded = dtos.map((dto) => dto.toEntity(userId)).toList();
-      final pending = await FriendshipService.instance.getPendingRequests(userId);
+      final pending = await FriendshipService.instance.getPendingRequests(
+        userId,
+      );
+      if (!mounted) return;
       setState(() {
         friends = loaded;
         filteredFriends = loaded;
@@ -55,6 +59,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         friends = [];
         filteredFriends = [];
@@ -76,7 +81,9 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
         filteredFriends = friends.where((friend) {
           return friend.name.toLowerCase().contains(query);
         }).toList();
-        displayedFriends = filteredFriends.take(12).toList(); // Show more when searching
+        displayedFriends = filteredFriends
+            .take(12)
+            .toList(); // Show more when searching
       }
     });
   }
@@ -101,6 +108,7 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
       context,
       MaterialPageRoute(builder: (_) => const AddFriendScreen()),
     );
+    if (!mounted) return;
     if (changed == true) {
       _loadFriends();
     }
@@ -135,13 +143,19 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      await context.pushSlideBottom(const PendingRequestsScreen());
+                      await context.pushSlideBottom(
+                        const PendingRequestsScreen(),
+                      );
                       _loadFriends();
                     },
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        const Icon(Icons.person_add_alt_1, size: 28, color: Colors.black),
+                        const Icon(
+                          Icons.person_add_alt_1,
+                          size: 28,
+                          color: Colors.black,
+                        ),
                         if (_pendingCount > 0)
                           Positioned(
                             right: -6,
@@ -254,7 +268,8 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
 
               // 6. Share Link Section
               ShareLinkSection(
-                memoreLink: 'memore.app/${StorageService.instance.getUserProfile()?['username'] ?? 'user'}',
+                memoreLink:
+                    'memore.app/${StorageService.instance.getUserProfile()?['username'] ?? 'user'}',
                 onCopyTap: () {
                   debugPrint('Copy link tapped');
                 },

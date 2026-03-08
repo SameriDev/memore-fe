@@ -23,12 +23,8 @@ class StorySection extends StatelessWidget {
       child: Stack(
         children: [
           ListView.separated(
-            padding: EdgeInsets.only(
-              left: AppDimensions.horizontalPadding,
-              right:
-                  AppDimensions.storyAvatarSize +
-                  AppDimensions.storySpacing +
-                  AppDimensions.horizontalPadding,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.horizontalPadding,
             ),
             scrollDirection: Axis.horizontal,
             itemCount: stories.length,
@@ -47,53 +43,6 @@ class StorySection extends StatelessWidget {
                 },
               );
             },
-          ),
-          Positioned(
-            right: AppDimensions.horizontalPadding,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: AppDimensions.storyAvatarSize + 20,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    const Color(0xFFF5F1EB).withOpacity(0),
-                    const Color(0xFFF5F1EB),
-                    const Color(0xFFF5F1EB),
-                  ],
-                  stops: const [0.0, 0.3, 1.0],
-                ),
-              ),
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: onMoreTap,
-                child: Container(
-                  width: AppDimensions.storyAvatarSize,
-                  height: AppDimensions.storyAvatarSize,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey[300]!, width: 2),
-                  ),
-                  child: Center(
-                    child: Transform.translate(
-                      offset: const Offset(0, -6),
-                      child: Text(
-                        '...',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
-                          height: 1.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ),
         ],
       ),

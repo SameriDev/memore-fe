@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../domain/entities/album.dart';
 import '../../core/constants/app_dimensions.dart';
@@ -44,22 +45,7 @@ class AlbumCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(
                       AppDimensions.albumCardRadius,
                     ),
-                    child: Image.network(
-                      album.coverImageUrl,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[200],
-                          child: const Icon(
-                            Icons.image,
-                            size: 48,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    ),
+                    child: _buildCoverImage(album.coverImageUrl),
                   ),
                   Positioned(
                     top: 8,
@@ -155,6 +141,45 @@ class AlbumCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildCoverImage(String imageUrl) {
+  final errorWidget = Container(
+    color: Colors.grey[200],
+    child: const Icon(Icons.image, size: 48, color: Colors.grey),
+  );
+
+  if (imageUrl.isEmpty) return errorWidget;
+
+  // Local file path: bắt đầu bằng '/' hoặc có prefix 'file://'
+  if (imageUrl.startsWith('/')) {
+    return Image.file(
+      File(imageUrl),
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => errorWidget,
+    );
+  }
+
+  if (imageUrl.startsWith('file://')) {
+    final path = imageUrl.replaceFirst('file://', '');
+    return Image.file(
+      File(path),
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => errorWidget,
+    );
+  }
+
+  return Image.network(
+    imageUrl,
+    width: double.infinity,
+    height: double.infinity,
+    fit: BoxFit.cover,
+    errorBuilder: (_, __, ___) => errorWidget,
+  );
 }
 
 class _ParticipantAvatars extends StatelessWidget {

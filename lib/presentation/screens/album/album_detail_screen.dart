@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memore/core/utils/snackbar_helper.dart';
@@ -74,7 +75,10 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Hủy', style: GoogleFonts.inika(color: const Color(0xFF8B4513))),
+            child: Text(
+              'Hủy',
+              style: GoogleFonts.inika(color: const Color(0xFF8B4513)),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -115,7 +119,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
       context: context,
       builder: (ctx) => AppPopup(
         size: AppPopupSize.medium,
-        title: 'Thành viên (${participants.where((p) => p.status == 'ACCEPTED').length})',
+        title:
+            'Thành viên (${participants.where((p) => p.status == 'ACCEPTED').length})',
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,9 +133,10 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
               Text(
                 'Đang chờ',
                 style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500),
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               ...participants
                   .where((p) => p.status == 'PENDING')
@@ -158,8 +164,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
       subtitle: isOwner
           ? const Text('Creator', style: TextStyle(color: Colors.brown))
           : isPending
-              ? const Text('Đang chờ', style: TextStyle(color: Colors.orange))
-              : null,
+          ? const Text('Đang chờ', style: TextStyle(color: Colors.orange))
+          : null,
       trailing: _isCreator && !isOwner && !isPending
           ? IconButton(
               icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
@@ -176,11 +182,19 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: Text('Hủy', style: GoogleFonts.inika(color: const Color(0xFF8B4513))),
+                        child: Text(
+                          'Hủy',
+                          style: GoogleFonts.inika(
+                            color: const Color(0xFF8B4513),
+                          ),
+                        ),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: Text('Xóa', style: GoogleFonts.inika(color: Colors.red)),
+                        child: Text(
+                          'Xóa',
+                          style: GoogleFonts.inika(color: Colors.red),
+                        ),
                       ),
                     ],
                   ),
@@ -211,199 +225,251 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
             )
           : null,
       body: DecoratedBackground(
-      child: SafeArea(
-        bottom: false,
-        child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: Colors.brown))
-            : _album == null
-                ? const Center(child: Text('Album không tồn tại'))
-                : Column(
-                    children: [
-                      // Header
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, right: 16, top: 30),
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.arrow_back,
-                                    color: Colors.black, size: 20),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                _album!.name ?? 'Untitled',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  color: Colors.black,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            // Members button
-                            GestureDetector(
-                              onTap: _showMembersSheet,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.people,
-                                        size: 18, color: Colors.brown),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '${_album!.participants.where((p) => p.status == 'ACCEPTED').length}',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            // Menu
-                            PopupMenuButton<String>(
-                              icon: const Icon(Icons.more_vert),
-                              onSelected: (value) {
-                                if (value == 'leave') _leaveAlbum();
-                                if (value == 'delete') _deleteAlbum();
-                              },
-                              itemBuilder: (ctx) => [
-                                if (!_isCreator)
-                                  const PopupMenuItem(
-                                    value: 'leave',
-                                    child: Text('Rời album'),
-                                  ),
-                                if (_isCreator)
-                                  const PopupMenuItem(
-                                    value: 'delete',
-                                    child: Text('Xóa album',
-                                        style: TextStyle(color: Colors.red)),
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
+        child: SafeArea(
+          bottom: false,
+          child: _isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.brown),
+                )
+              : _album == null
+              ? const Center(child: Text('Album không tồn tại'))
+              : Column(
+                  children: [
+                    // Header
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 30,
                       ),
-                      // Description
-                      if (_album!.description != null &&
-                          _album!.description!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          child: Text(
-                            _album!.description!,
-                            style: TextStyle(
-                                fontSize: 14, color: Colors.grey[600]),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.black,
+                                size: 20,
+                              ),
+                            ),
                           ),
-                        ),
-                      // Participant avatars row
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _album!.name ?? 'Untitled',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          // Members button
+                          GestureDetector(
+                            onTap: _showMembersSheet,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.people,
+                                    size: 18,
+                                    color: Colors.brown,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${_album!.participants.where((p) => p.status == 'ACCEPTED').length}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Menu
+                          PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert),
+                            onSelected: (value) {
+                              if (value == 'leave') _leaveAlbum();
+                              if (value == 'delete') _deleteAlbum();
+                            },
+                            itemBuilder: (ctx) => [
+                              if (!_isCreator)
+                                const PopupMenuItem(
+                                  value: 'leave',
+                                  child: Text('Rời album'),
+                                ),
+                              if (_isCreator)
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text(
+                                    'Xóa album',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Description
+                    if (_album!.description != null &&
+                        _album!.description!.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 4),
-                        child: Row(
-                          children: [
-                            ..._album!.participants
-                                .where((p) => p.status == 'ACCEPTED')
-                                .take(5)
-                                .map((p) => Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 4),
-                                      child: CircleAvatar(
-                                        radius: 14,
-                                        backgroundImage: p.userAvatarUrl !=
-                                                    null &&
-                                                p.userAvatarUrl!.isNotEmpty
-                                            ? NetworkImage(
-                                                p.userAvatarUrl!)
-                                            : null,
-                                        child: p.userAvatarUrl == null ||
-                                                p.userAvatarUrl!.isEmpty
-                                            ? Text(
-                                                p.userName?.isNotEmpty ==
-                                                        true
-                                                    ? p.userName![0]
-                                                    : '?',
-                                                style: const TextStyle(
-                                                    fontSize: 10))
-                                            : null,
-                                      ),
-                                    )),
-                            Text(
-                              '${_album!.filesCount} ảnh',
-                              style: TextStyle(
-                                  fontSize: 13, color: Colors.grey[600]),
-                            ),
-                          ],
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Text(
+                          _album!.description!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      // Photo grid
-                      Expanded(
-                        child: _photos.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.photo_library_outlined,
-                                        size: 64, color: Colors.grey[400]),
-                                    const SizedBox(height: 12),
-                                    Text('Chưa có ảnh nào',
-                                        style: TextStyle(
-                                            color: Colors.grey[600])),
-                                  ],
-                                ),
-                              )
-                            : GridView.builder(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 4,
-                                  mainAxisSpacing: 4,
-                                ),
-                                itemCount: _photos.length,
-                                itemBuilder: (context, index) {
-                                  final photo = _photos[index];
-                                  final url = photo.filePath ?? '';
-                                  return ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.circular(8),
-                                    child: Image.network(
-                                      url,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
-                                          Container(
-                                        color: Colors.grey[200],
-                                        child: const Icon(Icons.image,
-                                            color: Colors.grey),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                    // Participant avatars row
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
                       ),
-                    ],
-                  ),
+                      child: Row(
+                        children: [
+                          ..._album!.participants
+                              .where((p) => p.status == 'ACCEPTED')
+                              .take(5)
+                              .map(
+                                (p) => Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: CircleAvatar(
+                                    radius: 14,
+                                    backgroundImage:
+                                        p.userAvatarUrl != null &&
+                                            p.userAvatarUrl!.isNotEmpty
+                                        ? NetworkImage(p.userAvatarUrl!)
+                                        : null,
+                                    child:
+                                        p.userAvatarUrl == null ||
+                                            p.userAvatarUrl!.isEmpty
+                                        ? Text(
+                                            p.userName?.isNotEmpty == true
+                                                ? p.userName![0]
+                                                : '?',
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                            ),
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                          Text(
+                            '${_album!.filesCount} ảnh',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Photo grid
+                    Expanded(
+                      child: _photos.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.photo_library_outlined,
+                                    size: 64,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'Chưa có ảnh nào',
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : GridView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 4,
+                                    mainAxisSpacing: 4,
+                                  ),
+                              itemCount: _photos.length,
+                              itemBuilder: (context, index) {
+                                final photo = _photos[index];
+                                final url = photo.filePath ?? '';
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: _buildPhotoImage(url),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+        ),
       ),
-    ),
     );
   }
+}
+
+Widget _buildPhotoImage(String url) {
+  final errorWidget = Container(
+    color: Colors.grey[200],
+    child: const Icon(Icons.image, color: Colors.grey),
+  );
+
+  if (url.isEmpty) return errorWidget;
+
+  if (url.startsWith('/')) {
+    return Image.file(
+      File(url),
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => errorWidget,
+    );
+  }
+
+  if (url.startsWith('file://')) {
+    final path = url.replaceFirst('file://', '');
+    return Image.file(
+      File(path),
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => errorWidget,
+    );
+  }
+
+  return Image.network(
+    url,
+    fit: BoxFit.cover,
+    errorBuilder: (_, __, ___) => errorWidget,
+  );
 }

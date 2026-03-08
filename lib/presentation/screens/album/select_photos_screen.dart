@@ -90,94 +90,95 @@ class _SelectPhotosScreenState extends State<SelectPhotosScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Colors.brown))
+          ? const Center(child: CircularProgressIndicator(color: Colors.brown))
           : _photos.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.photo_library_outlined,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Không có ảnh nào để thêm',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            )
+          : GridView.builder(
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4,
+              ),
+              itemCount: _photos.length,
+              itemBuilder: (context, index) {
+                final photo = _photos[index];
+                final isSelected = _selectedIds.contains(photo.id);
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        _selectedIds.remove(photo.id);
+                      } else {
+                        _selectedIds.add(photo.id);
+                      }
+                    });
+                  },
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Icon(Icons.photo_library_outlined,
-                          size: 64, color: Colors.grey[400]),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Không có ảnh nào để thêm',
-                        style: TextStyle(color: Colors.grey[600]),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          photo.filePath ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.image, color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.brown.withValues(alpha: 0.3),
+                            border: Border.all(color: Colors.brown, width: 3),
+                          ),
+                        ),
+                      Positioned(
+                        top: 6,
+                        right: 6,
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected
+                                ? Colors.brown
+                                : Colors.black.withValues(alpha: 0.3),
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 14,
+                                )
+                              : null,
+                        ),
                       ),
                     ],
                   ),
-                )
-              : GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 4,
-                    mainAxisSpacing: 4,
-                  ),
-                  itemCount: _photos.length,
-                  itemBuilder: (context, index) {
-                    final photo = _photos[index];
-                    final isSelected = _selectedIds.contains(photo.id);
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _selectedIds.remove(photo.id);
-                          } else {
-                            _selectedIds.add(photo.id);
-                          }
-                        });
-                      },
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              photo.filePath ?? '',
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.image,
-                                    color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                          if (isSelected)
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.brown.withValues(alpha: 0.3),
-                                border: Border.all(
-                                    color: Colors.brown, width: 3),
-                              ),
-                            ),
-                          Positioned(
-                            top: 6,
-                            right: 6,
-                            child: Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isSelected
-                                    ? Colors.brown
-                                    : Colors.black.withValues(alpha: 0.3),
-                                border: Border.all(
-                                    color: Colors.white, width: 2),
-                              ),
-                              child: isSelected
-                                  ? const Icon(Icons.check,
-                                      color: Colors.white, size: 14)
-                                  : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                );
+              },
+            ),
     );
   }
 }
