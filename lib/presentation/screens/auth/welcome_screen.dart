@@ -24,7 +24,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     if (result.success) {
       Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
     } else {
-      SnackBarHelper.showError(context, result.errorMessage ?? 'Đăng nhập Google thất bại');
+      SnackBarHelper.showError(
+        context,
+        result.errorMessage ?? 'Đăng nhập Google thất bại',
+      );
     }
   }
 
