@@ -10,6 +10,7 @@ import '../animations/camera_transition_controller.dart';
 import '../routes/camera_page_route.dart';
 import '../../data/local/storage_service.dart';
 import '../../data/data_sources/remote/notification_service.dart';
+import '../widgets/ai_bubble/ai_floating_bubble.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -119,6 +120,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               child: screens[currentIndex],
             ),
           ),
+          const AiFloatingBubble(),
           Positioned(
             bottom: 0,
             left: 0,
