@@ -155,7 +155,10 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Cập nhật thông tin thành công')),
           );
+          // Immediate callback để trigger local refresh trước khi close
           widget.onProfileUpdated?.call();
+          // Delay nhẹ để UI có thời gian update
+          await Future.delayed(const Duration(milliseconds: 100));
           Navigator.of(context).pop();
         }
       }

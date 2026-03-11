@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../domain/entities/user_profile.dart';
+import '../../../widgets/universal_avatar.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserProfile user;
@@ -10,26 +11,10 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Avatar
-        Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFFFCBA03), width: 6),
-          ),
-          child: ClipOval(
-            child: Image.network(
-              user.avatarUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.person, size: 60),
-                );
-              },
-            ),
-          ),
+        // Avatar với Universal Avatar Widget
+        UniversalAvatar.large(
+          avatarUrl: user.avatarUrl,
+          fallbackText: user.name,
         ),
         const SizedBox(height: 16),
         // Name

@@ -4,6 +4,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'storage_service.dart';
 import '../data_sources/remote/auth_service.dart';
 import '../data_sources/remote/user_service.dart';
+import '../data_sources/remote/photo_service.dart';
+import '../data_sources/remote/friendship_service.dart';
 import '../../domain/entities/user_profile.dart';
 
 class AuthResult {
@@ -22,6 +24,8 @@ class UserManager {
   final _storage = StorageService.instance;
   final _authService = AuthService.instance;
   final _userService = UserService.instance;
+  final _photoService = PhotoService.instance;
+  final _friendshipService = FriendshipService.instance;
 
   /// Login user via BE API
   Future<AuthResult> login({
@@ -315,5 +319,54 @@ class UserManager {
     } catch (e) {
       return null;
     }
+  }
+
+  /// Fetch fresh profile with real counts from backend APIs
+  Future<UserProfile?> fetchProfileWithRealCounts() async {
+    try {
+      final userId = _storage.userId;
+      if (userId == null || userId.isEmpty) return null;
+
+      debugPrint('🔄 Fetching profile with real counts for user: $userId');
+
+      // Try to fetch all data in parallel for better performance
+      try {
+        final futures = await Future.wait([
+          _userService.getUserById(userId),
+          _photoService.getPhotoCountByUserId(userId),
+          _friendshipService.getFriendsCount(userId),
+        ]);
+
+        final userDto = futures[0] as dynamic;
+        final photosCount = futures[1] as int;
+        final friendsCount = futures[2] as int;
+
+        debugPrint('📊 Real counts - Photos: $photosCount, Friends: $friendsCount');
+
+        // Update local storage with real counts
+        final updatedProfile = userDto.toStorageMap();
+        updatedProfile['photosCount'] = photosCount;
+        updatedProfile['friendsCount'] = friendsCount;
+
+        await _storage.saveUserProfile(updatedProfile);
+        return toUserProfile();
+      } catch (countingError) {
+        debugPrint('⚠️ Counting APIs failed: $countingError');
+
+        // Try to at least get user profile without counts
+        final userDto = await _userService.getUserById(userId);
+        await _storage.saveUserProfile(userDto.toStorageMap());
+        return toUserProfile();
+      }
+    } catch (e) {
+      debugPrint('❌ Error fetching profile with real counts: $e');
+      // Fallback to normal fetch
+      return await fetchAndUpdateProfile();
+    }
+  }
+
+  /// Force refresh profile data with real backend counts
+  Future<void> refreshProfileCounts() async {
+    await fetchProfileWithRealCounts();
   }
 }

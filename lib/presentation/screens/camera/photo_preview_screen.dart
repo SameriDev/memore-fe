@@ -73,6 +73,8 @@ class _PhotoPreviewScreenState extends State<PhotoPreviewScreen> {
 
       // Update user photo count
       await UserManager.instance.incrementPhotoCount();
+      // Refresh real counts from backend (includes streak update)
+      await UserManager.instance.refreshProfileCounts();
 
       if (photoId != null) {
         // Fire-and-forget upload to server

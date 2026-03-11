@@ -5,6 +5,7 @@ import '../../../data/data_sources/remote/friendship_service.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/models/user_dto.dart';
 import '../../widgets/decorated_background.dart';
+import '../../widgets/universal_avatar.dart';
 import 'pending_requests_screen.dart';
 
 class AddFriendScreen extends StatefulWidget {
@@ -148,10 +149,9 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                             final user = _results[index];
                             final isSent = _sentIds.contains(user.id);
                             return ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  user.avatarUrl ?? 'https://i.pravatar.cc/150?u=${user.id}',
-                                ),
+                              leading: UniversalAvatar.medium(
+                                avatarUrl: user.avatarUrl,
+                                fallbackText: user.name,
                               ),
                               title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.w600)),
                               subtitle: Text('@${user.username}', style: const TextStyle(color: Colors.black54)),

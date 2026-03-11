@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../widgets/universal_avatar.dart';
 
 class TimelineHeader extends StatelessWidget {
   final String name;
@@ -26,29 +27,13 @@ class TimelineHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          // Avatar với viền vàng
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFFD4AF37), // Màu vàng gold
-                width: 4,
-              ),
-            ),
-            child: ClipOval(
-              child: Image.network(
-                avatarUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.person, size: 50),
-                  );
-                },
-              ),
-            ),
+          // Avatar với viền vàng bằng Universal Avatar Widget
+          UniversalAvatar(
+            avatarUrl: avatarUrl,
+            radius: 50.0, // 100/2
+            borderColor: const Color(0xFFD4AF37), // Màu vàng gold
+            borderWidth: 4.0,
+            fallbackText: name,
           ),
           const SizedBox(width: 16),
           // Thông tin người dùng

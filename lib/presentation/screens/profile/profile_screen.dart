@@ -32,11 +32,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => user = localProfile);
     }
 
-    // Fetch fresh data from API
-    UserManager.instance.fetchAndUpdateProfile().then((freshProfile) {
-      if (freshProfile != null && mounted) {
-        setState(() => user = freshProfile);
-      }
+    // Delay API fetch để cho local changes time to settle, use real counts
+    Future.delayed(const Duration(milliseconds: 500), () {
+      UserManager.instance.fetchProfileWithRealCounts().then((freshProfile) {
+        if (freshProfile != null && mounted) {
+          setState(() => user = freshProfile);
+        }
+      });
     });
   }
 

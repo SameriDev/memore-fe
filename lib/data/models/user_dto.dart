@@ -57,6 +57,9 @@ class UserDto {
       'username': username,
       'email': email,
       'avatarUrl': avatarUrl ?? '',
+      'birthday': birthday, // Fix: Thêm birthday field
+      'badgeLevel': badgeLevel ?? 'BRONZE', // Fix: Thêm badgeLevel
+      'streakCount': streakCount ?? 0, // Fix: Thêm streakCount
       'bio': '',
       'friendsCount': friendsCount ?? 0,
       'photosCount': imagesCount ?? 0,

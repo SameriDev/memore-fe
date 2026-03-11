@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../domain/entities/story.dart';
 import '../../core/constants/app_dimensions.dart';
 
@@ -105,9 +107,7 @@ class _StoryAvatar extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(1.5),
               child: CircleAvatar(
-                backgroundImage: story.userAvatar.isNotEmpty
-                    ? NetworkImage(story.userAvatar)
-                    : null,
+                backgroundImage: _getAvatarImageProvider(story.userAvatar, story.userName),
                 child: story.userAvatar.isEmpty
                     ? const Icon(Icons.person, size: 20)
                     : null,
@@ -128,5 +128,26 @@ class _StoryAvatar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  ImageProvider<Object>? _getAvatarImageProvider(String? avatarUrl, String userName) {
+    if (avatarUrl == null || avatarUrl.isEmpty) return null;
+
+    // Check if it's a local file path
+    if (avatarUrl.startsWith('/') ||
+        avatarUrl.startsWith('file:') ||
+        avatarUrl.contains('\\') || // Windows paths
+        File(avatarUrl).existsSync()) {
+      return FileImage(File(avatarUrl));
+    }
+
+    // Check if it's a valid network URL
+    if (avatarUrl.startsWith('http://') ||
+        avatarUrl.startsWith('https://') ||
+        avatarUrl.startsWith('www.')) {
+      return CachedNetworkImageProvider(avatarUrl);
+    }
+
+    return null;
   }
 }

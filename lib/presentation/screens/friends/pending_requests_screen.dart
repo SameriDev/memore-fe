@@ -4,6 +4,7 @@ import '../../../data/data_sources/remote/friendship_service.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/models/friendship_dto.dart';
 import '../../widgets/decorated_background.dart';
+import '../../widgets/universal_avatar.dart';
 
 class PendingRequestsScreen extends StatefulWidget {
   const PendingRequestsScreen({super.key});
@@ -144,11 +145,9 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    CircleAvatar(
-                                      radius: 24,
-                                      backgroundImage: NetworkImage(
-                                        'https://i.pravatar.cc/150?u=$senderId',
-                                      ),
+                                    UniversalAvatar.medium(
+                                      avatarUrl: dto.userAvatarUrl,
+                                      fallbackText: dto.userName,
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(

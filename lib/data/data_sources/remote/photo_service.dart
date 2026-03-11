@@ -162,4 +162,15 @@ class PhotoService {
       return null;
     }
   }
+
+  /// Get photo count for a user (for real-time counting)
+  Future<int> getPhotoCountByUserId(String userId) async {
+    try {
+      final response = await _dio.get('/api/photos/count/user/$userId');
+      return response.data as int;
+    } on DioException catch (e) {
+      debugPrint('Get photo count error: ${e.message}');
+      return 0;
+    }
+  }
 }

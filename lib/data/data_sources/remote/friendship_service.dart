@@ -91,4 +91,15 @@ class FriendshipService {
       return null;
     }
   }
+
+  /// Get friends count for a user (for real-time counting)
+  Future<int> getFriendsCount(String userId) async {
+    try {
+      final response = await _dio.get('/api/friendships/count/$userId');
+      return response.data as int;
+    } on DioException catch (e) {
+      debugPrint('Get friends count error: ${e.message}');
+      return 0;
+    }
+  }
 }

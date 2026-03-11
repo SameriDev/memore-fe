@@ -192,6 +192,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
       if (photoId != null) {
         await UserManager.instance.incrementPhotoCount();
+        // Refresh real counts from backend (includes streak update)
+        await UserManager.instance.refreshProfileCounts();
 
         final userId = StorageService.instance.userId;
         if (userId != null) {

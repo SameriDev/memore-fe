@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../domain/entities/friend.dart';
+import '../../../widgets/universal_avatar.dart';
 
 class FriendGridItem extends StatelessWidget {
   final Friend friend;
@@ -14,28 +15,13 @@ class FriendGridItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Avatar
-          Container(
-            width: 68,
-            height: 68,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: friend.isOnline
-                  ? Border.all(color: const Color(0xFF4A90E2), width: 2)
-                  : null,
-            ),
-            child: ClipOval(
-              child: Image.network(
-                friend.avatarUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.person, size: 40),
-                  );
-                },
-              ),
-            ),
+          // Avatar với Universal Avatar Widget
+          UniversalAvatar(
+            avatarUrl: friend.avatarUrl,
+            radius: 34.0, // 68/2
+            borderColor: friend.isOnline ? const Color(0xFF4A90E2) : null,
+            borderWidth: friend.isOnline ? 2.0 : 0.0,
+            fallbackText: friend.name,
           ),
           const SizedBox(height: 6),
           // Name

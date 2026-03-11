@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/entities/friend.dart';
+import 'universal_avatar.dart';
 
 class FriendListItem extends StatelessWidget {
   final Friend friend;
@@ -24,53 +25,14 @@ class FriendListItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
-            // Avatar
-            Stack(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: friend.isOnline
-                          ? const Color(0xFF4A90E2)
-                          : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                  child: ClipOval(
-                    child: Image.network(
-                      friend.avatarUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.person, size: 30),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                // Online status indicator
-                if (friend.isOnline)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4CAF50),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFFF4F2F0),
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+            // Avatar với Universal Avatar Widget
+            UniversalAvatar.medium(
+              avatarUrl: friend.avatarUrl,
+              showOnlineStatus: true,
+              isOnline: friend.isOnline,
+              borderColor: friend.isOnline ? const Color(0xFF4A90E2) : null,
+              fallbackText: friend.name,
+              onTap: onTap,
             ),
             const SizedBox(width: 12),
             // Name and Status

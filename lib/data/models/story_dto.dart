@@ -63,7 +63,7 @@ class StoryDto {
     return Story(
       id: id,
       userId: userId ?? '',
-      userAvatar: userAvatarUrl ?? 'https://i.pravatar.cc/150?u=$userId',
+      userAvatar: userAvatarUrl ?? '', // Let UniversalAvatar handle fallback
       userName: userName ?? 'Unknown',
       photoUrl: photoUrl,
       content: content,
