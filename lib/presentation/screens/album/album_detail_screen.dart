@@ -11,6 +11,7 @@ import '../../../data/models/album_dto.dart';
 import '../../../data/models/album_participant_dto.dart';
 import '../../../data/models/photo_dto.dart';
 import '../../widgets/decorated_background.dart';
+import '../../widgets/optimized_cached_image.dart';
 import 'select_photos_screen.dart';
 
 class AlbumDetailScreen extends StatefulWidget {
@@ -443,33 +444,16 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 }
 
 Widget _buildPhotoImage(String url) {
-  final errorWidget = Container(
-    color: Colors.grey[200],
-    child: const Icon(Icons.image, color: Colors.grey),
-  );
-
-  if (url.isEmpty) return errorWidget;
-
-  if (url.startsWith('/')) {
-    return Image.file(
-      File(url),
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => errorWidget,
+  // Use OptimizedCachedImage for consistent handling of both local and network images
+  if (url.isEmpty) {
+    return Container(
+      color: Colors.grey[200],
+      child: const Icon(Icons.image, color: Colors.grey),
     );
   }
 
-  if (url.startsWith('file://')) {
-    final path = url.replaceFirst('file://', '');
-    return Image.file(
-      File(path),
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => errorWidget,
-    );
-  }
-
-  return Image.network(
-    url,
-    fit: BoxFit.cover,
-    errorBuilder: (_, __, ___) => errorWidget,
+  return OptimizedCachedImage.timeline(
+    imageUrl: url,
+    borderRadius: BorderRadius.circular(8),
   );
 }

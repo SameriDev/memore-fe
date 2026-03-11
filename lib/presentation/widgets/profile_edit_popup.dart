@@ -202,9 +202,10 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
       title: 'Chỉnh sửa thông tin',
       content: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             // Profile Image Section
             GestureDetector(
               onTap: _pickProfileImage,
@@ -329,6 +330,7 @@ class _ProfileEditPopupState extends State<ProfileEditPopup> {
               ),
             ),
           ],
+          ),
         ),
       ),
       actions: [

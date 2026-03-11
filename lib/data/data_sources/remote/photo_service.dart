@@ -18,6 +18,7 @@ class PhotoService {
     required String localFilePath,
     required String userId,
     String? caption,
+    ProgressCallback? onProgress,
   }) async {
     try {
       // Step 1: Upload file to R2 storage
@@ -35,6 +36,7 @@ class PhotoService {
         '/api/photos/storage/upload',
         data: formData,
         queryParameters: {'key': s3Key},
+        onSendProgress: onProgress,
         options: Options(
           contentType: 'multipart/form-data',
         ),

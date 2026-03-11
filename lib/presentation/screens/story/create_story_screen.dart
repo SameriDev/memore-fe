@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/local/storage_service.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
 import '../../../data/data_sources/remote/story_service.dart';
+import '../../widgets/optimized_cached_image.dart';
 
 class CreateStoryScreen extends StatefulWidget {
   const CreateStoryScreen({super.key});
@@ -19,6 +20,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
   final _picker = ImagePicker();
   String? _selectedImagePath;
   bool _isPosting = false;
+  double _uploadProgress = 0.0;
 
   Future<void> _pickFromCamera() async {
     final image = await _picker.pickImage(source: ImageSource.camera);
@@ -40,7 +42,10 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
     final userId = StorageService.instance.userId;
     if (userId == null) return;
 
-    setState(() => _isPosting = true);
+    setState(() {
+      _isPosting = true;
+      _uploadProgress = 0.0;
+    });
 
     try {
       // Upload photo first
@@ -48,6 +53,13 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
         localFilePath: _selectedImagePath!,
         userId: userId,
         caption: _captionController.text.trim(),
+        onProgress: (sent, total) {
+          if (mounted) {
+            setState(() {
+              _uploadProgress = sent / total;
+            });
+          }
+        },
       );
 
       if (photo == null) {
@@ -68,6 +80,16 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
 
       if (mounted) {
         if (story != null) {
+          // NEW: Preload the just-created story image for instant viewing
+          if (story.photoUrl?.isNotEmpty == true) {
+            try {
+              OptimizedCachedImage.preloadBatch(context, [story.photoUrl!]);
+              debugPrint('Story image preloaded successfully: ${story.photoUrl}');
+            } catch (e) {
+              debugPrint('Story creation preload error: $e');
+            }
+          }
+
           SnackBarHelper.showSuccess(context, 'Đã đăng story!');
           Navigator.of(context).pop(true);
         } else {
@@ -80,7 +102,12 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
         SnackBarHelper.showError(context, 'Có lỗi xảy ra');
       }
     } finally {
-      if (mounted) setState(() => _isPosting = false);
+      if (mounted) {
+        setState(() {
+          _isPosting = false;
+          _uploadProgress = 0.0;
+        });
+      }
     }
   }
 
@@ -219,10 +246,23 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: _isPosting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_uploadProgress > 0)
+                              LinearProgressIndicator(
+                                value: _uploadProgress,
+                                backgroundColor: Colors.white30,
+                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            if (_uploadProgress > 0) const SizedBox(height: 4),
+                            Text(
+                              _uploadProgress > 0
+                                  ? 'Đang tải lên... ${(_uploadProgress * 100).toInt()}%'
+                                  : 'Đang xử lý...',
+                              style: const TextStyle(fontSize: 12, color: Colors.white),
+                            ),
+                          ],
                         )
                       : const Text('Đăng Story', style: TextStyle(fontWeight: FontWeight.w600)),
                 ),

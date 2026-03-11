@@ -15,6 +15,7 @@ import '../../widgets/album_header.dart';
 import '../../widgets/filter_section.dart';
 import '../../widgets/album_card.dart';
 import '../../widgets/decorated_background.dart';
+import '../../widgets/optimized_cached_image.dart';
 import '../album/create_album_screen.dart';
 import '../album/album_detail_screen.dart';
 import '../album/album_invites_screen.dart';
@@ -86,6 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _allStoryDtos = storyDtos;
         stories = [addStory, ...groupedStories];
         albums = albumDtos.map((dto) => (dto as dynamic).toEntity() as Album).toList();
+
+        // NEW: Trigger background preloading after UI updates
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _preloadTimelineStories();
+        });
       });
     } catch (e) {
       debugPrint('Load stories/albums error: $e');
@@ -165,6 +171,26 @@ class _HomeScreenState extends State<HomeScreen> {
     final invites = await AlbumService.instance.getPendingInvites(userId);
     if (mounted) {
       setState(() => _pendingInviteCount = invites.length);
+    }
+  }
+
+  /// Preload images from the most recent stories for instant viewing
+  void _preloadTimelineStories() {
+    if (!mounted) return;
+
+    final recentStories = stories
+        .where((s) => !s.isAddButton && s.photoUrl?.isNotEmpty == true)
+        .take(5)
+        .toList();
+
+    if (recentStories.isNotEmpty) {
+      final urls = recentStories.map((s) => s.photoUrl!).toList();
+      try {
+        OptimizedCachedImage.preloadBatch(context, urls);
+        debugPrint('Timeline stories preloaded: ${urls.length} images');
+      } catch (e) {
+        debugPrint('Timeline preload error: $e');
+      }
     }
   }
 

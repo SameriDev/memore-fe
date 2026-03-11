@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../domain/entities/story.dart';
 import '../../../data/data_sources/remote/story_service.dart';
+import '../../widgets/optimized_cached_image.dart';
 
 
 class StoryViewerScreen extends StatefulWidget {
@@ -31,7 +33,47 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
       vsync: this,
       duration: _storyDuration,
     );
+
+    // Use addPostFrameCallback to preload images after widget is fully built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preloadStoryImages();
+    });
+
     _startStory();
+  }
+
+  /// Preload story images for smooth viewing experience
+  void _preloadStoryImages() {
+    // Safety check: ensure widget is still mounted
+    if (!mounted) return;
+
+    List<String> urlsToPreload = [];
+
+    // Collect current and next 2 stories
+    for (int i = _currentIndex; i < widget.stories.length && i <= _currentIndex + 2; i++) {
+      final story = widget.stories[i];
+      if (story.photoUrl != null && story.photoUrl!.isNotEmpty) {
+        urlsToPreload.add(story.photoUrl!);
+      }
+    }
+
+    // Add previous story if exists
+    if (_currentIndex > 0) {
+      final prevStory = widget.stories[_currentIndex - 1];
+      if (prevStory.photoUrl != null && prevStory.photoUrl!.isNotEmpty) {
+        urlsToPreload.add(prevStory.photoUrl!);
+      }
+    }
+
+    // Batch preload using optimized method only if we have URLs and context is mounted
+    if (urlsToPreload.isNotEmpty && mounted) {
+      try {
+        OptimizedCachedImage.preloadBatch(context, urlsToPreload);
+      } catch (e) {
+        // Silently handle preload errors to not crash the app
+        debugPrint('Story preload error: $e');
+      }
+    }
   }
 
   void _startStory() {
@@ -55,6 +97,12 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
     if (_currentIndex < widget.stories.length - 1) {
       setState(() => _currentIndex++);
       _progressController.removeStatusListener(_onProgressComplete);
+
+      // Safely preload next images after frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _preloadStoryImages();
+      });
+
       _startStory();
     } else {
       Navigator.of(context).pop();
@@ -65,6 +113,12 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
     if (_currentIndex > 0) {
       setState(() => _currentIndex--);
       _progressController.removeStatusListener(_onProgressComplete);
+
+      // Safely preload images after frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _preloadStoryImages();
+      });
+
       _startStory();
     }
   }
@@ -112,14 +166,11 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Story image
+            // Story image with optimized caching
             if (story.photoUrl != null && story.photoUrl!.isNotEmpty)
-              Image.network(
-                story.photoUrl!,
+              OptimizedCachedImage.story(
+                imageUrl: story.photoUrl!,
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Center(
-                  child: Icon(Icons.image_not_supported, color: Colors.white54, size: 64),
-                ),
               )
             else
               Center(
@@ -195,15 +246,18 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
               right: 16,
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundImage: story.userAvatar.isNotEmpty
-                        ? NetworkImage(story.userAvatar)
-                        : null,
-                    child: story.userAvatar.isEmpty
-                        ? const Icon(Icons.person, size: 18)
-                        : null,
-                  ),
+                  story.userAvatar.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(18),
+                          child: OptimizedCachedImage.avatar(
+                            imageUrl: story.userAvatar,
+                            size: 36,
+                          ),
+                        )
+                      : const CircleAvatar(
+                          radius: 18,
+                          child: Icon(Icons.person, size: 18),
+                        ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(

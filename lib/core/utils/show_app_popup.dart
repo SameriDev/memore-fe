@@ -55,7 +55,7 @@ class _AppPopupOverlay extends AnimatedWidget {
         AnimatedPadding(
           duration: const Duration(milliseconds: 100),
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom / 2,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Center(
             child: Opacity(

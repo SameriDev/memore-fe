@@ -1,7 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../domain/entities/album.dart';
 import '../../core/constants/app_dimensions.dart';
+import 'optimized_cached_image.dart';
 
 class AlbumCard extends StatelessWidget {
   final Album album;
@@ -144,41 +144,19 @@ class AlbumCard extends StatelessWidget {
 }
 
 Widget _buildCoverImage(String imageUrl) {
-  final errorWidget = Container(
-    color: Colors.grey[200],
-    child: const Icon(Icons.image, size: 48, color: Colors.grey),
-  );
-
-  if (imageUrl.isEmpty) return errorWidget;
-
-  // Local file path: bắt đầu bằng '/' hoặc có prefix 'file://'
-  if (imageUrl.startsWith('/')) {
-    return Image.file(
-      File(imageUrl),
-      width: double.infinity,
-      height: double.infinity,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => errorWidget,
+  // Use OptimizedCachedImage for consistent handling of both local and network images
+  if (imageUrl.isEmpty) {
+    return Container(
+      color: Colors.grey[200],
+      child: const Icon(Icons.image, size: 48, color: Colors.grey),
     );
   }
 
-  if (imageUrl.startsWith('file://')) {
-    final path = imageUrl.replaceFirst('file://', '');
-    return Image.file(
-      File(path),
-      width: double.infinity,
-      height: double.infinity,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => errorWidget,
-    );
-  }
-
-  return Image.network(
-    imageUrl,
+  return OptimizedCachedImage.timeline(
+    imageUrl: imageUrl,
     width: double.infinity,
     height: double.infinity,
-    fit: BoxFit.cover,
-    errorBuilder: (_, __, ___) => errorWidget,
+    borderRadius: BorderRadius.circular(AppDimensions.albumCardRadius),
   );
 }
 
@@ -214,9 +192,12 @@ class _ParticipantAvatars extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
-                child: CircleAvatar(
-                  radius: AppDimensions.participantAvatarSize / 2,
-                  backgroundImage: NetworkImage(avatars[i]),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppDimensions.participantAvatarSize / 2),
+                  child: OptimizedCachedImage.avatar(
+                    imageUrl: avatars[i],
+                    size: AppDimensions.participantAvatarSize,
+                  ),
                 ),
               ),
             ),
