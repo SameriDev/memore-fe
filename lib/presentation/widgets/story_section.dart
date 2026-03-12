@@ -21,7 +21,7 @@ class StorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppDimensions.storyAvatarSize + 28,
+      height: AppDimensions.storyAvatarSize + 48,
       child: Stack(
         children: [
           ListView.separated(
@@ -66,6 +66,7 @@ class _StoryAvatar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(height: 20),
             Container(
               width: AppDimensions.storyAvatarSize,
               height: AppDimensions.storyAvatarSize,

@@ -22,12 +22,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90,
+      height: 102,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Positioned(
-            bottom: 8,
+            bottom: 20,
             left: 12,
             right: 12,
             child: Stack(

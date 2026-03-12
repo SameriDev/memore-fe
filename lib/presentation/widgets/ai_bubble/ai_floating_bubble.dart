@@ -9,7 +9,7 @@ class AiFloatingBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       right: 16,
-      bottom: 90,
+      bottom: 120,
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(
