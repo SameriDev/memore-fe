@@ -45,7 +45,12 @@ class SnackBarHelper {
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 100, // Đẩy lên cao hơn để tránh thanh navigation
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

@@ -24,7 +24,8 @@
       "Bash(flutter build apk --debug --suppress-analytics)",
       "Bash(flutter build apk --debug)",
       "Bash(flutter build apk --debug --target-platform android-arm64)",
-      "Bash(flutter analyze lib/presentation/screens/camera/ --suppress-analytics)"
+      "Bash(flutter analyze lib/presentation/screens/camera/ --suppress-analytics)",
+      "Bash(dir \"D:\\\\memore\\\\memore-fe\\\\lib\\\\presentation\\\\screens\" /B)"
     ]
   }
 }
