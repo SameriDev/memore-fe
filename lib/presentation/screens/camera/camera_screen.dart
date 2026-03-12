@@ -270,56 +270,13 @@ class _CameraScreenState extends State<CameraScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            SingleChildScrollView(
-              physics: isKeyboardVisible ? const ClampingScrollPhysics() : const NeverScrollableScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
-                ),
-                child: IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 60),
-
-                      CameraViewfinder(
-                        controller: _cameraController,
-                        capturedImagePath: _capturedImagePath,
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Mode selector
-                      if (_currentMode == CameraMode.capture)
-                        CameraModeSelector(
-                          isPanoramaMode: false,
-                          onModeChanged: _onModeChanged,
-                        ),
-
-                      const Spacer(),
-
-                      Padding(
-                        padding: EdgeInsets.only(bottom: isKeyboardVisible ? keyboardHeight + 16 : 0),
-                        child: CameraControls(
-                          isFlashOn: _isFlashOn,
-                          onFlashToggle: _toggleFlash,
-                          onCapture: _currentMode == CameraMode.capture
-                              ? _capturePhoto
-                              : _confirmPhoto,
-                          onFlipCamera: _currentMode == CameraMode.capture
-                            ? _flipCamera
-                            : _cancelPreview,
-                          mode: _currentMode,
-                          isProcessing: _isProcessing,
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-              ),
+            // Full-screen viewfinder background
+            CameraViewfinder(
+              controller: _cameraController,
+              capturedImagePath: _capturedImagePath,
             ),
 
+            // Close button (existing position)
             Positioned(
               top: 20,
               left: 20,
@@ -337,6 +294,40 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
             ),
 
+            // Mode selector (ngang hàng với nút X)
+            if (_currentMode == CameraMode.capture)
+              Positioned(
+                top: 20,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: CameraModeSelector(
+                    isPanoramaMode: false,
+                    onModeChanged: _onModeChanged,
+                  ),
+                ),
+              ),
+
+            // Bottom controls (repositioned)
+            Positioned(
+              bottom: 24 + MediaQuery.of(context).padding.bottom + (isKeyboardVisible ? keyboardHeight : 0),
+              left: 0,
+              right: 0,
+              child: CameraControls(
+                isFlashOn: _isFlashOn,
+                onFlashToggle: _toggleFlash,
+                onCapture: _currentMode == CameraMode.capture
+                    ? _capturePhoto
+                    : _confirmPhoto,
+                onFlipCamera: _currentMode == CameraMode.capture
+                  ? _flipCamera
+                  : _cancelPreview,
+                mode: _currentMode,
+                isProcessing: _isProcessing,
+              ),
+            ),
+
+            // Loading overlay (existing)
             if (_isProcessing)
               Positioned.fill(
                 child: Container(

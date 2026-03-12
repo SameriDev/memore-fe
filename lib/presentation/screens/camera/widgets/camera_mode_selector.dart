@@ -16,12 +16,12 @@ class CameraModeSelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadowColor,
-            blurRadius: 8,
+            blurRadius: 12,
             offset: Offset(0, 2),
           ),
         ],
