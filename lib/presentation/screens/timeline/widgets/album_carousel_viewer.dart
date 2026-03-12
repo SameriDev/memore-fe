@@ -2,17 +2,24 @@ import 'dart:async';
 import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../../../data/models/photo_dto.dart';
+import '../../../widgets/ai_bubble/ai_chat_panel.dart';
+import '../../camera/panorama_preview_screen.dart';
 
 class AlbumCarouselViewer extends StatefulWidget {
   final List<String> images;
   final int initialIndex;
   final VoidCallback onClose;
+  final List<String> photoIds;
+  final List<String> photoSources;
 
   const AlbumCarouselViewer({
     super.key,
     required this.images,
     required this.initialIndex,
     required this.onClose,
+    this.photoIds = const [],
+    this.photoSources = const [],
   });
 
   @override
@@ -154,10 +161,57 @@ class _AlbumCarouselViewerState extends State<AlbumCarouselViewer>
     }
   }
 
-  void _handleClose() {
+  void _handleClose({bool result = false}) {
     _fadeController.reverse().then((_) {
       widget.onClose();
     });
+  }
+
+  bool _isPanorama(int index) {
+    if (index < widget.photoSources.length) {
+      return widget.photoSources[index].toUpperCase() == 'PANORAMA';
+    }
+    return false;
+  }
+
+  void _openPanoramaView() {
+    if (_currentIndex >= widget.images.length) return;
+
+    final photoId = _currentIndex < widget.photoIds.length
+        ? widget.photoIds[_currentIndex]
+        : '';
+    final photoUrl = widget.images[_currentIndex];
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PanoramaPreviewScreen(
+          photoDto: PhotoDto(
+            id: photoId,
+            filePath: photoUrl,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openAiEdit() async {
+    if (_currentIndex >= widget.photoIds.length) return;
+
+    final photoId = widget.photoIds[_currentIndex];
+    final photoUrl = widget.images[_currentIndex];
+
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => AiChatPanel(
+          initialPhotoId: photoId,
+          initialPhotoUrl: photoUrl,
+        ),
+      ),
+    );
+
+    if (saved == true && mounted) {
+      Navigator.of(context).pop(true);
+    }
   }
 
   @override
@@ -404,6 +458,112 @@ class _AlbumCarouselViewerState extends State<AlbumCarouselViewer>
                                   );
                                 },
                               ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // Action buttons (AI Edit + Panorama 360°)
+                    if (widget.photoIds.isNotEmpty || _isPanorama(_currentIndex))
+                      Positioned(
+                        bottom: 80,
+                        left: 0,
+                        right: 0,
+                        child: AnimatedOpacity(
+                          opacity: _showControls ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 300),
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Panorama 360° button
+                                if (_isPanorama(_currentIndex))
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 12),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: _openPanoramaView,
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.2),
+                                            borderRadius: BorderRadius.circular(25),
+                                            border: Border.all(
+                                              color: Colors.white.withOpacity(0.3),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.threed_rotation,
+                                                color: Colors.white,
+                                                size: 20,
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                'Xem 360°',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                // AI Edit button
+                                if (widget.photoIds.isNotEmpty)
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: _openAiEdit,
+                                      borderRadius: BorderRadius.circular(25),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(25),
+                                          border: Border.all(
+                                            color: Colors.white.withOpacity(0.3),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: const Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.auto_fix_high,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'AI Edit',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ),

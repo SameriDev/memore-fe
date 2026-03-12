@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -25,6 +27,10 @@ class PhotoService {
       final photoName = '${_uuid.v4()}.jpg';
       final s3Key = 'users/$userId/photos/$photoName';
 
+      final file = File(localFilePath);
+      final fileSizeBytes = await file.length();
+      debugPrint('📤 Uploading photo: ${(fileSizeBytes / 1024 / 1024).toStringAsFixed(2)} MB, path: $localFilePath');
+
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(
           localFilePath,
@@ -39,6 +45,8 @@ class PhotoService {
         onSendProgress: onProgress,
         options: Options(
           contentType: 'multipart/form-data',
+          sendTimeout: const Duration(seconds: 300),
+          receiveTimeout: const Duration(seconds: 120),
         ),
       );
 
@@ -63,9 +71,13 @@ class PhotoService {
       return PhotoDto.fromJson(recordResponse.data);
     } on DioException catch (e) {
       debugPrint('Photo upload error: ${e.message}');
+      debugPrint('Photo upload DioExceptionType: ${e.type}');
+      debugPrint('Photo upload inner error: ${e.error}');
+      debugPrint('Photo upload stackTrace: ${e.stackTrace}');
       return null;
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Photo upload error: $e');
+      debugPrint('Photo upload stackTrace: $stackTrace');
       return null;
     }
   }
@@ -92,6 +104,8 @@ class PhotoService {
         queryParameters: {'key': s3Key},
         options: Options(
           contentType: 'multipart/form-data',
+          sendTimeout: const Duration(seconds: 300),
+          receiveTimeout: const Duration(seconds: 120),
         ),
       );
 

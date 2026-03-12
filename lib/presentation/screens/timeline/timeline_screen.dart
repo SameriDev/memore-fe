@@ -53,6 +53,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                 'storagePath': dto.filePath ?? '',
                 'caption': dto.caption ?? '',
                 'note': dto.note ?? '',
+                'source': dto.source ?? '',
                 'timestamp': createdAt.millisecondsSinceEpoch,
                 'isRemote': true,
               };
@@ -114,6 +115,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
             .where((id) => id.isNotEmpty)
             .toList();
 
+        final photoSources = photosOfDay
+            .map((p) => p['source']?.toString() ?? '')
+            .toList();
+
         realTimelineItems.add(TimelineItemData(
           alignment: alignmentIndex % 2 == 0 ? TimelineAlignment.left : TimelineAlignment.right,
           images: imagePaths,
@@ -126,6 +131,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
           month: _getMonthName(date.month),
           displayDate: '${_getMonthName(date.month)} ${date.year}',
           photoIds: photoIds,
+          photoSources: photoSources,
         ));
 
         alignmentIndex++;
@@ -269,8 +275,8 @@ class _TimelineScreenState extends State<TimelineScreen> {
     );
   }
 
-  void _showAlbumCarousel(List<String> images, int initialIndex) {
-    Navigator.of(context).push(
+  Future<void> _showAlbumCarousel(List<String> images, int initialIndex, {List<String> photoIds = const [], List<String> photoSources = const []}) async {
+    final result = await Navigator.of(context).push<bool>(
       PageRouteBuilder(
         opaque: false,
         barrierColor: Colors.transparent,
@@ -278,6 +284,8 @@ class _TimelineScreenState extends State<TimelineScreen> {
           return AlbumCarouselViewer(
             images: images,
             initialIndex: initialIndex,
+            photoIds: photoIds,
+            photoSources: photoSources,
             onClose: () {
               Navigator.of(context).pop();
             },
@@ -288,6 +296,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
         },
       ),
     );
+
+    if (result == true && mounted) {
+      _loadTimelineData();
+    }
   }
 
   @override
@@ -499,7 +511,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                   month: item.month,
                   config: config,
                   onAlbumTap: item.images.isNotEmpty
-                      ? () => _showAlbumCarousel(item.images, 0)
+                      ? () => _showAlbumCarousel(item.images, 0, photoIds: item.photoIds, photoSources: item.photoSources)
                       : null,
                   onEditNote: () => _showEditNoteSheet(item),
                 ),

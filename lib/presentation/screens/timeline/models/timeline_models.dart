@@ -8,6 +8,7 @@ class TimelineItemData {
   final String month;
   final String displayDate;
   final List<String> photoIds;
+  final List<String> photoSources;
 
   TimelineItemData({
     required this.alignment,
@@ -19,6 +20,7 @@ class TimelineItemData {
     required this.month,
     required this.displayDate,
     this.photoIds = const [],
+    this.photoSources = const [],
   });
 }
 

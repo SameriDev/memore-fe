@@ -13,7 +13,14 @@ import 'widgets/chat_input_bar.dart';
 import 'widgets/suggested_prompt_chips.dart';
 
 class AiChatPanel extends StatefulWidget {
-  const AiChatPanel({super.key});
+  final String? initialPhotoId;
+  final String? initialPhotoUrl;
+
+  const AiChatPanel({
+    super.key,
+    this.initialPhotoId,
+    this.initialPhotoUrl,
+  });
 
   @override
   State<AiChatPanel> createState() => _AiChatPanelState();
@@ -42,11 +49,32 @@ class _AiChatPanelState extends State<AiChatPanel> {
   }
 
   void _addBotGreeting() {
-    _messages.add(ChatMessage(
-      isBot: true,
-      text: 'Chào bạn! Hãy chọn hoặc chụp ảnh để mình chỉnh sửa nhé!',
-      actions: ['Chọn từ thư viện', 'Chụp ảnh mới'],
-    ));
+    if (widget.initialPhotoId != null) {
+      _currentPhotoId = widget.initialPhotoId;
+      _currentPhotoUrl = widget.initialPhotoUrl;
+
+      _messages.add(ChatMessage(
+        isBot: false,
+        imageUrl: widget.initialPhotoUrl,
+      ));
+      _messages.add(ChatMessage(
+        isBot: true,
+        text: 'Bạn muốn chỉnh sửa gì?',
+        actions: [
+          'Làm sáng hơn',
+          'Làm ấm hơn',
+          'Xóa nền',
+          'Thêm hoàng hôn',
+          'Phong cách tranh vẽ',
+        ],
+      ));
+    } else {
+      _messages.add(ChatMessage(
+        isBot: true,
+        text: 'Chào bạn! Hãy chọn hoặc chụp ảnh để mình chỉnh sửa nhé!',
+        actions: ['Chọn từ thư viện', 'Chụp ảnh mới'],
+      ));
+    }
   }
 
   void _scrollToBottom() {
@@ -256,7 +284,7 @@ class _AiChatPanelState extends State<AiChatPanel> {
             backgroundColor: AppColors.success,
           ),
         );
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {
