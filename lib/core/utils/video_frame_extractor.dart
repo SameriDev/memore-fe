@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:ffmpeg_kit_flutter_min/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter_min/ffprobe_kit.dart';
-import 'package:ffmpeg_kit_flutter_min/return_code.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class VideoFrameExtractor {
   /// Tach frames tu video file, tra ve list duong dan anh JPEG.
@@ -15,65 +13,54 @@ class VideoFrameExtractor {
   }) async {
     final outputDir = await _createOutputDir();
 
-    // Lay duration cua video de tinh fps filter
-    final duration = await _getVideoDuration(videoPath);
-    if (duration <= 0) {
-      throw VideoFrameExtractionException('Không thể đọc video. Hãy thử quay lại.');
-    }
+    try {
+      // Sử dụng video_thumbnail để tạo nhiều thumbnail ở các thời điểm khác nhau
+      final frames = <String>[];
 
-    // Tinh fps de lay deu maxFrames tu video
-    // VD: video 10s, maxFrames=12 → fps=1.2
-    final fps = maxFrames / duration;
+      for (var i = 0; i < maxFrames; i++) {
+        // Tính thời điểm để tách frame (phân bố đều trong video)
+        // Ví dụ: video 10s, maxFrames=12 → timeMs = [0, 833, 1667, 2500, ...]
+        final timeMs = (i * 10000 ~/ maxFrames); // Ước tính mỗi frame cách 833ms
 
-    final outputPattern = '$outputDir/frame_%03d.jpg';
-    final command =
-        '-i "$videoPath" -vf "fps=$fps" -frames:v $maxFrames -q:v 2 "$outputPattern"';
+        try {
+          final thumbnailPath = await VideoThumbnail.thumbnailFile(
+            video: videoPath,
+            thumbnailPath: '$outputDir/frame_${i.toString().padLeft(3, '0')}.jpg',
+            imageFormat: ImageFormat.JPEG,
+            timeMs: timeMs,
+            quality: 90,
+          );
 
-    debugPrint('FFmpeg command: $command');
-
-    final session = await FFmpegKit.execute(command);
-    final returnCode = await session.getReturnCode();
-
-    if (!ReturnCode.isSuccess(returnCode)) {
-      final logs = await session.getLogsAsString();
-      debugPrint('FFmpeg error: $logs');
-      throw VideoFrameExtractionException(
-        'Không thể tách ảnh từ video. Hãy thử quay lại.',
-      );
-    }
-
-    // Collect output frame paths
-    final frames = <String>[];
-    for (var i = 1; i <= maxFrames; i++) {
-      final framePath =
-          '$outputDir/frame_${i.toString().padLeft(3, '0')}.jpg';
-      if (File(framePath).existsSync()) {
-        frames.add(framePath);
+          if (thumbnailPath != null && File(thumbnailPath).existsSync()) {
+            frames.add(thumbnailPath);
+          }
+        } catch (e) {
+          debugPrint('Error extracting frame $i: $e');
+          // Tiếp tục với frame tiếp theo
+        }
       }
-    }
 
-    if (frames.length < 3) {
-      // Cleanup
+      if (frames.length < 3) {
+        // Cleanup
+        await _cleanupDir(outputDir);
+        throw VideoFrameExtractionException(
+          'Video quá ngắn hoặc không hợp lệ, chỉ tách được ${frames.length} ảnh. Cần ít nhất 3 ảnh. Hãy quay video dài hơn.',
+        );
+      }
+
+      debugPrint('Extracted ${frames.length} frames from video');
+      return frames;
+
+    } catch (e) {
+      // Cleanup on error
       await _cleanupDir(outputDir);
+      if (e is VideoFrameExtractionException) {
+        rethrow;
+      }
       throw VideoFrameExtractionException(
-        'Video quá ngắn, chỉ tách được ${frames.length} ảnh. Cần ít nhất 3 ảnh. Hãy quay video dài hơn.',
+        'Không thể tách ảnh từ video. Hãy thử quay lại. Lỗi: $e',
       );
     }
-
-    debugPrint('Extracted ${frames.length} frames from video');
-    return frames;
-  }
-
-  /// Lay duration (giay) cua video
-  static Future<double> _getVideoDuration(String videoPath) async {
-    final session = await FFprobeKit.getMediaInformation(videoPath);
-    final info = session.getMediaInformation();
-    if (info == null) return 0;
-
-    final durationStr = info.getDuration();
-    if (durationStr == null) return 0;
-
-    return double.tryParse(durationStr) ?? 0;
   }
 
   static Future<String> _createOutputDir() async {
