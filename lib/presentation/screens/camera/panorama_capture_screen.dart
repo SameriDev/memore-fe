@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -6,7 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:dchs_motion_sensors/dchs_motion_sensors.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/video_frame_extractor.dart';
 import '../../../data/data_sources/remote/panorama_service.dart';
 import 'panorama_preview_screen.dart';
 
@@ -17,30 +17,44 @@ class PanoramaCaptureScreen extends StatefulWidget {
   State<PanoramaCaptureScreen> createState() => _PanoramaCaptureScreenState();
 }
 
-class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
-  static const int _minPhotosToStitch = 3;
-  static const int _maxPhotosToStitch = 20;
-  static const double _autoCaptureAngleStep = 0.18;
-  static const Duration _autoCaptureMinInterval = Duration(milliseconds: 700);
+class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen>
+    with SingleTickerProviderStateMixin {
+  static const Duration _minRecordDuration = Duration(seconds: 3);
+  static const Duration _maxRecordDuration = Duration(seconds: 30);
 
   CameraController? _cameraController;
   bool _isCameraReady = false;
-  final List<String> _capturedPaths = [];
-  bool _isCapturing = false;
-  bool _isStitching = false;
-  bool _isAutoCaptureEnabled = false;
-  double _lastAutoCaptureGyroY = 0;
-  DateTime _lastAutoCaptureAt = DateTime.fromMillisecondsSinceEpoch(0);
+
+  // Recording state
+  bool _isRecording = false;
+  Duration _recordingDuration = Duration.zero;
+  Timer? _recordingTimer;
+  String? _videoPath;
+
+  // Processing state
+  bool _isProcessing = false;
+  String _processingStatus = '';
 
   // Gyroscope
   double _gyroX = 0;
   double _gyroY = 0;
   StreamSubscription? _gyroSubscription;
-  String _directionHint = 'Xoay ngang để chụp';
+  String _directionHint = 'Quay video quét ngang';
+
+  // Pulse animation for record button
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
     _initCamera();
     _initGyroscope();
   }
@@ -69,117 +83,112 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
     _gyroSubscription = motionSensors.gyroscope.listen((event) {
       if (mounted) {
         setState(() {
-          // Accumulate rotation for direction hint
           _gyroX += event.x * 0.1;
           _gyroY += event.y * 0.1;
 
-          // Update direction hint based on accumulated rotation
           if (_gyroX.abs() > 0.5) {
             _directionHint = _gyroX > 0 ? 'Nghiêng lên' : 'Nghiêng xuống';
           } else {
-            _directionHint = 'Xoay ngang để chụp';
+            _directionHint =
+                _isRecording ? 'Quét ngang đều...' : 'Quay video quét ngang';
           }
         });
-        _maybeAutoCapture();
       }
     });
   }
 
-  Future<void> _capturePhoto({bool showLimitMessage = true}) async {
-    if (_isCapturing ||
-        _cameraController == null ||
-        !_cameraController!.value.isInitialized)
-      return;
-    if (_capturedPaths.length >= _maxPhotosToStitch) {
-      if (_isAutoCaptureEnabled) {
-        setState(() => _isAutoCaptureEnabled = false);
-      }
-      if (showLimitMessage) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đã đạt giới hạn tối đa 20 ảnh cho panorama'),
-          ),
-        );
-      }
+  Future<void> _startRecording() async {
+    if (_cameraController == null ||
+        !_cameraController!.value.isInitialized ||
+        _isRecording ||
+        _isProcessing) {
       return;
     }
 
-    setState(() => _isCapturing = true);
     try {
-      final file = await _cameraController!.takePicture();
+      await _cameraController!.startVideoRecording();
       setState(() {
-        _capturedPaths.add(file.path);
-        _lastAutoCaptureGyroY = _gyroY;
-        _lastAutoCaptureAt = DateTime.now();
+        _isRecording = true;
+        _recordingDuration = Duration.zero;
+      });
+
+      _pulseController.repeat(reverse: true);
+
+      _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        setState(() {
+          _recordingDuration += const Duration(seconds: 1);
+        });
+
+        // Auto-stop at max duration
+        if (_recordingDuration >= _maxRecordDuration) {
+          _stopRecording();
+        }
       });
     } catch (e) {
-      debugPrint('Error capturing photo: $e');
-    } finally {
-      setState(() => _isCapturing = false);
+      debugPrint('Error starting recording: $e');
     }
   }
 
-  void _toggleAutoCapture() {
-    if (!_isCameraReady || _isStitching) return;
+  Future<void> _stopRecording() async {
+    if (!_isRecording || _cameraController == null) return;
 
-    setState(() {
-      _isAutoCaptureEnabled = !_isAutoCaptureEnabled;
-      _lastAutoCaptureGyroY = _gyroY;
-      _lastAutoCaptureAt = DateTime.now();
-    });
+    _recordingTimer?.cancel();
+    _recordingTimer = null;
+    _pulseController.stop();
+    _pulseController.reset();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _isAutoCaptureEnabled
-              ? 'Đã bật tự chụp. Xoay ngang đều để chụp liên tục'
-              : 'Đã tắt tự chụp',
-        ),
-        duration: const Duration(milliseconds: 1200),
-      ),
-    );
-  }
+    final duration = _recordingDuration;
 
-  Future<void> _maybeAutoCapture() async {
-    if (!_isAutoCaptureEnabled || _isStitching || _isCapturing) return;
-    if (_capturedPaths.length >= _maxPhotosToStitch) {
-      if (mounted) setState(() => _isAutoCaptureEnabled = false);
-      return;
+    try {
+      final xFile = await _cameraController!.stopVideoRecording();
+      setState(() => _isRecording = false);
+
+      if (duration < _minRecordDuration) {
+        // Discard video
+        try {
+          await File(xFile.path).delete();
+        } catch (_) {}
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Quay ít nhất 3 giây để tạo panorama'),
+            ),
+          );
+        }
+        return;
+      }
+
+      _videoPath = xFile.path;
+      await _processAndUpload();
+    } catch (e) {
+      setState(() => _isRecording = false);
+      debugPrint('Error stopping recording: $e');
     }
-
-    final now = DateTime.now();
-    if (now.difference(_lastAutoCaptureAt) < _autoCaptureMinInterval) return;
-
-    final delta = (_gyroY - _lastAutoCaptureGyroY).abs();
-    if (delta < _autoCaptureAngleStep) return;
-
-    await _capturePhoto(showLimitMessage: false);
   }
 
-  void _removeLastPhoto() {
-    if (_capturedPaths.isEmpty) return;
-    final removed = _capturedPaths.removeLast();
-    // Delete the file
-    try {
-      File(removed).deleteSync();
-    } catch (_) {}
-    setState(() {});
-  }
+  Future<void> _processAndUpload() async {
+    if (_videoPath == null) return;
 
-  Future<void> _finishCapture() async {
-    if (_capturedPaths.length < _minPhotosToStitch) return;
-
+    List<String> frames = [];
     setState(() {
-      _isStitching = true;
-      _isAutoCaptureEnabled = false;
+      _isProcessing = true;
+      _processingStatus = 'Đang tách ảnh từ video...';
     });
+
     try {
+      frames = await VideoFrameExtractor.extractFrames(
+        videoPath: _videoPath!,
+      );
+
+      setState(() => _processingStatus = 'Đang ghép panorama...');
+
       final result = await PanoramaService.instance.stitchPanorama(
-        imagePaths: _capturedPaths,
+        imagePaths: frames,
       );
 
       if (!mounted) return;
-      setState(() => _isStitching = false);
+
+      setState(() => _isProcessing = false);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => PanoramaPreviewScreen(photoDto: result),
@@ -187,21 +196,64 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() => _isStitching = false);
+      setState(() => _isProcessing = false);
+
       String message;
       if (e is PanoramaStitchFailure) {
         message = e.displayMessage;
+      } else if (e is VideoFrameExtractionException) {
+        message = e.message;
       } else {
         message = e.toString().replaceFirst('Exception: ', '');
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+
+      _showErrorDialog(message);
+    } finally {
+      // Cleanup video + frames
+      _cleanup(frames);
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Không thể tạo panorama'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Quay lại video'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _cleanup(List<String> frames) async {
+    // Cleanup frames
+    if (frames.isNotEmpty) {
+      await VideoFrameExtractor.cleanupFrames(frames);
+    }
+    // Cleanup video
+    if (_videoPath != null) {
+      try {
+        await File(_videoPath!).delete();
+      } catch (_) {}
+      _videoPath = null;
+    }
+  }
+
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 
   @override
   void dispose() {
+    _recordingTimer?.cancel();
+    _pulseController.dispose();
     _gyroSubscription?.cancel();
     _cameraController?.dispose();
     super.dispose();
@@ -219,25 +271,30 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
           if (_isCameraReady)
             Positioned.fill(child: CameraPreview(_cameraController!))
           else
-            const Center(child: CircularProgressIndicator(color: Colors.white)),
+            const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
 
-          // Stitching overlay
-          if (_isStitching)
+          // Processing overlay
+          if (_isProcessing)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.7),
-                child: const Center(
+                color: Colors.black.withValues(alpha:0.7),
+                child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircularProgressIndicator(color: Colors.white),
-                      SizedBox(height: 16),
+                      const CircularProgressIndicator(color: Colors.white),
+                      const SizedBox(height: 16),
                       Text(
-                        'Đang ghép ảnh panorama...',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        _processingStatus,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
-                      SizedBox(height: 8),
-                      Text(
+                      const SizedBox(height: 8),
+                      const Text(
                         'Quá trình này có thể mất vài giây',
                         style: TextStyle(color: Colors.white70, fontSize: 13),
                       ),
@@ -247,7 +304,7 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
               ),
             ),
 
-          // Top bar: close button + direction hint + counter
+          // Top bar: close + direction hint + timer
           Positioned(
             top: topPadding + 12,
             left: 16,
@@ -256,17 +313,21 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
               children: [
                 // Close button
                 GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
+                  onTap: _isRecording || _isProcessing
+                      ? null
+                      : () => Navigator.of(context).pop(),
                   child: Container(
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha:0.5),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.close,
-                      color: Colors.white,
+                      color: _isRecording || _isProcessing
+                          ? Colors.white30
+                          : Colors.white,
                       size: 24,
                     ),
                   ),
@@ -276,13 +337,13 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
                 Expanded(
                   child: Center(
                     child: Container(
-                      constraints: const BoxConstraints(maxWidth: 170),
+                      constraints: const BoxConstraints(maxWidth: 190),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha:0.5),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -307,23 +368,41 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Photo counter
+                // Recording timer
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: _isRecording
+                        ? Colors.red.withValues(alpha:0.7)
+                        : Colors.black.withValues(alpha:0.5),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Text(
-                    '${_capturedPaths.length}/$_maxPhotosToStitch ảnh',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_isRecording)
+                        Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsets.only(right: 6),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      Text(
+                        '${_formatDuration(_recordingDuration)} / ${_formatDuration(_maxRecordDuration)}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -331,10 +410,11 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
           ),
 
           // Gyroscope guide circle in center
-          if (_isCameraReady && !_isStitching) Center(child: _buildGyroGuide()),
+          if (_isCameraReady && !_isProcessing)
+            Center(child: _buildGyroGuide()),
 
           // Bottom controls
-          if (!_isStitching)
+          if (!_isProcessing)
             Positioned(
               bottom: 0,
               left: 0,
@@ -342,210 +422,80 @@ class _PanoramaCaptureScreenState extends State<PanoramaCaptureScreen> {
               child: Container(
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom + 16,
-                  top: 8,
+                  top: 16,
                 ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha:0.8),
+                    ],
                   ),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: _toggleAutoCapture,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _isAutoCaptureEnabled
-                                  ? AppColors.primary.withOpacity(0.9)
-                                  : Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.4),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  _isAutoCaptureEnabled
-                                      ? Icons.motion_photos_on
-                                      : Icons.motion_photos_off,
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  _isAutoCaptureEnabled
-                                      ? 'Tự chụp: BẬT'
-                                      : 'Tự chụp: TẮT',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Thumbnail strip
-                    if (_capturedPaths.isNotEmpty)
-                      SizedBox(
-                        height: 56,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: _capturedPaths.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  File(_capturedPaths[index]),
-                                  width: 56,
-                                  height: 56,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                    const SizedBox(height: 16),
-
-                    // Capture button + undo + finish
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // Undo button
-                        GestureDetector(
-                          onTap: _capturedPaths.isNotEmpty
-                              ? _removeLastPhoto
-                              : null,
-                          child: Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(
-                                _capturedPaths.isNotEmpty ? 0.2 : 0.05,
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.undo,
-                              color: _capturedPaths.isNotEmpty
-                                  ? Colors.white
-                                  : Colors.white30,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-
-                        // Capture button
-                        GestureDetector(
-                          onTap:
-                              (_isCapturing ||
-                                  _capturedPaths.length >= _maxPhotosToStitch)
-                              ? null
-                              : _capturePhoto,
-                          child: Container(
-                            width: 72,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 4),
-                            ),
+                    // Record button
+                    GestureDetector(
+                      onTap: _isCameraReady
+                          ? (_isRecording
+                              ? _stopRecording
+                              : _startRecording)
+                          : null,
+                      child: AnimatedBuilder(
+                        animation: _pulseAnimation,
+                        builder: (context, child) {
+                          final scale =
+                              _isRecording ? _pulseAnimation.value : 1.0;
+                          return Transform.scale(
+                            scale: scale,
                             child: Container(
-                              margin: const EdgeInsets.all(4),
+                              width: 80,
+                              height: 80,
                               decoration: BoxDecoration(
-                                color:
-                                    (_isCapturing ||
-                                        _capturedPaths.length >=
-                                            _maxPhotosToStitch)
-                                    ? Colors.grey
-                                    : Colors.white,
                                 shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 4,
+                                ),
+                              ),
+                              child: Container(
+                                margin: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color:
+                                      _isRecording ? Colors.red : Colors.white,
+                                  shape: _isRecording
+                                      ? BoxShape.rectangle
+                                      : BoxShape.circle,
+                                  borderRadius: _isRecording
+                                      ? BorderRadius.circular(8)
+                                      : null,
+                                ),
+                                child: _isRecording
+                                    ? const Icon(
+                                        Icons.stop,
+                                        color: Colors.white,
+                                        size: 32,
+                                      )
+                                    : null,
                               ),
                             ),
-                          ),
-                        ),
-
-                        // Finish button
-                        GestureDetector(
-                          onTap: _capturedPaths.length >= _minPhotosToStitch
-                              ? _finishCapture
-                              : null,
-                          child: Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: _capturedPaths.length >= _minPhotosToStitch
-                                  ? AppColors.primary
-                                  : Colors.white.withOpacity(0.05),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.check,
-                              color: _capturedPaths.length >= _minPhotosToStitch
-                                  ? Colors.white
-                                  : Colors.white30,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    if (_capturedPaths.length >= _minPhotosToStitch &&
-                        _capturedPaths.length < _maxPhotosToStitch)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          _isAutoCaptureEnabled
-                              ? 'Tự chụp đang bật, nhấn ✓ bất cứ lúc nào để hoàn tất'
-                              : 'Nhấn ✓ để hoàn tất',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                        ),
-                      )
-                    else if (_capturedPaths.length >= _maxPhotosToStitch)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Đã đạt tối đa 20 ảnh, nhấn ✓ để hoàn tất',
-                          style: TextStyle(color: Colors.white70, fontSize: 12),
-                        ),
-                      )
-                    else
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Cần ít nhất $_minPhotosToStitch ảnh (đã chụp ${_capturedPaths.length})',
-                          style: const TextStyle(
-                            color: Colors.white54,
-                            fontSize: 12,
-                          ),
-                        ),
+                          );
+                        },
                       ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      _isRecording
+                          ? 'Nhấn để dừng quay'
+                          : 'Nhấn để bắt đầu quay',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ),
