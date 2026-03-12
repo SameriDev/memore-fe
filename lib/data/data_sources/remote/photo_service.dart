@@ -70,6 +70,45 @@ class PhotoService {
     }
   }
 
+  /// Upload avatar to S3 storage (no photo record created)
+  Future<String?> uploadAvatar({
+    required String localFilePath,
+    required String userId,
+  }) async {
+    try {
+      final avatarName = '${_uuid.v4()}.jpg';
+      final s3Key = 'users/$userId/avatars/$avatarName';
+
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          localFilePath,
+          filename: avatarName,
+        ),
+      });
+
+      final uploadResponse = await _dio.post(
+        '/api/photos/storage/upload',
+        data: formData,
+        queryParameters: {'key': s3Key},
+        options: Options(
+          contentType: 'multipart/form-data',
+        ),
+      );
+
+      if (uploadResponse.data['success'] == true) {
+        return s3Key;
+      }
+      debugPrint('Avatar upload failed: ${uploadResponse.data}');
+      return null;
+    } on DioException catch (e) {
+      debugPrint('Avatar upload error: ${e.message}');
+      return null;
+    } catch (e) {
+      debugPrint('Avatar upload error: $e');
+      return null;
+    }
+  }
+
   /// Get all photos for a user
   Future<List<PhotoDto>> getUserPhotos(String userId) async {
     try {

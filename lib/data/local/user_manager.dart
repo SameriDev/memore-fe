@@ -181,9 +181,30 @@ class UserManager {
     }
   }
 
-  /// Update user avatar
-  Future<bool> updateAvatar(String avatarPath) async {
-    return await updateProfile({'avatarUrl': avatarPath});
+  /// Update user avatar via S3 upload
+  Future<bool> updateAvatar(String localFilePath) async {
+    try {
+      final userId = _storage.userId;
+      if (userId == null || userId.isEmpty) return false;
+
+      // Step 1: Upload avatar to S3
+      final s3Key = await _photoService.uploadAvatar(
+        localFilePath: localFilePath,
+        userId: userId,
+      );
+      if (s3Key == null) return false;
+
+      // Step 2: Save S3 key to BE
+      await _userService.updateUser(userId, {'avatarUrl': s3Key});
+
+      // Step 3: Fetch fresh profile (BE returns presigned URL) and update local cache
+      await fetchAndUpdateProfile();
+
+      return true;
+    } catch (e) {
+      debugPrint('Update avatar error: $e');
+      return false;
+    }
   }
 
   /// Update user bio
