@@ -21,10 +21,11 @@ class StorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppDimensions.storyAvatarSize + 48,
-      child: Stack(
-        children: [
-          ListView.separated(
+      height: AppDimensions.storyAvatarSize + 80,
+      child: Center(
+        child: SizedBox(
+          height: AppDimensions.storyAvatarSize + 48,
+          child: ListView.separated(
             padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.horizontalPadding,
             ),
@@ -46,7 +47,7 @@ class StorySection extends StatelessWidget {
               );
             },
           ),
-        ],
+        ),
       ),
     );
   }
@@ -66,7 +67,6 @@ class _StoryAvatar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 20),
             Container(
               width: AppDimensions.storyAvatarSize,
               height: AppDimensions.storyAvatarSize,
@@ -78,7 +78,16 @@ class _StoryAvatar extends StatelessWidget {
               child: const Icon(Icons.add, color: Colors.white, size: 32),
             ),
             const SizedBox(height: 4),
-            const SizedBox(height: 12),
+            SizedBox(
+              width: AppDimensions.storyAvatarSize + 4,
+              child: const Text(
+                'Add',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       );
