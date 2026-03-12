@@ -22,9 +22,10 @@ class StorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: AppDimensions.storyAvatarSize + 80,
-      child: Center(
+      child: Align(
+        alignment: Alignment.bottomCenter,
         child: SizedBox(
-          height: AppDimensions.storyAvatarSize + 48,
+          height: AppDimensions.storyAvatarSize + 36,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.horizontalPadding,
@@ -117,7 +118,10 @@ class _StoryAvatar extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(1.5),
               child: CircleAvatar(
-                backgroundImage: _getAvatarImageProvider(story.userAvatar, story.userName),
+                backgroundImage: _getAvatarImageProvider(
+                  story.userAvatar,
+                  story.userName,
+                ),
                 child: story.userAvatar.isEmpty
                     ? const Icon(Icons.person, size: 20)
                     : null,
@@ -140,7 +144,10 @@ class _StoryAvatar extends StatelessWidget {
     );
   }
 
-  ImageProvider<Object>? _getAvatarImageProvider(String? avatarUrl, String userName) {
+  ImageProvider<Object>? _getAvatarImageProvider(
+    String? avatarUrl,
+    String userName,
+  ) {
     if (avatarUrl == null || avatarUrl.isEmpty) return null;
 
     // Check if it's a local file path

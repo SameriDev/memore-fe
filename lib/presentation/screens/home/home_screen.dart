@@ -86,7 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _allStoryDtos = storyDtos;
         stories = [addStory, ...groupedStories];
-        albums = albumDtos.map((dto) => (dto as dynamic).toEntity() as Album).toList();
+        albums = albumDtos
+            .map((dto) => (dto as dynamic).toEntity() as Album)
+            .toList();
 
         // NEW: Trigger background preloading after UI updates
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -234,10 +236,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => StoryViewerScreen(
-          stories: userStories,
-          initialIndex: 0,
-        ),
+        builder: (context) =>
+            StoryViewerScreen(stories: userStories, initialIndex: 0),
       ),
     );
   }
@@ -264,13 +264,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onStoryTap: (story) {
                 _openStoryViewer(story);
               },
-              onMoreTap: () {
-                debugPrint('More stories tapped');
-              },
             ),
-            const SizedBox(height: 8),
-
-
+            const SizedBox(height: 0),
             AlbumHeader(
               onSearchTap: () {
                 debugPrint('Search tapped');
@@ -278,9 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onAddTap: () async {
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const CreateAlbumScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const CreateAlbumScreen()),
                 );
                 if (result == true) _loadStoriesAndAlbums();
               },
@@ -288,9 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onInvitesTap: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const AlbumInvitesScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const AlbumInvitesScreen()),
                 );
                 _loadStoriesAndAlbums();
                 _loadPendingInvites();
@@ -327,8 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     0.85,
                     1.15,
                   ];
-                  final aspectRatio =
-                      aspectRatios[index % aspectRatios.length];
+                  final aspectRatio = aspectRatios[index % aspectRatios.length];
 
                   return AlbumCard(
                     album: album,
