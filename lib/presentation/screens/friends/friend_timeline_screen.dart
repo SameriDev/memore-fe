@@ -128,21 +128,17 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
         _hasMorePhotos = false;
       }
 
-      // Convert PhotoTimelineDto sang TimelinePhoto
-      final convertedPhotos = photos.map(_convertToTimelinePhoto).toList();
-
       if (mounted) {
         setState(() {
           if (refresh) {
             _timelinePhotos = photos;
-            _displayPhotos = convertedPhotos;
-            _totalPhotosLoaded = photos.length;
           } else {
             _timelinePhotos.addAll(photos);
-            _displayPhotos.addAll(convertedPhotos);
-            _totalPhotosLoaded += photos.length;
           }
 
+          // Regroup toàn bộ ảnh theo ngày sau mỗi lần load
+          _displayPhotos = _groupPhotosByDate(_timelinePhotos);
+          _totalPhotosLoaded = _timelinePhotos.length;
           _isLoading = false;
           _isLoadingMore = false;
           _currentPage++;
@@ -162,14 +158,37 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
     await _loadTimelinePhotos();
   }
 
-  TimelinePhoto _convertToTimelinePhoto(PhotoTimelineDto dto) {
-    return TimelinePhoto(
-      id: dto.id,
-      imageUrls: [dto.displayUrl], // Sử dụng displayUrl (thumbnail nếu có)
-      time: _formatTime(dto.createdAt.toIso8601String()),
-      season: 'Friend', // Có thể customize
-      description: dto.caption ?? '',
-    );
+  List<TimelinePhoto> _groupPhotosByDate(List<PhotoTimelineDto> photos) {
+    final Map<String, List<PhotoTimelineDto>> groups = {};
+    for (final photo in photos) {
+      final dt = photo.createdAt;
+      final key =
+          '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+      groups.putIfAbsent(key, () => []).add(photo);
+    }
+
+    // Sắp xếp ngày mới nhất lên đầu
+    final sortedKeys = groups.keys.toList()..sort((a, b) => b.compareTo(a));
+
+    return sortedKeys.map((dateKey) {
+      final dayPhotos = groups[dateKey]!;
+      final dt = DateTime.parse(dateKey);
+      return TimelinePhoto(
+        id: dayPhotos.first.id,
+        imageUrls: dayPhotos.map((p) => p.displayUrl).toList(),
+        time: _formatDate(dt),
+        season: '${dayPhotos.length} ảnh',
+        description: dayPhotos.first.caption ?? '',
+      );
+    }).toList();
+  }
+
+  String _formatDate(DateTime dt) {
+    const months = [
+      'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+      'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12',
+    ];
+    return '${dt.day} ${months[dt.month - 1]}';
   }
 
   void _setErrorState(String message) {
@@ -181,16 +200,6 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
-    }
-  }
-
-  String _formatTime(String? createdAt) {
-    if (createdAt == null) return '';
-    try {
-      final dt = DateTime.parse(createdAt);
-      return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-    } catch (_) {
-      return '';
     }
   }
 
