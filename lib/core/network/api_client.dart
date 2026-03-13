@@ -10,6 +10,7 @@ class ApiClient {
   // Android emulator uses 10.0.2.2 to reach host localhost
   // For real device on same network, use your machine's IP
   static const String baseUrl = 'https://api.memore.vn';
+  //static const String baseUrl = 'https://6sd4llwt.asse.devtunnels.ms:8080';
 
   ApiClient._() {
     dio = Dio(
@@ -30,18 +31,26 @@ class ApiClient {
           final token = StorageService.instance.accessToken;
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
-            print('📡 API Request: ${options.method} ${options.path} - Token: ${token.substring(0, 20)}...');
+            print(
+              '📡 API Request: ${options.method} ${options.path} - Token: ${token.substring(0, 20)}...',
+            );
           } else {
-            print('⚠️ API Request: ${options.method} ${options.path} - NO TOKEN!');
+            print(
+              '⚠️ API Request: ${options.method} ${options.path} - NO TOKEN!',
+            );
           }
           handler.next(options);
         },
         onError: (error, handler) {
-          print('❌ API Error: ${error.requestOptions.method} ${error.requestOptions.path}');
+          print(
+            '❌ API Error: ${error.requestOptions.method} ${error.requestOptions.path}',
+          );
           print('   Status: ${error.response?.statusCode}');
           print('   Message: ${error.message}');
           if (error.response?.statusCode == 401) {
-            print('   🔒 Authentication failed - Token may be expired or invalid');
+            print(
+              '   🔒 Authentication failed - Token may be expired or invalid',
+            );
           }
           handler.next(error);
         },

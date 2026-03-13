@@ -6,4 +6,5 @@ class AppConstants {
   static const int maxImageSize = 5242880;
 
   static const String baseUrl = 'https://api.memore.vn';
+  //static const String baseUrl = 'https://6sd4llwt.asse.devtunnels.ms:8080';
 }

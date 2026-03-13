@@ -4,7 +4,6 @@ import 'package:memore/core/utils/show_app_popup.dart';
 import '../../widgets/app_popup.dart';
 import '../../../data/data_sources/remote/photo_service.dart';
 import '../../../data/data_sources/remote/user_service.dart';
-import '../../../data/models/photo_dto.dart';
 import '../../../data/models/user_dto.dart';
 import '../../../domain/entities/friend.dart';
 import '../../../domain/entities/timeline_photo.dart';
@@ -22,60 +21,167 @@ class FriendTimelineScreen extends StatefulWidget {
 }
 
 class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
-  List<TimelinePhoto> timelinePhotos = [];
-  bool isLoading = true;
+  // Enhanced timeline management
+  List<PhotoTimelineDto> _timelinePhotos = [];
+  List<TimelinePhoto> _displayPhotos = [];
+  bool _isLoading = true;
+  bool _isLoadingMore = false;
+  bool _hasMorePhotos = true;
   UserDto? _userProfile;
+
+  // Pagination
+  int _currentPage = 0;
+  static const int _pageSize = 20;
+  final ScrollController _scrollController = ScrollController();
+
+  // Performance tracking
+  int _totalPhotosLoaded = 0;
+  final Stopwatch _loadStopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
-    _loadPhotos();
-    _loadUserProfile();
+    _setupScrollListener();
+    _loadInitialData();
+    _preloadFriendTimeline();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _setupScrollListener() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 500 &&
+          !_isLoadingMore &&
+          _hasMorePhotos) {
+        _loadMorePhotos();
+      }
+    });
+  }
+
+  Future<void> _loadInitialData() async {
+    debugPrint('🔄 Loading initial timeline data cho friend: ${widget.friend.name}');
+    _loadStopwatch.start();
+
+    // Load user profile và photos song song
+    await Future.wait([
+      _loadUserProfile(),
+      _loadTimelinePhotos(refresh: true),
+    ]);
+
+    _loadStopwatch.stop();
+    debugPrint('⚡ Initial load completed trong ${_loadStopwatch.elapsedMilliseconds}ms');
+  }
+
+  Future<void> _preloadFriendTimeline() async {
+    try {
+      debugPrint('🚀 Starting preload cho friend: ${widget.friend.name} (${widget.friend.id})');
+      await PhotoService.instance.preloadFriendTimeline(widget.friend.id);
+      debugPrint('✅ Preload completed cho friend: ${widget.friend.name}');
+    } catch (e) {
+      debugPrint('❌ Preload failed cho friend: ${widget.friend.name} - Error: $e');
+      // Preload failure shouldn't block the UI
+    }
   }
 
   Future<void> _loadUserProfile() async {
     try {
       final user = await UserService.instance.getUserById(widget.friend.id);
-      setState(() => _userProfile = user);
+      if (mounted) {
+        setState(() => _userProfile = user);
+      }
     } catch (e) {
-      debugPrint('Load user profile error: $e');
+      debugPrint('❌ Load user profile error: $e');
     }
   }
 
-  Future<void> _loadPhotos() async {
+  Future<void> _loadTimelinePhotos({bool refresh = false}) async {
+    if (refresh) {
+      _currentPage = 0;
+      _hasMorePhotos = true;
+      setState(() => _isLoading = true);
+    } else {
+      setState(() => _isLoadingMore = true);
+    }
+
     try {
-      final photoDtos =
-          await PhotoService.instance.getUserPhotos(widget.friend.id);
-      final photos = <TimelinePhoto>[];
-
-      for (final dto in photoDtos) {
-        final imageUrl = await _getImageUrl(dto);
-        if (imageUrl == null) continue;
-
-        photos.add(TimelinePhoto(
-          id: dto.id,
-          imageUrls: [imageUrl],
-          time: _formatTime(dto.createdAt),
-          season: dto.season ?? 'Unknown',
-          description: dto.caption ?? '',
-        ));
+      // Check quyền xem timeline trước
+      final canView = await PhotoService.instance.canViewFriendTimeline(widget.friend.id);
+      if (!canView) {
+        debugPrint('❌ Không có quyền xem timeline của ${widget.friend.name}');
+        _setErrorState('Bạn không có quyền xem timeline này');
+        return;
       }
 
-      setState(() {
-        timelinePhotos = photos;
-        isLoading = false;
-      });
+      // Load timeline photos với enhanced PhotoService
+      final photos = await PhotoService.instance.getFriendTimelinePhotos(
+        widget.friend.id,
+        page: _currentPage,
+        size: _pageSize,
+      );
+
+      if (photos.length < _pageSize) {
+        _hasMorePhotos = false;
+      }
+
+      // Convert PhotoTimelineDto sang TimelinePhoto
+      final convertedPhotos = photos.map(_convertToTimelinePhoto).toList();
+
+      if (mounted) {
+        setState(() {
+          if (refresh) {
+            _timelinePhotos = photos;
+            _displayPhotos = convertedPhotos;
+            _totalPhotosLoaded = photos.length;
+          } else {
+            _timelinePhotos.addAll(photos);
+            _displayPhotos.addAll(convertedPhotos);
+            _totalPhotosLoaded += photos.length;
+          }
+
+          _isLoading = false;
+          _isLoadingMore = false;
+          _currentPage++;
+        });
+
+        debugPrint('📸 Loaded ${photos.length} photos (Total: $_totalPhotosLoaded)');
+      }
     } catch (e) {
-      debugPrint('Load timeline photos error: $e');
-      setState(() => isLoading = false);
+      debugPrint('❌ Load timeline photos error: $e');
+      _setErrorState('Lỗi khi tải timeline');
     }
   }
 
-  Future<String?> _getImageUrl(PhotoDto dto) async {
-    if (dto.s3Key != null) {
-      return PhotoService.instance.getPresignedUrl(dto.s3Key!);
+  Future<void> _loadMorePhotos() async {
+    if (!_hasMorePhotos || _isLoadingMore) return;
+    debugPrint('📄 Loading more photos - page $_currentPage');
+    await _loadTimelinePhotos();
+  }
+
+  TimelinePhoto _convertToTimelinePhoto(PhotoTimelineDto dto) {
+    return TimelinePhoto(
+      id: dto.id,
+      imageUrls: [dto.displayUrl], // Sử dụng displayUrl (thumbnail nếu có)
+      time: _formatTime(dto.createdAt.toIso8601String()),
+      season: 'Friend', // Có thể customize
+      description: dto.caption ?? '',
+    );
+  }
+
+  void _setErrorState(String message) {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _isLoadingMore = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
     }
-    return null;
   }
 
   String _formatTime(String? createdAt) {
@@ -136,59 +242,11 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
       body: Stack(
         children: [
           const TimelineBackgroundDecoration(),
-          isLoading
+          _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : timelinePhotos.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TimelineHeader(
-                            name: _userProfile?.name ?? widget.friend.name,
-                            avatarUrl: _userProfile?.avatarUrl ?? widget.friend.avatarUrl,
-                            isOnline: _userProfile?.isOnline ?? widget.friend.isOnline,
-                            onMenuTap: _onMenuTap,
-                            username: _userProfile?.username,
-                            friendsCount: _userProfile?.friendsCount,
-                            imagesCount: _userProfile?.imagesCount,
-                          ),
-                          const SizedBox(height: 60),
-                          const Icon(Icons.photo_library_outlined,
-                              size: 64, color: Colors.grey),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'No photos yet',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          TimelineHeader(
-                            name: _userProfile?.name ?? widget.friend.name,
-                            avatarUrl: _userProfile?.avatarUrl ?? widget.friend.avatarUrl,
-                            isOnline: _userProfile?.isOnline ?? widget.friend.isOnline,
-                            onMenuTap: _onMenuTap,
-                            username: _userProfile?.username,
-                            friendsCount: _userProfile?.friendsCount,
-                            imagesCount: _userProfile?.imagesCount,
-                          ),
-                          const SizedBox(height: 20),
-                          ...timelinePhotos.asMap().entries.map((entry) {
-                            return TimelinePhotoCard(
-                              photo: entry.value,
-                              index: entry.key,
-                            );
-                          }),
-                          const SizedBox(height: 40),
-                        ],
-                      ),
-                    ),
+              : _displayPhotos.isEmpty
+                  ? _buildEmptyState()
+                  : _buildTimelineContent(),
           Positioned(
             right: 29,
             top: -500,
@@ -198,5 +256,159 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TimelineHeader(
+            name: _userProfile?.name ?? widget.friend.name,
+            avatarUrl: _userProfile?.avatarUrl ?? widget.friend.avatarUrl,
+            isOnline: _userProfile?.isOnline ?? widget.friend.isOnline,
+            onMenuTap: _onMenuTap,
+            username: _userProfile?.username,
+            friendsCount: _userProfile?.friendsCount,
+            imagesCount: _userProfile?.imagesCount,
+          ),
+          const SizedBox(height: 60),
+          const Icon(Icons.photo_library_outlined,
+              size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text(
+            'No photos yet',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimelineContent() {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      child: Column(
+        children: [
+          // Timeline Header
+          TimelineHeader(
+            name: _userProfile?.name ?? widget.friend.name,
+            avatarUrl: _userProfile?.avatarUrl ?? widget.friend.avatarUrl,
+            isOnline: _userProfile?.isOnline ?? widget.friend.isOnline,
+            onMenuTap: _onMenuTap,
+            username: _userProfile?.username,
+            friendsCount: _userProfile?.friendsCount,
+            imagesCount: _userProfile?.imagesCount,
+          ),
+          const SizedBox(height: 20),
+
+          // Performance info (debug only)
+          if (mounted && _totalPhotosLoaded > 0)
+            _buildDebugInfo(),
+
+          // Timeline Photos
+          ..._displayPhotos.asMap().entries.map((entry) {
+            return TimelinePhotoCard(
+              photo: entry.value,
+              index: entry.key,
+            );
+          }),
+
+          // Load more indicator
+          if (_isLoadingMore) _buildLoadMoreIndicator(),
+
+          // End of timeline indicator
+          if (!_hasMorePhotos && _displayPhotos.isNotEmpty)
+            _buildEndOfTimelineIndicator(),
+
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDebugInfo() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        '📊 $_totalPhotosLoaded photos loaded | Page $_currentPage',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadMoreIndicator() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          SizedBox(width: 10),
+          Text(
+            'Loading more photos...',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEndOfTimelineIndicator() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.check_circle_outline,
+            color: Colors.grey,
+            size: 32,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'You\'ve seen all photos',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+            '$_totalPhotosLoaded total photos',
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onRefresh() async {
+    debugPrint('🔄 Refreshing friend timeline');
+    await _loadTimelinePhotos(refresh: true);
+
+    // Print cache statistics
+    final stats = PhotoService.instance.getCacheStatistics();
+    debugPrint('📊 Cache Stats: ${stats['hitRatioPercentage']} hit ratio, ${stats['cacheSize']} entries');
   }
 }
