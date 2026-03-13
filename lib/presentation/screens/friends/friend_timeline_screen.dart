@@ -7,6 +7,7 @@ import '../../../data/data_sources/remote/user_service.dart';
 import '../../../data/models/user_dto.dart';
 import '../../../domain/entities/friend.dart';
 import '../../../domain/entities/timeline_photo.dart';
+import '../recent_photos_viewer/recent_photos_viewer_screen.dart';
 import 'widgets/timeline_header.dart';
 import 'widgets/timeline_photo_card.dart';
 import 'widgets/timeline_background_decoration.dart';
@@ -24,6 +25,7 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
   // Enhanced timeline management
   List<PhotoTimelineDto> _timelinePhotos = [];
   List<TimelinePhoto> _displayPhotos = [];
+  List<List<PhotoTimelineDto>> _photoGroups = [];
   bool _isLoading = true;
   bool _isLoadingMore = false;
   bool _hasMorePhotos = true;
@@ -170,6 +172,8 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
     // Sắp xếp ngày mới nhất lên đầu
     final sortedKeys = groups.keys.toList()..sort((a, b) => b.compareTo(a));
 
+    _photoGroups = sortedKeys.map((k) => groups[k]!).toList();
+
     return sortedKeys.map((dateKey) {
       final dayPhotos = groups[dateKey]!;
       final dt = DateTime.parse(dateKey);
@@ -201,6 +205,29 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
         SnackBar(content: Text(message)),
       );
     }
+  }
+
+  void _openGroupDetail(int groupIndex) {
+    if (groupIndex >= _photoGroups.length) return;
+    final groupDtos = _photoGroups[groupIndex];
+    final photoItems = groupDtos
+        .map((dto) => PhotoItem(
+              imageUrl: dto.displayUrl,
+              uploadedAt: dto.createdAt,
+            ))
+        .toList();
+
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (_) => RecentPhotosViewerScreen(
+          userId: widget.friend.id,
+          initialIndex: 0,
+          photos: photoItems,
+          userName: _userProfile?.name ?? widget.friend.name,
+          userAvatar: _userProfile?.avatarUrl ?? widget.friend.avatarUrl ?? '',
+        ),
+      ),
+    );
   }
 
   void _onMenuTap() {
@@ -323,6 +350,7 @@ class _FriendTimelineScreenState extends State<FriendTimelineScreen> {
             return TimelinePhotoCard(
               photo: entry.value,
               index: entry.key,
+              onTap: () => _openGroupDetail(entry.key),
             );
           }),
 

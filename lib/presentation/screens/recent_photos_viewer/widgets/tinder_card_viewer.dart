@@ -223,33 +223,46 @@ class _TinderCardViewerState extends State<TinderCardViewer>
   }
 
   Widget _buildCard(PhotoItem photo, {bool isTop = true}) {
+    final size = MediaQuery.of(context).size;
+    final cardWidth = size.width - 24; // 12px margin mỗi bên
+    final cardHeight = size.height * 0.72;
+
     return Transform.translate(
       offset: isTop ? _cardOffset : Offset.zero,
       child: Transform.rotate(
         angle: isTop ? _rotationAngle : 0.0,
         child: Container(
-          margin: const EdgeInsets.only(left: 24.0, right: 24.0, top: 55.0),
+          margin: const EdgeInsets.only(left: 12.0, right: 12.0, top: 40.0),
+          width: cardWidth,
+          height: cardHeight,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
               photo.imageUrl,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
+              width: cardWidth,
+              height: cardHeight,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                        : null,
-                    color: Colors.white,
+                return Container(
+                  width: cardWidth,
+                  height: cardHeight,
+                  color: Colors.grey[900],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                          : null,
+                      color: Colors.white,
+                    ),
                   ),
                 );
               },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  width: double.infinity,
-                  height: 500,
+                  width: cardWidth,
+                  height: cardHeight,
                   decoration: BoxDecoration(
                     color: Colors.grey[800],
                     borderRadius: BorderRadius.circular(20),
@@ -257,11 +270,7 @@ class _TinderCardViewerState extends State<TinderCardViewer>
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.broken_image_outlined,
-                        size: 64,
-                        color: Colors.white38,
-                      ),
+                      Icon(Icons.broken_image_outlined, size: 64, color: Colors.white38),
                       SizedBox(height: 12),
                       Text(
                         'Failed to load image',

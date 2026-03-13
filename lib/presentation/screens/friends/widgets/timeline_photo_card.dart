@@ -4,15 +4,24 @@ import '../../../../domain/entities/timeline_photo.dart';
 class TimelinePhotoCard extends StatelessWidget {
   final TimelinePhoto photo;
   final int index;
+  final VoidCallback? onTap;
 
   const TimelinePhotoCard({
     super.key,
     required this.photo,
     required this.index,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: _buildCard(context),
+    );
+  }
+
+  Widget _buildCard(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
@@ -170,3 +179,4 @@ class TimelinePhotoCard extends StatelessWidget {
     );
   }
 }
+
