@@ -219,6 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
           participantAvatars: album.participantAvatars,
           additionalParticipants: album.additionalParticipants,
           isFavorite: !album.isFavorite,
+          previewImageUrls: album.previewImageUrls,
         );
       }
     });

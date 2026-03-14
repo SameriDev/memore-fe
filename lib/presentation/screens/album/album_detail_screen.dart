@@ -13,6 +13,7 @@ import '../../../data/models/photo_dto.dart';
 import '../../widgets/decorated_background.dart';
 import '../../widgets/optimized_cached_image.dart';
 import 'select_photos_screen.dart';
+import 'select_preview_photos_screen.dart';
 
 class AlbumDetailScreen extends StatefulWidget {
   final String albumId;
@@ -96,6 +97,19 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
       return;
     }
     if (mounted) Navigator.pop(context, true);
+  }
+
+  Future<void> _openSelectPreviewPhotos() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SelectPreviewPhotosScreen(
+          albumId: widget.albumId,
+          albumPhotos: _photos,
+        ),
+      ),
+    );
+    if (result == true) _loadData();
   }
 
   Future<void> _openSelectPhotos() async {
@@ -311,8 +325,19 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                             onSelected: (value) {
                               if (value == 'leave') _leaveAlbum();
                               if (value == 'delete') _deleteAlbum();
+                              if (value == 'preview') _openSelectPreviewPhotos();
                             },
                             itemBuilder: (ctx) => [
+                              const PopupMenuItem(
+                                value: 'preview',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.grid_view, size: 18, color: Colors.brown),
+                                    SizedBox(width: 8),
+                                    Text('Đặt ảnh preview'),
+                                  ],
+                                ),
+                              ),
                               if (!_isCreator)
                                 const PopupMenuItem(
                                   value: 'leave',

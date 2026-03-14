@@ -7,6 +7,7 @@ class Album {
   final List<String> participantAvatars;
   final int additionalParticipants;
   final bool isFavorite;
+  final List<String> previewImageUrls;
 
   Album({
     required this.id,
@@ -17,5 +18,6 @@ class Album {
     required this.participantAvatars,
     this.additionalParticipants = 0,
     this.isFavorite = false,
+    this.previewImageUrls = const [],
   });
 }

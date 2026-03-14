@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/album.dart';
 import '../../core/constants/app_dimensions.dart';
 import 'optimized_cached_image.dart';
+import 'album_preview_grid.dart';
 
 class AlbumCard extends StatelessWidget {
   final Album album;
@@ -41,12 +42,17 @@ class AlbumCard extends StatelessWidget {
               aspectRatio: aspectRatio,
               child: Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      AppDimensions.albumCardRadius,
-                    ),
-                    child: _buildCoverImage(album.coverImageUrl),
-                  ),
+                  album.previewImageUrls.length == 3
+                      ? AlbumPreviewGrid(
+                          imageUrls: album.previewImageUrls,
+                          borderRadius: AppDimensions.albumCardRadius,
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            AppDimensions.albumCardRadius,
+                          ),
+                          child: _buildCoverImage(album.coverImageUrl),
+                        ),
                   Positioned(
                     top: 8,
                     right: 8,

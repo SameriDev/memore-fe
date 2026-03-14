@@ -13,6 +13,7 @@ class AlbumDto {
   final String? createdAt;
   final String? updatedAt;
   final List<AlbumParticipantDto> participants;
+  final List<String> previewImageUrls;
 
   AlbumDto({
     required this.id,
@@ -26,6 +27,7 @@ class AlbumDto {
     this.createdAt,
     this.updatedAt,
     this.participants = const [],
+    this.previewImageUrls = const [],
   });
 
   factory AlbumDto.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,10 @@ class AlbumDto {
       updatedAt: json['updatedAt']?.toString(),
       participants: (json['participants'] as List<dynamic>?)
               ?.map((p) => AlbumParticipantDto.fromJson(p))
+              .toList() ??
+          [],
+      previewImageUrls: (json['previewImageUrls'] as List<dynamic>?)
+              ?.map((u) => u.toString())
               .toList() ??
           [],
     );
@@ -99,6 +105,7 @@ class AlbumDto {
       participantAvatars: avatars,
       additionalParticipants: additionalCount,
       isFavorite: isFavorite,
+      previewImageUrls: previewImageUrls,
     );
   }
 }

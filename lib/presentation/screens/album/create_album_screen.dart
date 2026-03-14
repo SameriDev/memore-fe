@@ -82,10 +82,13 @@ class _CreateAlbumScreenState extends State<CreateAlbumScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final friendPickerHeight = screenHeight * 0.25;
+
     return DecoratedBackground(
       child: SafeArea(
-        bottom: false,
-        child: Padding(
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.only(left: 16, right: 16, top: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,11 +160,11 @@ class _CreateAlbumScreenState extends State<CreateAlbumScreen> {
               ),
               const SizedBox(height: 8),
               // Friend picker
-              Expanded(
+              SizedBox(
+                height: friendPickerHeight,
                 child: _isLoading
                     ? const Center(
-                        child:
-                            CircularProgressIndicator(color: Colors.brown))
+                        child: CircularProgressIndicator(color: Colors.brown))
                     : FriendPickerWidget(
                         friends: _friends,
                         selectedIds: _selectedFriendIds,
@@ -169,38 +172,37 @@ class _CreateAlbumScreenState extends State<CreateAlbumScreen> {
                             setState(() => _selectedFriendIds = ids),
                       ),
               ),
+              const SizedBox(height: 12),
               // Create button
-              Padding(
-                padding: const EdgeInsets.only(bottom: 32, top: 12),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isCreating ? null : _createAlbum,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isCreating ? null : _createAlbum,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: _isCreating
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            'Tạo Album',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
                   ),
+                  child: _isCreating
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Tạo Album',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                 ),
               ),
+              const SizedBox(height: 32),
             ],
           ),
         ),

@@ -142,6 +142,26 @@ class AlbumService {
     }
   }
 
+  Future<AlbumDto?> updatePreviewImages({
+    required String albumId,
+    required List<String> photoIds,
+    required String requesterId,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/api/albums/$albumId/preview-images',
+        data: {
+          'photoIds': photoIds,
+          'requesterId': requesterId,
+        },
+      );
+      return AlbumDto.fromJson(response.data);
+    } on DioException catch (e) {
+      debugPrint('Update preview images error: ${e.message}');
+      return null;
+    }
+  }
+
   Future<List<AlbumDto>> getPendingInvites(String userId) async {
     try {
       final response = await _dio.get('/api/albums/invites/$userId');
