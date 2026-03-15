@@ -409,7 +409,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                                 ),
                               ),
                           Text(
-                            '${_album!.filesCount} ảnh',
+                            '${_photos.length} ảnh',
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.grey[600],
