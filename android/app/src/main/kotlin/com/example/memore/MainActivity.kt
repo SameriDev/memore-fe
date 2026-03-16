@@ -1,4 +1,4 @@
-package com.sameri.memore
+package com.example.memore
 
 import io.flutter.embedding.android.FlutterActivity
 

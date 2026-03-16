@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sameri.memore"
+    namespace = "com.example.memore"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.sameri.memore"
+        applicationId = "com.example.memore"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
