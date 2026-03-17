@@ -324,6 +324,10 @@ class UserManager {
       birthday: profile['birthday'] != null
           ? DateTime.tryParse(profile['birthday'] as String)
           : null,
+      subscriptionPlan: profile['subscriptionPlan'] as String? ?? 'FREE',
+      subscriptionExpiresAt: profile['subscriptionExpiresAt'] != null
+          ? DateTime.tryParse(profile['subscriptionExpiresAt'] as String)
+          : null,
     );
   }
 

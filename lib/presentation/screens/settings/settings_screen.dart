@@ -6,6 +6,7 @@ import '../../../presentation/widgets/app_popup.dart';
 import 'profile_edit_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'privacy_settings_screen.dart';
+import 'upgrade_screen.dart';
 import '../../../data/local/user_manager.dart';
 import '../../routes/custom_route_transitions.dart';
 
@@ -220,6 +221,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: 'Thay đổi thông tin cá nhân',
               onTap: () {
                 context.pushSlideRight(const ProfileEditScreen()).then((_) => _loadUserData());
+              },
+            ),
+            _buildSettingsItem(
+              icon: Icons.workspace_premium,
+              title: 'Nâng cấp tài khoản',
+              subtitle: 'Nâng cấp SILVER/GOLD để dùng nhiều AI hơn',
+              onTap: () {
+                Navigator.pushNamed(context, '/upgrade');
               },
             ),
 

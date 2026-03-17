@@ -13,6 +13,8 @@ class UserDto {
   final String? updatedAt;
   final String? lastActive;
   final bool? isOnline;
+  final String? subscriptionPlan;
+  final String? subscriptionExpiresAt;
 
   UserDto({
     required this.id,
@@ -29,6 +31,8 @@ class UserDto {
     this.updatedAt,
     this.lastActive,
     this.isOnline,
+    this.subscriptionPlan,
+    this.subscriptionExpiresAt,
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
@@ -47,6 +51,8 @@ class UserDto {
       updatedAt: json['updatedAt']?.toString(),
       lastActive: json['lastActive']?.toString(),
       isOnline: json['isOnline'] as bool?,
+      subscriptionPlan: json['subscriptionPlan'] as String?,
+      subscriptionExpiresAt: json['subscriptionExpiresAt']?.toString(),
     );
   }
 
@@ -66,6 +72,8 @@ class UserDto {
       'joinedDate': createdAt ?? DateTime.now().toIso8601String(),
       'isOnline': isOnline ?? true,
       'lastActiveTime': lastActive ?? DateTime.now().toIso8601String(),
+      'subscriptionPlan': subscriptionPlan ?? 'FREE',
+      'subscriptionExpiresAt': subscriptionExpiresAt,
     };
   }
 }

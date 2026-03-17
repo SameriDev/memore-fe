@@ -9,6 +9,8 @@ class UserProfile {
   final int streakCount;
   final String email;
   final DateTime? birthday;
+  final String subscriptionPlan;
+  final DateTime? subscriptionExpiresAt;
 
   UserProfile({
     required this.id,
@@ -21,5 +23,7 @@ class UserProfile {
     required this.streakCount,
     required this.email,
     this.birthday,
+    this.subscriptionPlan = 'FREE',
+    this.subscriptionExpiresAt,
   });
 }

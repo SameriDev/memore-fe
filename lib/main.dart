@@ -10,6 +10,7 @@ import 'presentation/screens/auth/welcome_screen.dart';
 import 'presentation/screens/auth/otp_verification_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/screens/gallery/gallery_screen.dart';
+import 'presentation/screens/settings/upgrade_screen.dart';
 
 void main() async {
   // Ensure flutter bindings are initialized
@@ -51,6 +52,7 @@ class MemoreApp extends StatelessWidget {
         '/otp': (context) => const OtpVerificationScreen(),
         '/main': (context) => const MainScreen(),
         '/gallery': (context) => const GalleryScreen(),
+        '/upgrade': (context) => const UpgradeScreen(),
       },
     );
   }

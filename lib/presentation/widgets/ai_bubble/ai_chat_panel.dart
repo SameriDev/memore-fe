@@ -104,6 +104,9 @@ class _AiChatPanelState extends State<AiChatPanel> {
       case 'Thử lại':
         _retryLastPrompt();
         break;
+      case 'Nâng cấp':
+        Navigator.pushNamed(context, '/upgrade');
+        break;
       default:
         // Treat as a prompt suggestion
         _sendPrompt(action);
@@ -228,11 +231,19 @@ class _AiChatPanelState extends State<AiChatPanel> {
         actions: ['Lưu ảnh', 'Sửa tiếp'],
       ));
     } on AiEditFailure catch (e) {
-      _replaceLastBotMessage(ChatMessage(
-        isBot: true,
-        text: '${e.message}${e.suggestion != null ? '\n💡 ${e.suggestion}' : ''}',
-        actions: ['Thử lại', 'Chọn từ thư viện'],
-      ));
+      if (e.errorCode == 'AI_RATE_LIMIT_EXCEEDED') {
+        _replaceLastBotMessage(ChatMessage(
+          isBot: true,
+          text: 'Bạn đã dùng hết lượt AI edit hôm nay.\n💡 Nâng cấp tài khoản để có thêm lượt!',
+          actions: ['Nâng cấp', 'Thử lại ngày mai'],
+        ));
+      } else {
+        _replaceLastBotMessage(ChatMessage(
+          isBot: true,
+          text: '${e.message}${e.suggestion != null ? '\n💡 ${e.suggestion}' : ''}',
+          actions: ['Thử lại', 'Chọn từ thư viện'],
+        ));
+      }
     } catch (e) {
       _replaceLastBotMessage(ChatMessage(
         isBot: true,

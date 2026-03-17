@@ -8,6 +8,7 @@ import '../../../data/local/user_manager.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_badges.dart';
 import 'widgets/profile_setting_item.dart';
+import '../settings/upgrade_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -111,6 +112,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         streakCount: user!.streakCount,
                       ),
                     ),
+                    // Subscription badge (only show for SILVER/GOLD)
+                    if (user!.subscriptionPlan != 'FREE') ...[
+                      const SizedBox(height: 12),
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: user!.subscriptionPlan == 'GOLD'
+                                ? const Color(0xFFFCBA03).withValues(alpha: 0.15)
+                                : const Color(0xFF90A4AE).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(99),
+                            border: Border.all(
+                              color: user!.subscriptionPlan == 'GOLD'
+                                  ? const Color(0xFFFCBA03)
+                                  : const Color(0xFF90A4AE),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (user!.subscriptionPlan == 'GOLD')
+                                const Icon(Icons.star, size: 14, color: Color(0xFFFCBA03)),
+                              if (user!.subscriptionPlan == 'GOLD') const SizedBox(width: 4),
+                              Text(
+                                user!.subscriptionPlan,
+                                style: GoogleFonts.inika(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: user!.subscriptionPlan == 'GOLD'
+                                      ? const Color(0xFFFCBA03)
+                                      : const Color(0xFF90A4AE),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 32),
                     // General Section Title
                     const Text(
@@ -123,6 +162,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 12),
                     // Settings List
+                    ProfileSettingItem(
+                      icon: Icons.workspace_premium,
+                      title: 'Nâng cấp tài khoản',
+                      onTap: () {
+                        Navigator.pushNamed(context, '/upgrade');
+                      },
+                    ),
+                    const SizedBox(height: 8),
                     ProfileSettingItem(
                       icon: Icons.edit,
                       title: 'Edit Profile',
