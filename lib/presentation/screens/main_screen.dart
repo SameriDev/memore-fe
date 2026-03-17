@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'home/home_screen.dart';
 import 'friends/friends_tab.dart';
 import 'camera/camera_screen.dart';
@@ -9,8 +10,11 @@ import '../widgets/bottom_navigation.dart';
 import '../animations/camera_transition_controller.dart';
 import '../routes/camera_page_route.dart';
 import '../../data/local/storage_service.dart';
+import '../../data/local/user_manager.dart';
 import '../../data/data_sources/remote/notification_service.dart';
 import '../widgets/ai_bubble/ai_floating_bubble.dart';
+import '../widgets/app_popup.dart';
+import '../../core/utils/show_app_popup.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -41,6 +45,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     _transitionController = CameraTransitionController();
     _transitionController.initialize(this);
     _configureNotifications();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showPremiumWelcomeIfNeeded());
   }
 
   @override
@@ -69,6 +74,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Future<void> _loadUnreadCount() async {
     final count = await NotificationService.instance.getUnreadCount();
     if (mounted) setState(() => _unreadNotificationCount = count);
+  }
+
+  void _showPremiumWelcomeIfNeeded() {
+    final user = UserManager.instance.toUserProfile();
+    if (user == null) return;
+    final plan = user.subscriptionPlan;
+    if (plan == 'FREE') return;
+    showAppPopup(
+      context: context,
+      builder: (ctx) => _PremiumWelcomePopup(ctx, plan),
+    );
   }
 
   Future<void> _handleNavTap(int index) async {
@@ -138,6 +154,65 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PremiumWelcomePopup extends StatelessWidget {
+  final BuildContext dialogContext;
+  final String plan;
+
+  const _PremiumWelcomePopup(this.dialogContext, this.plan);
+
+  @override
+  Widget build(BuildContext context) {
+    final isGold = plan == 'GOLD';
+    final planColor = isGold ? const Color(0xFFFCBA03) : const Color(0xFF90A4AE);
+    final title = isGold
+        ? 'Chào mừng trở lại, Gold Member! ⭐'
+        : 'Chào mừng trở lại, Silver Member!';
+    final description = isGold
+        ? 'Bạn đang dùng gói Gold — chỉnh ảnh bằng AI không giới hạn. Tận hưởng trải nghiệm premium nhé!'
+        : 'Bạn đang dùng gói Silver — chỉnh ảnh bằng AI tối đa 20 lần mỗi ngày.';
+
+    return AppPopup(
+      title: title,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 4,
+            decoration: BoxDecoration(
+              color: planColor,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            description,
+            style: GoogleFonts.inika(
+              fontSize: 14,
+              color: const Color(0xFF555555),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          style: TextButton.styleFrom(
+            foregroundColor: planColor,
+            textStyle: GoogleFonts.inika(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          child: const Text('Bắt đầu'),
+        ),
+      ],
     );
   }
 }
