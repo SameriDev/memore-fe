@@ -94,7 +94,7 @@ class UpgradeScreen extends StatelessWidget {
             const SizedBox(height: 12),
             _buildPlanCard(
               plan: 'SILVER',
-              price: '50.000₫ / tháng',
+              price: '70.000₫ / tháng',
               aiLimit: '20 lần/ngày',
               color: const Color(0xFF90A4AE),
               isCurrent: currentPlan == 'SILVER',
@@ -102,7 +102,7 @@ class UpgradeScreen extends StatelessWidget {
             const SizedBox(height: 12),
             _buildPlanCard(
               plan: 'GOLD',
-              price: '100.000₫ / tháng',
+              price: '150.000₫ / tháng',
               aiLimit: 'Không giới hạn',
               color: const Color(0xFFFCBA03),
               isCurrent: currentPlan == 'GOLD',
@@ -138,33 +138,26 @@ class UpgradeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // QR Code placeholder
+                  // QR Code
                   Center(
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5DC),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF8B4513).withValues(alpha: 0.3)),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.qr_code_2,
-                          size: 120,
-                          color: Color(0xFF8B4513),
-                        ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        'assets/icons/QR.png',
+                        width: 220,
+                        height: 260,
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  _buildBankInfoRow('Ngân hàng', 'Vietcombank'),
+                  _buildBankInfoRow('Ngân hàng', 'MB Bank'),
                   const SizedBox(height: 8),
-                  _buildBankInfoRow('Số tài khoản', '1234567890'),
+                  _buildBankInfoRow('Số tài khoản', '42739397979'),
                   const SizedBox(height: 8),
-                  _buildBankInfoRow('Chủ tài khoản', 'NGUYEN VAN A'),
+                  _buildBankInfoRow('Chủ tài khoản', 'VU TUAN HIEP'),
                   const SizedBox(height: 8),
                   _buildBankInfoRow('Nội dung CK', 'MEMORE [tên gói] [username]'),
                 ],
